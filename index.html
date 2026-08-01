@@ -6,7 +6,7 @@
   <title>SICAL MULTIMODAL AND RAIL TRANSPORT LIMITED - Visitor Management</title>
   <!-- FontAwesome Icons CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- QRCode.js & html5-qrcode CDN for Live Camera Scanning -->
+  <!-- QRCode.js CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://unpkg.com/html5-qrcode"></script>
   <style>
@@ -185,6 +185,30 @@
 
     .id-card-side { display: none; }
 
+    /* MOBILE PUBLIC PASS VIEW STYLING */
+    body.public-pass-view header,
+    body.public-pass-view .sidebar,
+    body.public-pass-view .card,
+    body.public-pass-view #loginScreen {
+      display: none !important;
+    }
+    body.public-pass-view #appScreen {
+      display: block !important;
+      background: var(--gray-bg);
+      padding: 15px 10px;
+    }
+    body.public-pass-view .content-container {
+      margin-left: 0 !important;
+      padding: 0 !important;
+      max-width: 650px !important;
+    }
+    body.public-pass-view .grid-2 {
+      display: block !important;
+    }
+    body.public-pass-view .pass-badge {
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+
     @media print {
       @page { size: A4 portrait; margin: 10mm 8mm 10mm 8mm; }
       html, body { height: auto !important; min-height: 100% !important; overflow: visible !important; margin: 0 !important; padding: 0 !important; background: #fff !important; }
@@ -285,7 +309,7 @@
       <!-- VISITOR ENTRY TAB -->
       <div id="entryTab" class="tab-content">
         <div class="grid-2">
-          <div class="card">
+          <div class="card" id="entryFormCard">
             <h3><i class="fa-solid fa-user-plus"></i> Visitor Entry & Pass Retrieval</h3>
 
             <!-- METRO GATE AUTO-SCAN INPUT & CAMERA SCANNER BUTTON -->
@@ -395,7 +419,7 @@
           </div>
 
           <!-- DYNAMIC LIVE PASS PREVIEW -->
-          <div>
+          <div id="passPreviewCard">
             <div id="printablePass" class="pass-badge">
               <div class="badge-header">
                 <h2>SICAL MULTIMODAL AND RAIL TRANSPORT LIMITED</h2>
@@ -447,7 +471,7 @@
                 <h5>SECURITY & SAFETY RULES FOR VISITORS</h5>
                 • <strong>Display Pass:</strong> Mandatory at all times.<br>
                 • <strong>Authorized Zones:</strong> Strictly designated floors.<br>
-                • <strong>Host Sign:</strong> Mandatory host verification.<br>
+                • <strong>Host Sign:</strong> Mandatory verification.<br>
                 • <strong>Checkout:</strong> Return pass or scan QR code at Security Gate upon leaving.
               </div>
 
@@ -579,9 +603,25 @@
 
     let activeUser = null;
 
+    // AUTO-LOAD VISITOR ENTRY FROM MOBILE QR SCAN LINK
     window.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
       const passParam = urlParams.get('pass');
+
+      // PUBLIC PASS VIEW MODE: IF SCANNED VIA MOBILE QR CODE
+      if (passParam) {
+        document.body.classList.add('public-pass-view');
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('appScreen').style.display = 'block';
+        document.getElementById('entryTab').style.display = 'block';
+        document.getElementById('entryFormCard').style.display = 'none';
+
+        fetchCloudData().then(() => {
+          document.getElementById('entrySearchInput').value = passParam;
+          searchAndLoadVisitor(true);
+        });
+        return;
+      }
 
       const savedUser = sessionStorage.getItem('sical_active_session');
       if (savedUser) {
@@ -589,12 +629,7 @@
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('appScreen').style.display = 'block';
         applyPermissions();
-        initApp(passParam);
-      } else if (passParam) {
-        fetchCloudData().then(() => {
-          document.getElementById('entrySearchInput').value = passParam;
-          searchAndLoadVisitor(true);
-        });
+        initApp();
       }
     });
 
@@ -910,7 +945,6 @@
           document.getElementById('prevTimeOut').textContent = (match.timeOut && match.timeOut !== '_______') ? match.timeOut : '_______';
           
           generateQrCode("passQrCode", getQrWebUrl(match.passNo), 100);
-          alert(`Pass ${match.passNo} details loaded!`);
         } else {
           alert(`Visitor details loaded for ${match.name}! Ready to issue a NEW Pass.`);
         }
