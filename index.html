@@ -176,7 +176,7 @@
     .status-banner.valid { background: #f0fdf4; color: #16a34a; border: 1px solid #86efac; display: block; }
 
     .signature-container { display: flex; justify-content: space-between; padding: 18px 12px 6px 12px; text-align: center; }
-    .sig-box { width: 30%; border-top: 1.5px solid #0f172a; padding-top: 3px; font-size: 0.58rem; font-weight: 800; color: #0f172a; }
+    .sig-box { width: 32%; border-top: 1.5px solid #0f172a; padding-top: 3px; font-size: 0.54rem; font-weight: 800; color: #0f172a; }
 
     .rules-and-qr-footer { display: flex; justify-content: space-between; align-items: flex-end; padding: 8px 12px 10px 12px; background: #ffffff; border-top: 1px solid #cbd5e1; gap: 8px; }
     .rules-box { flex: 1; font-size: 0.55rem; color: #334155; line-height: 1.3; }
@@ -348,16 +348,16 @@
               <label><i class="fa-solid fa-qrcode"></i> Scan QR (Visitor Gate Check-Out) / Search Pass/Mobile</label>
               <div class="search-input-group">
                 <input type="text" id="entrySearchInput" placeholder="Scan QR or type Pass/Mobile..." onkeydown="if(event.key==='Enter'){ handleQrScan(); event.preventDefault(); }">
-                <button type="button" class="btn-action" onclick="startQrCameraScanner()" style="padding: 8px 12px; font-size: 0.8rem; background: #7c3aed;"><i class="fa-solid fa-camera"></i> Visitor Out Gate Scanner</button>
+                <button type="button" class="btn-action" onclick="startQrCameraScanner()" style="padding: 8px 12px; font-size: 0.8rem; background: #7c3aed;"><i class="fa-solid fa-camera"></i> Standalone Out Gate Scanner</button>
                 <button type="button" class="btn-action" onclick="searchAndLoadVisitor(false)" style="padding: 8px 12px; font-size: 0.8rem;">Auto-Fill New Pass</button>
                 <button type="button" class="btn-action" onclick="searchAndLoadVisitor(true)" style="padding: 8px 12px; font-size: 0.8rem; background: #0f172a;">View/Reprint Pass</button>
                 <button type="button" class="btn-action" onclick="clearSearch()" style="padding: 8px 12px; font-size: 0.8rem; background: #dc2626;">Clear</button>
               </div>
             </div>
 
-            <!-- VISITOR OUT GATE CAMERA SCANNER MODAL -->
+            <!-- STANDALONE OUT GATE CAMERA SCANNER MODAL -->
             <div id="qrScannerContainer" style="display:none; background: #f1f5f9; padding: 15px; border-radius: 8px; border: 2px dashed #0284c7; margin-bottom: 15px; text-align: center;">
-              <h4 style="margin-bottom: 10px; color: #0f172a;"><i class="fa-solid fa-expand"></i> Visitor Out Gate Camera Scanner Active</h4>
+              <h4 style="margin-bottom: 10px; color: #0f172a;"><i class="fa-solid fa-expand"></i> Standalone Out Gate Camera Scanner Active</h4>
               <div id="reader" style="width: 100%; max-width: 320px; margin: 0 auto;"></div>
               <button type="button" class="btn-action" style="margin-top: 10px; background: #dc2626;" onclick="stopQrCameraScanner()">Close Gate Camera</button>
             </div>
@@ -499,6 +499,7 @@
                   <div class="badge-row"><div class="badge-label">Company:</div><div class="badge-val" id="prevCompany">-</div></div>
                   <div class="badge-row"><div class="badge-label">To Meet:</div><div class="badge-val" id="prevHost">-</div></div>
                   <div class="badge-row"><div class="badge-label">Dept:</div><div class="badge-val" id="prevDept">Admin</div></div>
+                  <div class="badge-row"><div class="badge-label">Purpose:</div><div class="badge-val" id="prevPurpose">Meeting</div></div>
                   <div class="badge-row"><div class="badge-label">Validity:</div><div class="badge-val" id="prevValidity">Daily</div></div>
                   <div class="badge-row"><div class="badge-label">Time In/Out:</div><div class="badge-val">IN: <span id="prevTimeIn">--:--</span> &nbsp;|&nbsp; OUT: <span id="prevTimeOut">_______</span></div></div>
                 </div>
@@ -510,6 +511,7 @@
 
               <div id="validityBanner" class="status-banner"></div>
 
+              <!-- UPDATED SIGNATURE LABELS -->
               <div class="signature-container">
                 <div class="sig-box">VISITOR SIGNATURE</div>
                 <div class="sig-box">PERSON TO MEET SIGN</div>
@@ -521,7 +523,7 @@
                   <h5>SECURITY & SAFETY RULES FOR VISITORS</h5>
                   • <strong>Display Pass:</strong> Must be carried at all times.<br>
                   • <strong>Authorized Zones:</strong> Strictly designated floors.<br>
-                  • <strong>Person To Meet Sign:</strong> Mandatory person to meet verification.<br>
+                  • <strong>Person To Meet Sign:</strong> Mandatory host verification.<br>
                   • <strong>Checkout:</strong> Return pass or scan QR code at Security Gate.
                 </div>
                 <div class="qrcode-container">
@@ -843,7 +845,7 @@
       }
     }
 
-    // VISITOR OUT-GATE CAMERA SCANNER ENGINE
+    // STANDALONE OUT-GATE CAMERA SCANNER ENGINE
     function startQrCameraScanner() {
       document.getElementById('qrScannerContainer').style.display = 'block';
       if (!html5QrcodeScanner) {
@@ -1115,6 +1117,7 @@
       const idNumVal = document.getElementById('idNumber').value || '-';
       const hostVal = document.getElementById('personToMeet').value || '-';
       const deptVal = document.getElementById('department').value || 'Admin';
+      const purposeVal = document.getElementById('purposeSelect').value || 'Meeting';
       const validityVal = document.querySelector('input[name="validity"]:checked')?.value || 'Daily';
 
       document.getElementById('prevPassNo').textContent = currentPass;
@@ -1130,6 +1133,7 @@
 
       document.getElementById('prevHost').textContent = hostVal;
       document.getElementById('prevDept').textContent = deptVal;
+      document.getElementById('prevPurpose').textContent = purposeVal;
       document.getElementById('prevValidity').textContent = validityVal;
 
       updatePhotoFrame(loadedVisitorPhoto || capturedPhotoData);
