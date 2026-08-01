@@ -93,7 +93,7 @@
     .tab-content.active { display: block; }
 
     .stats-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 25px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px;
     }
     .stat-card {
       background: white; padding: 20px; border-radius: 10px; border: 1px solid var(--border-color);
@@ -102,9 +102,50 @@
     .stat-card h4 { font-size: 0.85rem; color: #64748b; margin-bottom: 8px; text-transform: uppercase; }
     .stat-card .stat-val { font-size: 2rem; font-weight: 800; color: var(--navy); }
 
+    /* DASHBOARD UX ENHANCEMENT STYLES */
+    .quick-actions-bar {
+      background: white; padding: 16px 20px; border-radius: 10px; border: 1px solid var(--border-color);
+      margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    .quick-actions-title { font-size: 0.9rem; font-weight: 800; color: var(--navy); display: flex; align-items: center; gap: 8px; }
+    .action-btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+    
+    .dashboard-grid-2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; margin-bottom: 25px; }
+    .dashboard-grid-3 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+    /* OVERSTAY ALERT WIDGET */
+    .alert-banner {
+      background: #fef2f2; border: 1px solid #fca5a5; border-left: 5px solid #dc2626;
+      padding: 14px 18px; border-radius: 8px; margin-bottom: 20px; color: #991b1b;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+    }
+    .alert-banner-text { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; font-weight: 600; }
+
+    /* CHART ANALYTICS STYLES */
+    .chart-box { display: flex; align-items: center; justify-content: space-around; gap: 15px; padding: 10px 0; }
+    .donut-chart {
+      width: 120px; height: 120px; border-radius: 50%;
+      background: conic-gradient(#0284c7 0% 40%, #16a34a 40% 65%, #f59e0b 65% 85%, #7c3aed 85% 100%);
+      position: relative; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .donut-chart-center {
+      width: 70px; height: 70px; background: white; border-radius: 50%; display: flex;
+      flex-direction: column; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; color: var(--navy);
+    }
+    .chart-legend { list-style: none; font-size: 0.8rem; }
+    .chart-legend li { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+    .progress-list { list-style: none; padding-top: 5px; }
+    .progress-item { margin-bottom: 12px; }
+    .progress-meta { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; }
+    .progress-bar-bg { background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; border-radius: 4px; transition: width 0.3s ease; }
+
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
     @media (max-width: 900px) { 
-      .grid-2 { grid-template-columns: 1fr; }
+      .grid-2, .dashboard-grid-2, .dashboard-grid-3 { grid-template-columns: 1fr; }
       .sidebar { left: calc(var(--sidebar-width) * -1); }
       .sidebar.active-mobile { left: 0; }
       .content-container { margin-left: 0 !important; }
@@ -244,7 +285,7 @@
         height: 100% !important;
         overflow: hidden !important;
       }
-      #loginScreen, header, .sidebar, .card, h3, .stats-grid, .filter-bar, table, #addUserForm, #userTableBody, #qrScannerModal, #mobilePdfBtnContainer { display: none !important; }
+      #loginScreen, header, .sidebar, .card, h3, .stats-grid, .quick-actions-bar, .dashboard-grid-2, .dashboard-grid-3, .alert-banner, .filter-bar, table, #addUserForm, #userTableBody, #qrScannerModal, #mobilePdfBtnContainer { display: none !important; }
       body * { visibility: hidden !important; }
       #printablePass, #printablePass * { visibility: visible !important; }
       #printablePass { 
@@ -316,11 +357,12 @@
       
       <!-- DASHBOARD TAB -->
       <div id="dashboardTab" class="tab-content active">
-        <h3 style="margin-bottom: 15px; color: var(--navy);"><i class="fa-solid fa-chart-line"></i> CFS Visitor Overview Dashboard</h3>
+        <h3 style="margin-bottom: 15px; color: var(--navy);"><i class="fa-solid fa-chart-line"></i> CFS Visitor Security & Operations Center</h3>
         
+        <!-- TOP KPI CARDS WITH LIVE INSIDE PREMISES COUNTER -->
         <div class="stats-grid">
           <div class="stat-card" style="border-left-color: #0284c7;">
-            <h4>Total Visitors (Current Month)</h4>
+            <h4>Total (Current Month)</h4>
             <div class="stat-val" id="statMonth">...</div>
           </div>
           <div class="stat-card" style="border-left-color: #16a34a;">
@@ -331,11 +373,99 @@
             <h4>Yesterday's Visitors</h4>
             <div class="stat-val" id="statYesterday">...</div>
           </div>
-          <div class="stat-card" style="border-left-color: #7c3aed;">
-            <h4>Overall Visitors</h4>
-            <div class="stat-val" id="statOverall">...</div>
+          <div class="stat-card" style="border-left-color: #dc2626; background: #fff5f5;">
+            <h4 style="color: #dc2626;"><i class="fa-solid fa-street-view"></i> Currently Inside Premises</h4>
+            <div class="stat-val" id="statInside" style="color: #dc2626;">...</div>
           </div>
         </div>
+
+        <!-- QUICK ACTIONS SHORTCUT BAR -->
+        <div class="quick-actions-bar">
+          <div class="quick-actions-title">
+            <i class="fa-solid fa-bolt" style="color: #f59e0b; font-size: 1.1rem;"></i> Security Gate Quick Actions:
+          </div>
+          <div class="action-btn-group">
+            <button class="btn-action btn-success" onclick="switchTab('entryTab')"><i class="fa-solid fa-plus"></i> Issue New Visitor Pass</button>
+            <button class="btn-action btn-purple" onclick="shortcutOpenScanner()"><i class="fa-solid fa-camera"></i> Standalone Out-Scanner</button>
+            <button class="btn-action" style="background: #0f172a;" onclick="exportToCSV()"><i class="fa-solid fa-file-excel"></i> Export Today Logs</button>
+          </div>
+        </div>
+
+        <!-- OVERSTAY SECURITY ALERTS WIDGET -->
+        <div id="overstayAlertBanner" class="alert-banner" style="display:none;">
+          <div class="alert-banner-text">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size: 1.3rem;"></i>
+            <span><strong id="overstayCount">0</strong> Visitor(s) Have Exceeded Validity / 12 Hours Duration Inside CFS Premises!</span>
+          </div>
+          <button class="btn-action" style="background:#dc2626; padding: 4px 10px; font-size:0.8rem;" onclick="switchTab('reportTab')">Investigate Logs</button>
+        </div>
+
+        <!-- MIDDLE LAYER: LIVE IN-GATE FEED & DEPARTMENT DISTRIBUTION -->
+        <div class="dashboard-grid-2">
+          
+          <!-- LIVE IN-GATE ACTIVITY FEED -->
+          <div class="card">
+            <h3><i class="fa-solid fa-clock-rotate-left"></i> Live In-Gate Activity Log (Recent Check-Ins)</h3>
+            <div style="overflow-x: auto;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Pass No</th>
+                    <th>Visitor Name</th>
+                    <th>Department</th>
+                    <th>Time In</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="dashLiveLogsBody">
+                  <tr><td colspan="5" style="text-align:center;">Loading recent activity...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- VISITORS BY DEPARTMENT (DONUT PIE CHART) -->
+          <div class="card">
+            <h3><i class="fa-solid fa-chart-pie"></i> Traffic By Department</h3>
+            <div class="chart-box">
+              <div class="donut-chart" id="deptDonutChart">
+                <div class="donut-chart-center">
+                  <span id="donutTotalCount">0</span>
+                  <span style="font-size: 0.55rem; color:#64748b; font-weight: normal;">Visitors</span>
+                </div>
+              </div>
+              <ul class="chart-legend" id="deptLegendList">
+                <li><span class="legend-dot" style="background: #0284c7;"></span> Import: <b id="pctImport">0%</b></li>
+                <li><span class="legend-dot" style="background: #16a34a;"></span> Export: <b id="pctExport">0%</b></li>
+                <li><span class="legend-dot" style="background: #f59e0b;"></span> Customs: <b id="pctCustoms">0%</b></li>
+                <li><span class="legend-dot" style="background: #7c3aed;"></span> Bond & Admin: <b id="pctOther">0%</b></li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- LOWER LAYER: PURPOSE OF VISIT BREAKDOWN -->
+        <div class="dashboard-grid-3">
+          <div class="card" style="grid-column: span 2;">
+            <h3><i class="fa-solid fa-bars-staggered"></i> Visitor Distribution by Entry Purpose</h3>
+            <div class="progress-list" id="purposeProgressList">
+              <div class="progress-item">
+                <div class="progress-meta"><span>Clearance / EXIM Delivery</span><span id="lblPurpEXIM">0%</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="barPurpEXIM" style="width: 0%; background: #0284c7;"></div></div>
+              </div>
+              <div class="progress-item">
+                <div class="progress-meta"><span>Meeting / Official</span><span id="lblPurpMeeting">0%</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="barPurpMeeting" style="width: 0%; background: #16a34a;"></div></div>
+              </div>
+              <div class="progress-item">
+                <div class="progress-meta"><span>Vendor / Delivery / Maintenance</span><span id="lblPurpVendor">0%</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="barPurpVendor" style="width: 0%; background: #f59e0b;"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <!-- VISITOR ENTRY TAB -->
@@ -786,6 +916,13 @@
       }
     }
 
+    function shortcutOpenScanner() {
+      switchTab('entryTab');
+      setTimeout(() => {
+        startQrCameraScanner();
+      }, 300);
+    }
+
     let videoStream = null;
     let capturedPhotoData = null;
 
@@ -885,7 +1022,7 @@
       document.getElementById('statMonth').textContent = "...";
       document.getElementById('statToday').textContent = "...";
       document.getElementById('statYesterday').textContent = "...";
-      document.getElementById('statOverall').textContent = "...";
+      document.getElementById('statInside').textContent = "...";
 
       if (GOOGLE_SCRIPT_URL) {
         try {
@@ -896,7 +1033,6 @@
             document.getElementById('statMonth').textContent = data.statMonth;
             document.getElementById('statToday').textContent = data.statToday;
             document.getElementById('statYesterday').textContent = data.statYesterday;
-            document.getElementById('statOverall').textContent = data.statOverall;
 
             globalCloudLogs = data.logs || [];
             if (data.users && data.users.length > 0) {
@@ -911,6 +1047,8 @@
               currentPassNumber = 1001;
             }
 
+            // UPDATE ANALYTICS & DASHBOARD WIDGETS
+            computeDashboardAnalytics(globalCloudLogs);
             renderLogsTable(globalCloudLogs);
             renderUsersTable();
             updatePreview();
@@ -921,9 +1059,122 @@
         }
       }
 
+      computeDashboardAnalytics(globalCloudLogs);
       renderLogsTable(globalCloudLogs);
       renderUsersTable();
       updatePreview();
+    }
+
+    // CALCULATE REAL-TIME OPERATIONAL METRICS FOR DASHBOARD
+    function computeDashboardAnalytics(logs) {
+      if (!logs) logs = [];
+
+      // 1. Inside Premises Counter & Overstay Check
+      let insideCount = 0;
+      let overstayCount = 0;
+      let deptCounts = { Import: 0, Export: 0, Customs: 0, Other: 0 };
+      let purposeCounts = { EXIM: 0, Meeting: 0, Vendor: 0 };
+
+      logs.forEach(log => {
+        const isCheckedOut = (log.timeOut && log.timeOut !== '_______' && log.timeOut !== '--:--');
+        if (!isCheckedOut) {
+          insideCount++;
+          // Basic Overstay Detection check (if checked in on a previous date or over 12 hours)
+          if (log.date !== getCurrentDate()) {
+            overstayCount++;
+          }
+        }
+
+        // Dept Breakdown
+        const d = (log.department || '').toLowerCase();
+        if (d.includes('import')) deptCounts.Import++;
+        else if (d.includes('export')) deptCounts.Export++;
+        else if (d.includes('custom')) deptCounts.Customs++;
+        else deptCounts.Other++;
+
+        // Purpose Breakdown
+        const p = (log.purpose || '').toLowerCase();
+        if (p.includes('exim') || p.includes('clearance')) purposeCounts.EXIM++;
+        else if (p.includes('meeting')) purposeCounts.Meeting++;
+        else purposeCounts.Vendor++;
+      });
+
+      // Update KPI
+      document.getElementById('statInside').textContent = insideCount;
+
+      // Update Overstay Alert Banner
+      const alertBanner = document.getElementById('overstayAlertBanner');
+      if (overstayCount > 0) {
+        alertBanner.style.display = 'flex';
+        document.getElementById('overstayCount').textContent = overstayCount;
+      } else {
+        alertBanner.style.display = 'none';
+      }
+
+      // Update Department Charts
+      const totalLogs = logs.length || 1;
+      const pctImp = Math.round((deptCounts.Import / totalLogs) * 100);
+      const pctExp = Math.round((deptCounts.Export / totalLogs) * 100);
+      const pctCus = Math.round((deptCounts.Customs / totalLogs) * 100);
+      const pctOth = 100 - (pctImp + pctExp + pctCus);
+
+      document.getElementById('pctImport').textContent = pctImp + '%';
+      document.getElementById('pctExport').textContent = pctExp + '%';
+      document.getElementById('pctCustoms').textContent = pctCus + '%';
+      document.getElementById('pctOther').textContent = (pctOth < 0 ? 0 : pctOth) + '%';
+      document.getElementById('donutTotalCount').textContent = logs.length;
+
+      // Dynamic Conic Gradient for Donut Chart
+      const c1 = pctImp;
+      const c2 = c1 + pctExp;
+      const c3 = c2 + pctCus;
+      document.getElementById('deptDonutChart').style.background = `conic-gradient(#0284c7 0% ${c1}%, #16a34a ${c1}% ${c2}%, #f59e0b ${c2}% ${c3}%, #7c3aed ${c3}% 100%)`;
+
+      // Update Purpose Progress Bars
+      const pctPurpEXIM = Math.round((purposeCounts.EXIM / totalLogs) * 100);
+      const pctPurpMeeting = Math.round((purposeCounts.Meeting / totalLogs) * 100);
+      const pctPurpVendor = Math.round((purposeCounts.Vendor / totalLogs) * 100);
+
+      document.getElementById('lblPurpEXIM').textContent = pctPurpEXIM + '%';
+      document.getElementById('barPurpEXIM').style.width = pctPurpEXIM + '%';
+
+      document.getElementById('lblPurpMeeting').textContent = pctPurpMeeting + '%';
+      document.getElementById('barPurpMeeting').style.width = pctPurpMeeting + '%';
+
+      document.getElementById('lblPurpVendor').textContent = pctPurpVendor + '%';
+      document.getElementById('barPurpVendor').style.width = pctPurpVendor + '%';
+
+      // Render Live Activity Table (Recent 5 Check-Ins)
+      renderDashLiveLogs(logs.slice(-5).reverse());
+    }
+
+    function renderDashLiveLogs(recentLogs) {
+      const tbody = document.getElementById('dashLiveLogsBody');
+      tbody.innerHTML = '';
+
+      if (!recentLogs || recentLogs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No recent check-ins recorded.</td></tr>';
+        return;
+      }
+
+      recentLogs.forEach(log => {
+        const row = `<tr>
+          <td><strong>${log.passNo}</strong></td>
+          <td>${log.name}</td>
+          <td>${log.department || 'Admin'}</td>
+          <td>${log.timeIn}</td>
+          <td>
+            <button class="btn-action" style="padding: 3px 8px; font-size: 0.75rem;" onclick="quickViewPass('${log.passNo}')">View Pass</button>
+          </td>
+        </tr>`;
+        tbody.innerHTML += row;
+      });
+    }
+
+    function quickViewPass(passNo) {
+      switchTab('entryTab');
+      document.getElementById('entrySearchInput').value = passNo;
+      searchAndLoadVisitor(true);
     }
 
     function getFormattedPassNo() {
