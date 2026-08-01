@@ -89,7 +89,6 @@
     }
     .content-container.full-width { margin-left: 0; }
 
-    /* ANIMATION 2: SMOOTH TAB TRANSITIONS */
     .tab-content { 
       display: none; 
       opacity: 0;
@@ -106,7 +105,6 @@
       display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px;
     }
     
-    /* ANIMATION 2: CARD HOVER LIFT & ELEVATION */
     .stat-card, .card {
       background: white; padding: 20px; border-radius: 10px; border: 1px solid var(--border-color);
       box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 5px solid var(--blue);
@@ -120,7 +118,6 @@
     .stat-card h4 { font-size: 0.85rem; color: #64748b; margin-bottom: 8px; text-transform: uppercase; }
     .stat-card .stat-val { font-size: 2rem; font-weight: 800; color: var(--navy); }
 
-    /* ANIMATION 1: PULSING "LIVE" DOT INDICATOR */
     .live-dot {
       display: inline-block;
       width: 9px;
@@ -134,18 +131,11 @@
     }
 
     @keyframes livePulse {
-      0% {
-        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
-      }
-      70% {
-        box-shadow: 0 0 0 9px rgba(220, 38, 38, 0);
-      }
-      100% {
-        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
-      }
+      0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+      70% { box-shadow: 0 0 0 9px rgba(220, 38, 38, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
     }
 
-    /* DASHBOARD UX ENHANCEMENT STYLES */
     .quick-actions-bar {
       background: white; padding: 16px 20px; border-radius: 10px; border: 1px solid var(--border-color);
       margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
@@ -162,7 +152,6 @@
     .dashboard-grid-2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; margin-bottom: 25px; }
     .dashboard-grid-3 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
-    /* ANIMATION 4: SUBTLE ATTENTION SHAKE FOR OVERSTAY ALERTS */
     .alert-banner {
       background: #fef2f2; border: 1px solid #fca5a5; border-left: 5px solid #dc2626;
       padding: 14px 18px; border-radius: 8px; margin-bottom: 20px; color: #991b1b;
@@ -179,7 +168,6 @@
 
     .alert-banner-text { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; font-weight: 600; }
 
-    /* CHART ANALYTICS & ANIMATION 5: SMOOTH DONUT CHART ROTATION */
     .chart-box { display: flex; align-items: center; justify-content: space-around; gap: 15px; padding: 10px 0; }
     .donut-chart {
       width: 120px; height: 120px; border-radius: 50%;
@@ -199,7 +187,6 @@
     .chart-legend li { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
     .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
 
-    /* ANIMATION 3: DYNAMIC PROGRESS BARS FOR ENTRY PURPOSE */
     .progress-list { list-style: none; padding-top: 5px; }
     .progress-item { margin-bottom: 12px; }
     .progress-meta { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; }
@@ -354,7 +341,7 @@
         height: 100% !important;
         overflow: hidden !important;
       }
-      #loginScreen, header, .sidebar, .card, h3, .stats-grid, .quick-actions-bar, .dashboard-grid-2, .dashboard-grid-3, .alert-banner, .filter-bar, table, #addUserForm, #userTableBody, #qrScannerModal, #mobilePdfBtnContainer { display: none !important; }
+      #loginScreen, header, .sidebar, .card, h3, .stats-grid, .quick-actions-bar, .dashboard-grid-2, .dashboard-grid-3, .alert-banner, .filter-bar, table, #addUserForm, #userTableBody, #qrScannerModal { display: none !important; }
       body * { visibility: hidden !important; }
       #printablePass, #printablePass * { visibility: visible !important; }
       #printablePass { 
@@ -890,7 +877,10 @@
         document.body.classList.add('public-pass-view');
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('appScreen').style.display = 'block';
-        document.getElementById('entryTab').style.display = 'block';
+        
+        // Show Visitor Entry tab properly
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.getElementById('entryTab').classList.add('active');
         document.getElementById('entryFormCard').style.display = 'none';
 
         fetchCloudData().then(() => {
