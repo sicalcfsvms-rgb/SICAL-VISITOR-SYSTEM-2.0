@@ -171,7 +171,7 @@
     .chart-box { display: flex; align-items: center; justify-content: space-around; gap: 15px; padding: 10px 0; }
     .donut-chart {
       width: 120px; height: 120px; border-radius: 50%;
-      background: conic-gradient(#0284c7 0% 0%, #16a34a 0% 0%, #f59e0b 0% 0%, #e11d48 0% 0%, #0d9488 0% 0%, #7c3aed 0% 0%, #64748b 0% 100%);
+      background: #cbd5e1;
       position: relative; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
       transition: background 0.8s ease-in-out, transform 0.4s ease;
     }
@@ -1188,14 +1188,16 @@
       }
 
       // Update Department Charts & Percentages
+      const hasLogs = logs.length > 0;
       const totalLogs = logs.length || 1;
-      const pctImp = Math.round((deptCounts.Import / totalLogs) * 100);
-      const pctExp = Math.round((deptCounts.Export / totalLogs) * 100);
-      const pctCus = Math.round((deptCounts.Customs / totalLogs) * 100);
-      const pctBnd = Math.round((deptCounts.Bond / totalLogs) * 100);
-      const pctAdm = Math.round((deptCounts.Admin / totalLogs) * 100);
-      const pctIt  = Math.round((deptCounts.SicalIT / totalLogs) * 100);
-      const pctOth = 100 - (pctImp + pctExp + pctCus + pctBnd + pctAdm + pctIt);
+
+      const pctImp = hasLogs ? Math.round((deptCounts.Import / totalLogs) * 100) : 0;
+      const pctExp = hasLogs ? Math.round((deptCounts.Export / totalLogs) * 100) : 0;
+      const pctCus = hasLogs ? Math.round((deptCounts.Customs / totalLogs) * 100) : 0;
+      const pctBnd = hasLogs ? Math.round((deptCounts.Bond / totalLogs) * 100) : 0;
+      const pctAdm = hasLogs ? Math.round((deptCounts.Admin / totalLogs) * 100) : 0;
+      const pctIt  = hasLogs ? Math.round((deptCounts.SicalIT / totalLogs) * 100) : 0;
+      const pctOth = hasLogs ? Math.max(0, 100 - (pctImp + pctExp + pctCus + pctBnd + pctAdm + pctIt)) : 0;
 
       document.getElementById('pctImport').textContent = pctImp + '%';
       document.getElementById('pctExport').textContent = pctExp + '%';
@@ -1203,22 +1205,26 @@
       document.getElementById('pctBond').textContent = pctBnd + '%';
       document.getElementById('pctAdmin').textContent = pctAdm + '%';
       document.getElementById('pctIt').textContent = pctIt + '%';
-      document.getElementById('pctOther').textContent = (pctOth < 0 ? 0 : pctOth) + '%';
+      document.getElementById('pctOther').textContent = pctOth + '%';
       document.getElementById('donutTotalCount').textContent = logs.length;
 
       // Dynamic Conic Gradient calculation for Donut Chart
-      const c1 = pctImp;
-      const c2 = c1 + pctExp;
-      const c3 = c2 + pctCus;
-      const c4 = c3 + pctBnd;
-      const c5 = c4 + pctAdm;
-      const c6 = c5 + pctIt;
-      document.getElementById('deptDonutChart').style.background = `conic-gradient(#0284c7 0% ${c1}%, #16a34a ${c1}% ${c2}%, #f59e0b ${c2}% ${c3}%, #e11d48 ${c3}% ${c4}%, #0d9488 ${c4}% ${c5}%, #7c3aed ${c5}% ${c6}%, #64748b ${c6}% 100%)`;
+      if (hasLogs) {
+        const c1 = pctImp;
+        const c2 = c1 + pctExp;
+        const c3 = c2 + pctCus;
+        const c4 = c3 + pctBnd;
+        const c5 = c4 + pctAdm;
+        const c6 = c5 + pctIt;
+        document.getElementById('deptDonutChart').style.background = `conic-gradient(#0284c7 0% ${c1}%, #16a34a ${c1}% ${c2}%, #f59e0b ${c2}% ${c3}%, #e11d48 ${c3}% ${c4}%, #0d9488 ${c4}% ${c5}%, #7c3aed ${c5}% ${c6}%, #64748b ${c6}% 100%)`;
+      } else {
+        document.getElementById('deptDonutChart').style.background = `#cbd5e1`;
+      }
 
       // Update Purpose Progress Bars (with CSS smooth fill animation)
-      const pctPurpEXIM = Math.round((purposeCounts.EXIM / totalLogs) * 100);
-      const pctPurpMeeting = Math.round((purposeCounts.Meeting / totalLogs) * 100);
-      const pctPurpVendor = Math.round((purposeCounts.Vendor / totalLogs) * 100);
+      const pctPurpEXIM = hasLogs ? Math.round((purposeCounts.EXIM / totalLogs) * 100) : 0;
+      const pctPurpMeeting = hasLogs ? Math.round((purposeCounts.Meeting / totalLogs) * 100) : 0;
+      const pctPurpVendor = hasLogs ? Math.round((purposeCounts.Vendor / totalLogs) * 100) : 0;
 
       document.getElementById('lblPurpEXIM').textContent = pctPurpEXIM + '%';
       document.getElementById('lblPurpMeeting').textContent = pctPurpMeeting + '%';
