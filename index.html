@@ -23,13 +23,12 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
     body { background-color: var(--gray-bg); color: var(--text-dark); min-height: 100vh; }
 
-    /* RELATIVE GITHUB REPOSITORY BACKGROUND IMAGE LINK */
-    /* RELATIVE GITHUB REPOSITORY BACKGROUND IMAGE LINK */
-   #loginScreen {
-  display: flex; justify-content: center; align-items: center; min-height: 100vh;
-  background: linear-gradient(rgba(15, 23, 42, 0.35), rgba(15, 23, 42, 0.50)), 
-              url('SICAL_CFS_VMS_BG.jpg') center/cover no-repeat !important;
-}
+    /* LOGIN BACKGROUND IMAGE */
+    #loginScreen {
+      display: flex; justify-content: center; align-items: center; min-height: 100vh;
+      background: linear-gradient(rgba(15, 23, 42, 0.35), rgba(15, 23, 42, 0.50)), 
+                  url('SICAL CFS VMS BG.png') center/cover no-repeat !important;
+    }
 
     .login-box {
       background: white; padding: 35px; border-radius: 12px; width: 100%; max-width: 440px;
@@ -235,14 +234,15 @@
       display: block !important;
     }
 
-    /* FULL PRINT FIX FOR CR100 AND A4 PRINTING */
+    /* SINGLE-PAGE MOBILE PDF & PRINT FIX */
     @media print {
-      @page { size: A4 portrait; margin: 10mm; }
+      @page { size: portrait; margin: 0; }
       html, body { 
         background: #fff !important; 
         margin: 0 !important; 
         padding: 0 !important; 
-        height: auto !important;
+        height: 100% !important;
+        overflow: hidden !important;
       }
       #loginScreen, header, .sidebar, .card, h3, .stats-grid, .filter-bar, table, #addUserForm, #userTableBody, #qrScannerModal, #mobilePdfBtnContainer { display: none !important; }
       body * { visibility: hidden !important; }
@@ -251,15 +251,17 @@
         position: absolute !important; 
         left: 0 !important; 
         right: 0 !important; 
-        top: 20px !important; 
+        top: 5mm !important; 
         margin: 0 auto !important;
-        width: 98mm !important; 
-        max-width: 98mm !important; 
-        height: auto !important;
+        width: 95mm !important; 
+        max-width: 95mm !important; 
         border: 1.5px solid #000 !important; 
         box-shadow: none !important;
         box-sizing: border-box !important;
         page-break-inside: avoid !important;
+        page-break-after: avoid !important;
+        transform: scale(0.90);
+        transform-origin: top center;
       }
     }
   </style>
@@ -293,7 +295,7 @@
         <button class="menu-toggle-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
         <div>
           <div class="brand-title">SICAL MULTIMODAL AND RAIL TRANSPORT LIMITED</div>
-          <div class="brand-subtitle">VISITOR GATE PASS SYSTEM 2.0</div>
+          <div class="brand-subtitle">VISITOR GATE PASS SYSTEM</div>
         </div>
       </div>
       <div>
@@ -510,7 +512,7 @@
 
               <div class="signature-container">
                 <div class="sig-box">VISITOR SIGNATURE</div>
-                <div class="sig-box">PERSON TO MEET SIGN</div>
+                <div class="sig-box">HOST SIGN</div>
                 <div class="sig-box">SECURITY SIGN</div>
               </div>
 
@@ -519,7 +521,7 @@
                   <h5>SECURITY & SAFETY RULES FOR VISITORS</h5>
                   • <strong>Display Pass:</strong> Must be carried at all times.<br>
                   • <strong>Authorized Zones:</strong> Strictly designated floors.<br>
-                  • <strong>Person to Meet Sign:</strong> Mandatory host verification.<br>
+                  • <strong>Host Sign:</strong> Mandatory host verification.<br>
                   • <strong>Checkout:</strong> Return pass or scan QR code at Security Gate.
                 </div>
                 <div class="qrcode-container">
