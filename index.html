@@ -89,24 +89,72 @@
     }
     .content-container.full-width { margin-left: 0; }
 
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
+    /* ANIMATION 2: SMOOTH TAB TRANSITIONS */
+    .tab-content { 
+      display: none; 
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+    .tab-content.active { 
+      display: block; 
+      opacity: 1;
+      transform: translateY(0);
+    }
 
     .stats-grid {
       display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px;
     }
-    .stat-card {
+    
+    /* ANIMATION 2: CARD HOVER LIFT & ELEVATION */
+    .stat-card, .card {
       background: white; padding: 20px; border-radius: 10px; border: 1px solid var(--border-color);
       box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 5px solid var(--blue);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
+    .stat-card:hover, .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    }
+
     .stat-card h4 { font-size: 0.85rem; color: #64748b; margin-bottom: 8px; text-transform: uppercase; }
     .stat-card .stat-val { font-size: 2rem; font-weight: 800; color: var(--navy); }
+
+    /* ANIMATION 1: PULSING "LIVE" DOT INDICATOR */
+    .live-dot {
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      background-color: #dc2626;
+      border-radius: 50%;
+      margin-right: 6px;
+      vertical-align: middle;
+      box-shadow: 0 0 0 rgba(220, 38, 38, 0.4);
+      animation: livePulse 1.8s infinite;
+    }
+
+    @keyframes livePulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+      }
+      70% {
+        box-shadow: 0 0 0 9px rgba(220, 38, 38, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+      }
+    }
 
     /* DASHBOARD UX ENHANCEMENT STYLES */
     .quick-actions-bar {
       background: white; padding: 16px 20px; border-radius: 10px; border: 1px solid var(--border-color);
       margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .quick-actions-bar:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
     }
     .quick-actions-title { font-size: 0.9rem; font-weight: 800; color: var(--navy); display: flex; align-items: center; gap: 8px; }
     .action-btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
@@ -114,21 +162,35 @@
     .dashboard-grid-2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; margin-bottom: 25px; }
     .dashboard-grid-3 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
-    /* OVERSTAY ALERT WIDGET */
+    /* ANIMATION 4: SUBTLE ATTENTION SHAKE FOR OVERSTAY ALERTS */
     .alert-banner {
       background: #fef2f2; border: 1px solid #fca5a5; border-left: 5px solid #dc2626;
       padding: 14px 18px; border-radius: 8px; margin-bottom: 20px; color: #991b1b;
       display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+      animation: alertShake 0.6s cubic-bezier(.36,.07,.19,.97) both;
     }
+
+    @keyframes alertShake {
+      10%, 90% { transform: translate3d(-1px, 0, 0); }
+      20%, 80% { transform: translate3d(2px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+      40%, 60% { transform: translate3d(4px, 0, 0); }
+    }
+
     .alert-banner-text { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; font-weight: 600; }
 
-    /* CHART ANALYTICS STYLES */
+    /* CHART ANALYTICS & ANIMATION 5: SMOOTH DONUT CHART ROTATION */
     .chart-box { display: flex; align-items: center; justify-content: space-around; gap: 15px; padding: 10px 0; }
     .donut-chart {
       width: 120px; height: 120px; border-radius: 50%;
-      background: conic-gradient(#0284c7 0% 0%, #16a34a 0% 0%, #f59e0b 0% 0%, #e11d48 0% 0%, #0284c7 0% 0%, #7c3aed 0% 0%, #64748b 0% 100%);
+      background: conic-gradient(#0284c7 0% 0%, #16a34a 0% 0%, #f59e0b 0% 0%, #e11d48 0% 0%, #0d9488 0% 0%, #7c3aed 0% 0%, #64748b 0% 100%);
       position: relative; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      transition: background 0.8s ease-in-out, transform 0.4s ease;
     }
+    .donut-chart:hover {
+      transform: scale(1.06) rotate(6deg);
+    }
+
     .donut-chart-center {
       width: 70px; height: 70px; background: white; border-radius: 50%; display: flex;
       flex-direction: column; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; color: var(--navy);
@@ -137,11 +199,17 @@
     .chart-legend li { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
     .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
 
+    /* ANIMATION 3: DYNAMIC PROGRESS BARS FOR ENTRY PURPOSE */
     .progress-list { list-style: none; padding-top: 5px; }
     .progress-item { margin-bottom: 12px; }
     .progress-meta { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; }
     .progress-bar-bg { background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden; }
-    .progress-bar-fill { height: 100%; border-radius: 4px; transition: width 0.3s ease; }
+    .progress-bar-fill { 
+      height: 100%; 
+      border-radius: 4px; 
+      width: 0%; 
+      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); 
+    }
 
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
     @media (max-width: 900px) { 
@@ -173,7 +241,8 @@
     }
     #videoFeed { width: 100%; max-width: 220px; height: 165px; background: #000; border-radius: 6px; object-fit: cover; }
     .cam-btns { margin-top: 8px; display: flex; gap: 10px; }
-    .btn-cam { background: var(--blue); color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
+    .btn-cam { background: var(--blue); color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: background 0.2s ease; }
+    .btn-cam:hover { opacity: 0.9; }
 
     /* EXACT GATE PASS VISITOR CARD STYLING */
     .pass-badge { 
@@ -234,15 +303,15 @@
     th { background: var(--light-blue); color: var(--navy); font-weight: bold; }
     tr:nth-child(even) { background: #f8fafc; }
 
-    .btn-action { background: var(--blue); color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem; }
-    .btn-action:hover { background: #0369a1; }
+    .btn-action { background: var(--blue); color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem; transition: background 0.2s ease, transform 0.15s ease; }
+    .btn-action:hover { background: #0369a1; transform: translateY(-1px); }
     .btn-success { background: #16a34a; }
     .btn-success:hover { background: #15803d; }
     .btn-purple { background: #7c3aed; }
     .btn-purple:hover { background: #6d28d9; }
-    .btn-reset { background: #f59e0b; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; margin-right: 5px; }
+    .btn-reset { background: #f59e0b; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; margin-right: 5px; transition: background 0.2s ease; }
     .btn-reset:hover { background: #d97706; }
-    .btn-out { background: #e11d48; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; }
+    .btn-out { background: #e11d48; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; transition: background 0.2s ease; }
     .btn-out:hover { background: #be123c; }
 
     /* MOBILE PUBLIC PASS VIEW STYLING */
@@ -359,7 +428,7 @@
       <div id="dashboardTab" class="tab-content active">
         <h3 style="margin-bottom: 15px; color: var(--navy);"><i class="fa-solid fa-chart-line"></i> CFS Visitor Security & Operations Center</h3>
         
-        <!-- TOP KPI CARDS WITH LIVE INSIDE PREMISES COUNTER -->
+        <!-- TOP KPI CARDS WITH LIVE PULSING PREMISES COUNTER -->
         <div class="stats-grid">
           <div class="stat-card" style="border-left-color: #0284c7;">
             <h4>Total (Current Month)</h4>
@@ -374,7 +443,7 @@
             <div class="stat-val" id="statYesterday">...</div>
           </div>
           <div class="stat-card" style="border-left-color: #dc2626; background: #fff5f5;">
-            <h4 style="color: #dc2626;"><i class="fa-solid fa-street-view"></i> Currently Inside Premises</h4>
+            <h4 style="color: #dc2626;"><span class="live-dot"></span> Currently Inside Premises</h4>
             <div class="stat-val" id="statInside" style="color: #dc2626;">...</div>
           </div>
         </div>
@@ -391,7 +460,7 @@
           </div>
         </div>
 
-        <!-- OVERSTAY SECURITY ALERTS WIDGET -->
+        <!-- OVERSTAY SECURITY ALERTS WIDGET WITH ATTENTION SHAKE -->
         <div id="overstayAlertBanner" class="alert-banner" style="display:none;">
           <div class="alert-banner-text">
             <i class="fa-solid fa-triangle-exclamation" style="font-size: 1.3rem;"></i>
@@ -424,7 +493,7 @@
             </div>
           </div>
 
-          <!-- VISITORS BY DEPARTMENT (DONUT PIE CHART) -->
+          <!-- VISITORS BY DEPARTMENT (ANIMATED DONUT PIE CHART) -->
           <div class="card">
             <h3><i class="fa-solid fa-chart-pie"></i> Traffic By Department</h3>
             <div class="chart-box">
@@ -455,15 +524,15 @@
             <div class="progress-list" id="purposeProgressList">
               <div class="progress-item">
                 <div class="progress-meta"><span>Clearance / EXIM Delivery</span><span id="lblPurpEXIM">0%</span></div>
-                <div class="progress-bar-bg"><div class="progress-bar-fill" id="barPurpEXIM" style="width: 0%; background: #0284c7;"></div></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="barPurpEXIM" style="background: #0284c7;"></div></div>
               </div>
               <div class="progress-item">
                 <div class="progress-meta"><span>Meeting / Official</span><span id="lblPurpMeeting">0%</span></div>
-                <div class="progress-bar-bg"><div class="progress-bar-fill" id="barPurpMeeting" style="width: 0%; background: #16a34a;"></div></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="barPurpMeeting" style="background: #16a34a;"></div></div>
               </div>
               <div class="progress-item">
                 <div class="progress-meta"><span>Vendor / Delivery / Maintenance</span><span id="lblPurpVendor">0%</span></div>
-                <div class="progress-bar-bg"><div class="progress-bar-fill" id="barPurpVendor" style="width: 0%; background: #f59e0b;"></div></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="barPurpVendor" style="background: #f59e0b;"></div></div>
               </div>
             </div>
           </div>
@@ -1145,19 +1214,20 @@
       const c6 = c5 + pctIt;
       document.getElementById('deptDonutChart').style.background = `conic-gradient(#0284c7 0% ${c1}%, #16a34a ${c1}% ${c2}%, #f59e0b ${c2}% ${c3}%, #e11d48 ${c3}% ${c4}%, #0d9488 ${c4}% ${c5}%, #7c3aed ${c5}% ${c6}%, #64748b ${c6}% 100%)`;
 
-      // Update Purpose Progress Bars
+      // Update Purpose Progress Bars (with CSS smooth fill animation)
       const pctPurpEXIM = Math.round((purposeCounts.EXIM / totalLogs) * 100);
       const pctPurpMeeting = Math.round((purposeCounts.Meeting / totalLogs) * 100);
       const pctPurpVendor = Math.round((purposeCounts.Vendor / totalLogs) * 100);
 
       document.getElementById('lblPurpEXIM').textContent = pctPurpEXIM + '%';
-      document.getElementById('barPurpEXIM').style.width = pctPurpEXIM + '%';
-
       document.getElementById('lblPurpMeeting').textContent = pctPurpMeeting + '%';
-      document.getElementById('barPurpMeeting').style.width = pctPurpMeeting + '%';
-
       document.getElementById('lblPurpVendor').textContent = pctPurpVendor + '%';
-      document.getElementById('barPurpVendor').style.width = pctPurpVendor + '%';
+
+      setTimeout(() => {
+        document.getElementById('barPurpEXIM').style.width = pctPurpEXIM + '%';
+        document.getElementById('barPurpMeeting').style.width = pctPurpMeeting + '%';
+        document.getElementById('barPurpVendor').style.width = pctPurpVendor + '%';
+      }, 100);
 
       // Render Live Activity Table (Recent 5 Check-Ins)
       renderDashLiveLogs(logs.slice(-5).reverse());
@@ -1435,7 +1505,7 @@
         company: document.getElementById('companyFrom').value,
         personToMeet: document.getElementById('personToMeet').value,
         department: document.getElementById('department').value,
-        validity: document.querySelector('input[name="validity"]:checked').value,
+        validity: document.querySelector('input[name="validity"][value="Daily"]').checked ? 'Daily' : document.querySelector('input[name="validity"]:checked').value,
         purpose: document.getElementById('purposeSelect').value,
         vehicle: document.getElementById('vehicleNo').value || 'N/A',
         idType: document.getElementById('idType').value,
