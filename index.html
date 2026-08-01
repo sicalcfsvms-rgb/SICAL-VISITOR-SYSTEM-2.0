@@ -457,7 +457,7 @@
         <!-- MIDDLE LAYER: LIVE IN-GATE FEED & DEPARTMENT DISTRIBUTION -->
         <div class="dashboard-grid-2">
           
-          <!-- LIVE IN-GATE ACTIVITY FEED -->
+          <!-- LIVE IN-GATE ACTIVITY FEED (WITHOUT ACTION / VIEW PASS COLUMN) -->
           <div class="card">
             <h3><i class="fa-solid fa-clock-rotate-left"></i> Live In-Gate Activity Log (Recent Check-Ins)</h3>
             <div style="overflow-x: auto;">
@@ -468,11 +468,10 @@
                     <th>Visitor Name</th>
                     <th>Department To Meet</th>
                     <th>Time In</th>
-                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody id="dashLiveLogsBody">
-                  <tr><td colspan="5" style="text-align:center;">Loading recent activity...</td></tr>
+                  <tr><td colspan="4" style="text-align:center;">Loading recent activity...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1226,7 +1225,7 @@
       tbody.innerHTML = '';
 
       if (!recentLogs || recentLogs.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No recent check-ins recorded.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No recent check-ins recorded.</td></tr>';
         return;
       }
 
@@ -1236,9 +1235,6 @@
           <td>${log.name}</td>
           <td>${log.department || 'Admin'}</td>
           <td>${log.timeIn}</td>
-          <td>
-            <button class="btn-action" style="padding: 3px 8px; font-size: 0.75rem;" onclick="quickViewPass('${log.passNo}')">View Pass</button>
-          </td>
         </tr>`;
         tbody.innerHTML += row;
       });
