@@ -471,7 +471,7 @@
                 <h5>SECURITY & SAFETY RULES FOR VISITORS</h5>
                 • <strong>Display Pass:</strong> Mandatory at all times.<br>
                 • <strong>Authorized Zones:</strong> Strictly designated floors.<br>
-                • <strong>Host Sign:</strong> Mandatory host verification.<br>
+                • <strong>Host Sign:</strong> Mandatory verification.<br>
                 • <strong>Checkout:</strong> Return pass or scan QR code at Security Gate upon leaving.
               </div>
 
@@ -596,7 +596,7 @@
 
     // HELPER: CONVERT GOOGLE DRIVE VIEW LINKS TO DIRECT THUMBNAIL URLS FOR RELIABLE CROSS-ORIGIN RENDER
     function getDirectDriveImageUrl(url) {
-      if (!url || url === 'No Photo' || url === 'NO_PHOTO') return null;
+      if (!url || url === 'No Photo' || url === 'NO_PHOTO' || url === 'undefined' || url === 'N/A') return null;
       if (url.startsWith('data:image')) return url; // Base64 webcam capture
       
       // Extract Drive File ID from any variant link
@@ -772,8 +772,20 @@
     function updatePhotoFrame(photoSrc) {
       const frame = document.getElementById('prevPhotoFrame');
       const directUrl = getDirectDriveImageUrl(photoSrc);
+
+      let fileId = null;
+      if (photoSrc && photoSrc.includes('/d/')) {
+        fileId = photoSrc.split('/d/')[1].split('/')[0].split('?')[0];
+      } else if (photoSrc && photoSrc.includes('id=')) {
+        fileId = photoSrc.split('id=')[1].split('&')[0];
+      }
+
       if (directUrl) {
-        frame.innerHTML = `<img src="${directUrl}" alt="Visitor Photo" onerror="this.onerror=null; this.parentElement.innerHTML='NO PHOTO';">`;
+        if (fileId) {
+          frame.innerHTML = `<img src="${directUrl}" alt="Visitor Photo" onerror="if(this.src!='https://lh3.googleusercontent.com/d/${fileId}'){ this.src='https://lh3.googleusercontent.com/d/${fileId}'; } else { this.onerror=null; this.parentElement.innerHTML='NO PHOTO'; }">`;
+        } else {
+          frame.innerHTML = `<img src="${directUrl}" alt="Visitor Photo" onerror="this.onerror=null; this.parentElement.innerHTML='NO PHOTO';">`;
+        }
       } else {
         frame.innerHTML = 'NO PHOTO';
       }
@@ -964,11 +976,12 @@
           });
         }
 
-        // Retain and render photo correctly
-        loadedVisitorPhoto = (match.photoUrl && match.photoUrl !== 'No Photo') ? match.photoUrl : null;
+        // Preserve photo across state changes
+        loadedVisitorPhoto = (match.photoUrl && match.photoUrl !== 'No Photo' && match.photoUrl !== 'NO_PHOTO') ? match.photoUrl : null;
         capturedPhotoData = loadedVisitorPhoto;
 
         updatePreview();
+        updatePhotoFrame(loadedVisitorPhoto);
 
         if (reprintExactPass) {
           document.getElementById('prevPassNo').textContent = match.passNo;
