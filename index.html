@@ -511,7 +511,6 @@
 
               <div id="validityBanner" class="status-banner"></div>
 
-              <!-- UPDATED SIGNATURE LABELS -->
               <div class="signature-container">
                 <div class="sig-box">VISITOR SIGNATURE</div>
                 <div class="sig-box">PERSON TO MEET SIGN</div>
@@ -523,7 +522,7 @@
                   <h5>SECURITY & SAFETY RULES FOR VISITORS</h5>
                   • <strong>Display Pass:</strong> Must be carried at all times.<br>
                   • <strong>Authorized Zones:</strong> Strictly designated floors.<br>
-                  • <strong>Person To Meet Sign:</strong> Mandatory host verification.<br>
+                  • <strong>Person To Meet Sign:</strong> Mandatory person to meet verification.<br>
                   • <strong>Checkout:</strong> Return pass or scan QR code at Security Gate.
                 </div>
                 <div class="qrcode-container">
@@ -1062,6 +1061,7 @@
           document.getElementById('prevDate').textContent = match.date;
           document.getElementById('prevTimeIn').textContent = match.timeIn;
           document.getElementById('prevTimeOut').textContent = (match.timeOut && match.timeOut !== '_______') ? match.timeOut : '_______';
+          document.getElementById('prevPurpose').textContent = match.purpose || 'Meeting';
           
           generateQrCode("passQrCode", getQrWebUrl(match.passNo), 100);
         } else {
