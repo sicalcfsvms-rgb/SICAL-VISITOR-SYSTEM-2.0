@@ -395,7 +395,11 @@
           <div class="brand-subtitle">VISITOR GATE PASS SYSTEM 2.0</div>
         </div>
       </div>
-      <div>
+      <!-- DYNAMIC USERNAME DISPLAY IN HEADER -->
+      <div style="display: flex; align-items: center; gap: 15px;">
+        <span id="activeUserDisplay" style="font-size: 0.85rem; font-weight: 600; color: #38bdf8;">
+          <i class="fa-solid fa-user-circle"></i> <span id="displayUsername">User</span>
+        </span>
         <button class="nav-btn" onclick="logout()" style="background: #dc2626; color:white; border:none; padding:8px 14px; border-radius:6px; cursor:pointer;"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
       </div>
     </header>
@@ -438,7 +442,7 @@
         <!-- QUICK ACTIONS SHORTCUT BAR -->
         <div class="quick-actions-bar">
           <div class="quick-actions-title">
-            <i class="fa-solid fa-bolt" style="color: #f59e0b; font-size: 1.1rem;"></i> Security Quick Actions:
+            <i class="fa-solid fa-bolt" style="color: #f59e0b; font-size: 1.1rem;"></i> Quick Actions:
           </div>
           <div class="action-btn-group">
             <button class="btn-action" style="background: #0f172a;" onclick="exportToCSV()"><i class="fa-solid fa-file-excel"></i> Export Today Logs</button>
@@ -457,7 +461,7 @@
         <!-- MIDDLE LAYER: LIVE IN-GATE FEED & DEPARTMENT DISTRIBUTION -->
         <div class="dashboard-grid-2">
           
-          <!-- LIVE IN-GATE ACTIVITY FEED (WITHOUT ACTION / VIEW PASS COLUMN) -->
+          <!-- LIVE IN-GATE ACTIVITY FEED (ACTION / VIEW PASS COLUMN REMOVED) -->
           <div class="card">
             <h3><i class="fa-solid fa-clock-rotate-left"></i> Live In-Gate Activity Log (Recent Check-Ins)</h3>
             <div style="overflow-x: auto;">
@@ -864,6 +868,14 @@
 
     let activeUser = null;
 
+    // UPDATE LOGGED IN USER NAME IN HEADER
+    function updateHeaderUsername(name) {
+      const displayElem = document.getElementById('displayUsername');
+      if (displayElem && name) {
+        displayElem.textContent = name;
+      }
+    }
+
     // AUTO-LOAD VISITOR ENTRY FROM MOBILE QR SCAN LINK
     window.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
@@ -890,6 +902,7 @@
       const savedUser = sessionStorage.getItem('sical_active_session');
       if (savedUser) {
         activeUser = JSON.parse(savedUser);
+        updateHeaderUsername(activeUser.username);
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('appScreen').style.display = 'block';
         applyPermissions();
@@ -912,6 +925,7 @@
 
       if (matched) {
         activeUser = matched;
+        updateHeaderUsername(matched.username);
         sessionStorage.setItem('sical_active_session', JSON.stringify(matched));
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('appScreen').style.display = 'block';
