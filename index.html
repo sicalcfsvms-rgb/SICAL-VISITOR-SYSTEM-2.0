@@ -6,7 +6,7 @@
   <title>SICAL MULTIMODAL AND RAIL TRANSPORT LIMITED - Visitor Management</title>
   <!-- FontAwesome Icons CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- QRCode.js CDN -->
+  <!-- QRCode.js & html5-qrcode CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://unpkg.com/html5-qrcode"></script>
   <style>
@@ -471,7 +471,7 @@
                 <h5>SECURITY & SAFETY RULES FOR VISITORS</h5>
                 • <strong>Display Pass:</strong> Mandatory at all times.<br>
                 • <strong>Authorized Zones:</strong> Strictly designated floors.<br>
-                • <strong>Host Sign:</strong> Mandatory verification.<br>
+                • <strong>Host Sign:</strong> Mandatory host verification.<br>
                 • <strong>Checkout:</strong> Return pass or scan QR code at Security Gate upon leaving.
               </div>
 
@@ -592,6 +592,19 @@
     ];
 
     let html5QrcodeScanner = null;
+
+    // HELPER: CONVERT GOOGLE DRIVE VIEW LINKS TO DIRECT IMAGE URLS FOR MOBILE RENDER
+    function getDirectDriveImageUrl(url) {
+      if (!url || url === 'No Photo' || url === 'NO_PHOTO') return null;
+      if (url.startsWith('data:image')) return url; // Base64 webcam capture
+      
+      // Convert standard Google Drive link to direct display image URL
+      if (url.includes('drive.google.com/file/d/')) {
+        const fileId = url.split('/d/')[1].split('/')[0];
+        return `https://lh3.googleusercontent.com/d/${fileId}`;
+      }
+      return url;
+    }
 
     function toggleSidebar() {
       const sidebar = document.getElementById('sidebar');
@@ -743,8 +756,9 @@
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
       capturedPhotoData = canvas.toDataURL('image/jpeg');
 
+      const directImgUrl = getDirectDriveImageUrl(capturedPhotoData);
       const frame = document.getElementById('prevPhotoFrame');
-      frame.innerHTML = `<img src="${capturedPhotoData}" alt="Visitor Photo">`;
+      frame.innerHTML = `<img src="${directImgUrl}" alt="Visitor Photo">`;
     }
 
     // LIVE WEBCAM/MOBILE QR SCANNER ENGINE
@@ -933,7 +947,8 @@
         }
 
         if (match.photoUrl && match.photoUrl !== 'No Photo') {
-          document.getElementById('prevPhotoFrame').innerHTML = `<img src="${match.photoUrl}" alt="Visitor Photo">`;
+          const directImgUrl = getDirectDriveImageUrl(match.photoUrl);
+          document.getElementById('prevPhotoFrame').innerHTML = `<img src="${directImgUrl}" alt="Visitor Photo">`;
         }
 
         updatePreview();
@@ -1022,6 +1037,11 @@
       document.getElementById('prevVehicle').textContent = vehicleVal;
       document.getElementById('prevValidity').textContent = validityVal;
       document.getElementById('prevPurpose').textContent = purposeVal;
+
+      if (capturedPhotoData) {
+        const directImgUrl = getDirectDriveImageUrl(capturedPhotoData);
+        document.getElementById('prevPhotoFrame').innerHTML = `<img src="${directImgUrl}" alt="Visitor Photo">`;
+      }
 
       generateQrCode("passQrCode", getQrWebUrl(currentPass), 100);
     }
@@ -1368,8 +1388,9 @@
           ? `<button class="btn-out" onclick="recordTimeOut('${log.passNo}')">Mark Out</button>`
           : `<span style="color:#16a34a; font-weight:bold;">OUT</span>`;
 
-        const photoCell = (log.photoUrl && log.photoUrl.startsWith('http')) 
-          ? `<a href="${log.photoUrl}" target="_blank" style="color:#0284c7; font-weight:bold;">Drive Photo</a>` 
+        const directImgUrl = getDirectDriveImageUrl(log.photoUrl);
+        const photoCell = (directImgUrl && directImgUrl.startsWith('http')) 
+          ? `<a href="${directImgUrl}" target="_blank" style="color:#0284c7; font-weight:bold;">Drive Photo</a>` 
           : `No Photo`;
 
         const idProofText = log.idType !== 'N/A' ? `${log.idType} (${log.idNumber})` : 'N/A';
