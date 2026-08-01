@@ -348,16 +348,16 @@
               <label><i class="fa-solid fa-qrcode"></i> Scan QR (Visitor Gate Check-Out) / Search Pass/Mobile</label>
               <div class="search-input-group">
                 <input type="text" id="entrySearchInput" placeholder="Scan QR or type Pass/Mobile..." onkeydown="if(event.key==='Enter'){ handleQrScan(); event.preventDefault(); }">
-                <button type="button" class="btn-action" onclick="startQrCameraScanner()" style="padding: 8px 12px; font-size: 0.8rem; background: #7c3aed;"><i class="fa-solid fa-camera"></i> Standalone Out Gate Scanner</button>
+                <button type="button" class="btn-action" onclick="startQrCameraScanner()" style="padding: 8px 12px; font-size: 0.8rem; background: #7c3aed;"><i class="fa-solid fa-camera"></i> Visitor Out Gate Scanner</button>
                 <button type="button" class="btn-action" onclick="searchAndLoadVisitor(false)" style="padding: 8px 12px; font-size: 0.8rem;">Auto-Fill New Pass</button>
                 <button type="button" class="btn-action" onclick="searchAndLoadVisitor(true)" style="padding: 8px 12px; font-size: 0.8rem; background: #0f172a;">View/Reprint Pass</button>
                 <button type="button" class="btn-action" onclick="clearSearch()" style="padding: 8px 12px; font-size: 0.8rem; background: #dc2626;">Clear</button>
               </div>
             </div>
 
-            <!-- STANDALONE OUT GATE CAMERA SCANNER MODAL -->
+            <!-- VISITOR OUT GATE CAMERA SCANNER MODAL -->
             <div id="qrScannerContainer" style="display:none; background: #f1f5f9; padding: 15px; border-radius: 8px; border: 2px dashed #0284c7; margin-bottom: 15px; text-align: center;">
-              <h4 style="margin-bottom: 10px; color: #0f172a;"><i class="fa-solid fa-expand"></i> Standalone Out Gate Camera Scanner Active</h4>
+              <h4 style="margin-bottom: 10px; color: #0f172a;"><i class="fa-solid fa-expand"></i> Visitor Out Gate Camera Scanner Active</h4>
               <div id="reader" style="width: 100%; max-width: 320px; margin: 0 auto;"></div>
               <button type="button" class="btn-action" style="margin-top: 10px; background: #dc2626;" onclick="stopQrCameraScanner()">Close Gate Camera</button>
             </div>
@@ -843,7 +843,7 @@
       }
     }
 
-    // STANDALONE OUT-GATE CAMERA SCANNER ENGINE
+    // VISITOR OUT-GATE CAMERA SCANNER ENGINE
     function startQrCameraScanner() {
       document.getElementById('qrScannerContainer').style.display = 'block';
       if (!html5QrcodeScanner) {
