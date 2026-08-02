@@ -3,9 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SICAL MULTIMODAL AND RAIL TRANSPORT LIMITED - Login</title>
+  <title>SICAL MULTIMODAL AND RAIL TRANSPORT LIMITED - Visitor Management</title>
   <!-- FontAwesome Icons CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- QRCode.js & html5-qrcode CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode"></script>
   <style>
     :root {
       --navy: #0f172a;
@@ -14,41 +17,35 @@
       --gray-bg: #f8fafc;
       --text-dark: #1e293b;
       --border-color: #cbd5e1;
+      --sidebar-width: 250px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
-    
-    body { 
-      min-height: 100vh; 
-      width: 100vw;
-      color: var(--text-dark);
-      overflow-x: hidden;
-    }
+    body { background-color: var(--gray-bg); color: var(--text-dark); min-height: 100vh; overflow-x: hidden; }
 
-    /* FULL VIEWPORT BACKGROUND IMAGE APPLIED TO MAIN CONTAINER */
+    /* FULL VIEWPORT BACKGROUND IMAGE APPLIED TO MAIN LOGIN CONTAINER */
     #loginScreen {
       display: flex;
       min-height: 100vh;
       width: 100%;
-      background: linear-gradient(rgba(15, 23, 42, 0.35), rgba(15, 23, 42, 0.50)), 
+      background: linear-gradient(rgba(15, 23, 42, 0.25), rgba(15, 23, 42, 0.40)), 
                   url('SICAL_CFS_VMS_BG.jpg') center/cover no-repeat fixed !important;
     }
 
-    /* LEFT PANEL: TRUE SEMI-TRANSPARENT GLASS PANEL */
+    /* LEFT PANEL: ADJUSTED SEMI-TRANSPARENCY (0.72 OPACITY) */
     .login-left-panel {
       flex: 1.1;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 30px 60px;
+      padding: 35px 60px;
       
-      /* Lower opacity (0.45) so background image shows through clearly */
-      background: rgba(255, 255, 255, 0.45);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       
-      border-right: 1px solid rgba(255, 255, 255, 0.3);
-      box-shadow: 10px 0 30px rgba(0, 0, 0, 0.2);
+      border-right: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 10px 0 30px rgba(0, 0, 0, 0.15);
       overflow-y: auto;
       position: relative;
     }
@@ -79,7 +76,6 @@
       font-weight: 900;
       color: #dc2626;
       letter-spacing: 0.5px;
-      text-shadow: 0 1px 2px rgba(255,255,255,0.8);
     }
     .brand-logo-text .sub-title {
       font-size: 0.8rem;
@@ -109,7 +105,7 @@
       font-weight: 900;
     }
     .portal-heading p.portal-subtitle {
-      color: #0369a1;
+      color: #0284c7;
       font-size: 0.95rem;
       font-weight: 800;
       margin-top: 2px;
@@ -118,15 +114,15 @@
 
     /* PORTAL INFO SECTION */
     .vms-info-box {
-      background: rgba(255, 255, 255, 0.60);
-      border: 1px solid rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(203, 213, 225, 0.9);
       border-left: 4px solid var(--blue);
       border-radius: 8px;
       padding: 16px;
       margin-bottom: 25px;
       width: 100%;
       max-width: 440px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
     }
     .vms-info-box h4 {
       font-size: 0.9rem;
@@ -135,11 +131,12 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      font-weight: 800;
     }
     .vms-info-box ul {
       list-style: none;
-      font-size: 0.82rem;
-      color: #0f172a;
+      font-size: 0.83rem;
+      color: #1e293b;
       font-weight: 600;
     }
     .vms-info-box ul li {
@@ -160,16 +157,17 @@
     }
     .input-group { margin-bottom: 16px; text-align: left; }
     .input-group label { display: block; font-size: 0.85rem; font-weight: 800; margin-bottom: 6px; color: var(--navy); }
-    .input-group input {
-      width: 100%; padding: 11px 14px; border: 1px solid rgba(15, 23, 42, 0.2);
-      border-radius: 6px; font-size: 0.95rem; background: rgba(255, 255, 255, 0.85);
+    .input-group input, .input-group select {
+      width: 100%; padding: 11px 14px; border: 1px solid rgba(15, 23, 42, 0.25);
+      border-radius: 6px; font-size: 0.95rem; background: rgba(255, 255, 255, 0.95);
       transition: border-color 0.2s, box-shadow 0.2s;
       font-weight: 600;
+      color: #0f172a;
     }
     .input-group input:focus {
       outline: none;
       border-color: var(--blue);
-      background: rgba(255, 255, 255, 0.95);
+      background: #ffffff;
       box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
     }
     .btn-login {
@@ -219,6 +217,319 @@
         padding: 30px 20px;
       }
     }
+
+    /* Main App Layout */
+    #appScreen { display: none; min-height: 100vh; position: relative; }
+    
+    header {
+      background: var(--navy); color: white; padding: 12px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 99;
+    }
+    .header-left { display: flex; align-items: center; gap: 15px; }
+    .menu-toggle-btn {
+      background: transparent; color: white; border: none; font-size: 1.4rem; cursor: pointer; padding: 5px;
+    }
+    .brand-title { font-size: 1rem; font-weight: bold; letter-spacing: 0.5px; }
+    .brand-subtitle { font-size: 0.7rem; color: #94a3b8; }
+
+    .sidebar {
+      position: fixed; top: 57px; left: 0; bottom: 0; width: var(--sidebar-width);
+      background: #1e293b; color: white; transition: all 0.3s ease; z-index: 100;
+      box-shadow: 4px 0 10px rgba(0,0,0,0.1); display: flex; flex-direction: column;
+    }
+    .sidebar.collapsed { left: calc(var(--sidebar-width) * -1); }
+
+    .sidebar-menu { list-style: none; padding: 15px 0; flex: 1; }
+    .sidebar-menu li { margin-bottom: 5px; }
+    .sidebar-menu button {
+      width: 100%; padding: 12px 20px; background: transparent; color: #cbd5e1; border: none;
+      text-align: left; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 12px;
+      transition: all 0.2s ease;
+    }
+    .sidebar-menu button:hover, .sidebar-menu button.active {
+      background: var(--blue); color: white; border-left: 4px solid #38bdf8;
+    }
+    .sidebar-menu button i { width: 20px; text-align: center; font-size: 1rem; }
+
+    .content-container {
+      padding: 25px; max-width: 1300px; margin: 0 auto;
+      margin-left: var(--sidebar-width); transition: all 0.3s ease;
+    }
+    .content-container.full-width { margin-left: 0; }
+
+    .tab-content { 
+      display: none; 
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+    .tab-content.active { 
+      display: block; 
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px;
+    }
+    
+    .stat-card, .card {
+      background: white; padding: 20px; border-radius: 10px; border: 1px solid var(--border-color);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 5px solid var(--blue);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .stat-card:hover, .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .stat-card h4 { font-size: 0.85rem; color: #64748b; margin-bottom: 8px; text-transform: uppercase; }
+    .stat-card .stat-val { font-size: 2rem; font-weight: 800; color: var(--navy); }
+
+    .live-dot {
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      background-color: #dc2626;
+      border-radius: 50%;
+      margin-right: 6px;
+      vertical-align: middle;
+      box-shadow: 0 0 0 rgba(220, 38, 38, 0.4);
+      animation: livePulse 1.8s infinite;
+    }
+
+    @keyframes livePulse {
+      0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+      70% { box-shadow: 0 0 0 9px rgba(220, 38, 38, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+    }
+
+    .quick-actions-bar {
+      background: white; padding: 16px 20px; border-radius: 10px; border: 1px solid var(--border-color);
+      margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .quick-actions-bar:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+    }
+    .quick-actions-title { font-size: 0.9rem; font-weight: 800; color: var(--navy); display: flex; align-items: center; gap: 8px; }
+    .action-btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+    
+    .dashboard-grid-2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; margin-bottom: 25px; }
+    .dashboard-grid-3 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+    .alert-banner {
+      background: #fef2f2; border: 1px solid #fca5a5; border-left: 5px solid #dc2626;
+      padding: 14px 18px; border-radius: 8px; margin-bottom: 20px; color: #991b1b;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+      animation: alertShake 0.6s cubic-bezier(.36,.07,.19,.97) both;
+    }
+
+    @keyframes alertShake {
+      10%, 90% { transform: translate3d(-1px, 0, 0); }
+      20%, 80% { transform: translate3d(2px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+      40%, 60% { transform: translate3d(4px, 0, 0); }
+    }
+
+    .alert-banner-text { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; font-weight: 600; }
+
+    .chart-box { display: flex; align-items: center; justify-content: space-around; gap: 15px; padding: 10px 0; }
+    .donut-chart {
+      width: 120px; height: 120px; border-radius: 50%;
+      background: #cbd5e1;
+      position: relative; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      transition: background 0.8s ease-in-out, transform 0.4s ease;
+    }
+    .donut-chart:hover {
+      transform: scale(1.06) rotate(6deg);
+    }
+
+    .donut-chart-center {
+      width: 70px; height: 70px; background: white; border-radius: 50%; display: flex;
+      flex-direction: column; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; color: var(--navy);
+    }
+    .chart-legend { list-style: none; font-size: 0.8rem; }
+    .chart-legend li { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+    .progress-list { list-style: none; padding-top: 5px; }
+    .progress-item { margin-bottom: 12px; }
+    .progress-meta { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; }
+    .progress-bar-bg { background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden; }
+    .progress-bar-fill { 
+      height: 100%; 
+      border-radius: 4px; 
+      width: 0%; 
+      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); 
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+    @media (max-width: 900px) { 
+      .grid-2, .dashboard-grid-2, .dashboard-grid-3 { grid-template-columns: 1fr; }
+      .sidebar { left: calc(var(--sidebar-width) * -1); }
+      .sidebar.active-mobile { left: 0; }
+      .content-container { margin-left: 0 !important; }
+    }
+
+    .card { background: white; padding: 24px; border-radius: 10px; border: 1px solid var(--border-color); }
+    .card h3 { color: var(--navy); margin-bottom: 18px; border-bottom: 2px solid var(--light-blue); padding-bottom: 8px; }
+
+    .quick-search-box {
+      background: var(--light-blue); border: 1px solid #93c5fd; padding: 12px 16px; border-radius: 8px; margin-bottom: 18px;
+    }
+    .quick-search-box label { font-size: 0.8rem; font-weight: bold; color: var(--navy); display: block; margin-bottom: 6px; }
+    .search-input-group { display: flex; gap: 8px; flex-wrap: wrap; }
+    .search-input-group input { flex: 1; min-width: 180px; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.9rem; }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .full-width { grid-column: span 2; }
+    .checkbox-group { display: flex; gap: 15px; margin-top: 6px; flex-wrap: wrap; }
+    .checkbox-group label { font-weight: normal; font-size: 0.85rem; cursor: pointer; }
+
+    .admin-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
+
+    .webcam-container {
+      display: flex; flex-direction: column; align-items: center; background: #f1f5f9; border: 1px dashed var(--border-color); padding: 12px; border-radius: 8px; margin-top: 10px;
+    }
+    #videoFeed { width: 100%; max-width: 220px; height: 165px; background: #000; border-radius: 6px; object-fit: cover; }
+    .cam-btns { margin-top: 8px; display: flex; gap: 10px; }
+    .btn-cam { background: var(--blue); color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: background 0.2s ease; }
+    .btn-cam:hover { opacity: 0.9; }
+
+    /* EXACT GATE PASS VISITOR CARD STYLING */
+    .pass-badge { 
+      background: #ffffff; 
+      border: 1.5px solid #0f172a; 
+      border-radius: 10px; 
+      padding: 0; 
+      font-size: 0.80rem; 
+      position: relative; 
+      color: #0f172a; 
+      overflow: hidden; 
+      width: 100%; 
+      max-width: 420px; 
+      margin: 0 auto; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+    }
+
+    .badge-header { background: #ffffff; color: #0f172a; padding: 8px 12px; position: relative; border-bottom: 2px solid #0f172a; }
+    .badge-header h2 { font-size: 0.80rem; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.2px; line-height: 1.2; width: 68%; }
+    .badge-header p.address-text { font-size: 0.60rem; color: #475569; margin-top: 2px; }
+
+    .top-right-logo { position: absolute; top: 6px; right: 8px; text-align: right; }
+    .top-right-logo .logo-main { font-size: 1.2rem; font-weight: 900; color: #dc2626; font-family: Arial, sans-serif; letter-spacing: 0.5px; line-height: 1; display: block; }
+    .top-right-logo .logo-sub { font-size: 0.45rem; font-weight: bold; color: #312e81; font-family: Arial, sans-serif; display: block; margin-top: 1px; }
+
+    .badge-title-strip { background: #ffffff; color: #0f172a; font-size: 0.90rem; font-weight: 800; text-align: center; padding: 4px; border-bottom: 1px solid #cbd5e1; letter-spacing: 0.5px; }
+
+    .badge-meta { display: flex; justify-content: space-between; align-items: center; padding: 5px 12px; font-weight: bold; font-size: 0.75rem; border-bottom: 1px solid #cbd5e1; background: #fff; }
+
+    .badge-body-container { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; background: #ffffff; }
+    .badge-details { flex: 1; }
+    .visitor-photo-frame { width: 100px; height: 120px; border: 1.5px solid #64748b; border-radius: 4px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; overflow: hidden; text-align: center; font-size: 0.65rem; color: #64748b; font-weight: bold; flex-shrink: 0; }
+    .visitor-photo-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+    .badge-row { display: flex; margin-bottom: 4px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 2px; font-size: 0.75rem; }
+    .badge-label { width: 34%; font-weight: 800; color: #0f172a; }
+    .badge-val { width: 66%; font-weight: 600; color: #1e293b; }
+
+    .status-banner { text-align: center; font-weight: bold; font-size: 0.72rem; padding: 3px; display: none; margin: 0 12px 6px 12px; border-radius: 4px; }
+    .status-banner.expired { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; display: block; }
+    .status-banner.valid { background: #f0fdf4; color: #16a34a; border: 1px solid #86efac; display: block; }
+
+    .signature-container { display: flex; justify-content: space-between; padding: 18px 12px 6px 12px; text-align: center; }
+    .sig-box { width: 32%; border-top: 1.5px solid #0f172a; padding-top: 3px; font-size: 0.54rem; font-weight: 800; color: #0f172a; }
+
+    .rules-and-qr-footer { display: flex; justify-content: space-between; align-items: flex-end; padding: 8px 12px 10px 12px; background: #ffffff; border-top: 1px solid #cbd5e1; gap: 8px; }
+    .rules-box { flex: 1; font-size: 0.55rem; color: #334155; line-height: 1.3; }
+    .rules-box h5 { margin-bottom: 2px; color: #0f172a; font-size: 0.58rem; font-weight: 800; }
+
+    /* HIGH-CLARITY QR CODE DISPLAY */
+    .qrcode-container { flex-shrink: 0; background: #fff; padding: 2px; border: 1.5px solid #0f172a; border-radius: 4px; }
+    .qrcode-container img, .qrcode-container canvas { display: block; width: 80px !important; height: 80px !important; }
+
+    .filter-bar { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 20px; flex-wrap: wrap; }
+    .search-box { flex: 1; min-width: 200px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 10px; }
+    th, td { border: 1px solid var(--border-color); padding: 10px; text-align: left; }
+    th { background: var(--light-blue); color: var(--navy); font-weight: bold; }
+    tr:nth-child(even) { background: #f8fafc; }
+
+    .btn-action { background: var(--blue); color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem; transition: background 0.2s ease, transform 0.15s ease; }
+    .btn-action:hover { background: #0369a1; transform: translateY(-1px); }
+    .btn-success { background: #16a34a; }
+    .btn-success:hover { background: #15803d; }
+    .btn-purple { background: #7c3aed; }
+    .btn-purple:hover { background: #6d28d9; }
+    .btn-reset { background: #f59e0b; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; margin-right: 5px; transition: background 0.2s ease; }
+    .btn-reset:hover { background: #d97706; }
+    .btn-out { background: #e11d48; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; transition: background 0.2s ease; }
+    .btn-out:hover { background: #be123c; }
+
+    /* MOBILE PUBLIC PASS VIEW STYLING */
+    body.public-pass-view header,
+    body.public-pass-view .sidebar,
+    body.public-pass-view .card,
+    body.public-pass-view #loginScreen {
+      display: none !important;
+    }
+    body.public-pass-view #appScreen {
+      display: block !important;
+      background: var(--gray-bg);
+      padding: 15px 10px;
+    }
+    body.public-pass-view .content-container {
+      margin-left: 0 !important;
+      padding: 0 !important;
+      max-width: 500px !important;
+    }
+    body.public-pass-view .grid-2 {
+      display: block !important;
+    }
+
+    #mobilePdfBtnContainer {
+      display: none;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    body.public-pass-view #mobilePdfBtnContainer {
+      display: block !important;
+    }
+
+    /* SINGLE-PAGE MOBILE PDF & PRINT FIX */
+    @media print {
+      @page { size: portrait; margin: 0; }
+      html, body { 
+        background: #fff !important; 
+        margin: 0 !important; 
+        padding: 0 !important; 
+        height: 100% !important;
+        overflow: hidden !important;
+      }
+      #loginScreen, header, .sidebar, .card, h3, .stats-grid, .quick-actions-bar, .dashboard-grid-2, .dashboard-grid-3, .alert-banner, .filter-bar, table, #addUserForm, #userTableBody, #qrScannerModal { display: none !important; }
+      body * { visibility: hidden !important; }
+      #printablePass, #printablePass * { visibility: visible !important; }
+      #printablePass { 
+        position: absolute !important; 
+        left: 0 !important; 
+        right: 0 !important; 
+        top: 5mm !important; 
+        margin: 0 auto !important;
+        width: 95mm !important; 
+        max-width: 95mm !important; 
+        border: 1.5px solid #000 !important; 
+        box-shadow: none !important;
+        box-sizing: border-box !important;
+        page-break-inside: avoid !important;
+        page-break-after: avoid !important;
+        transform: scale(0.90);
+        transform-origin: top center;
+      }
+    }
   </style>
 </head>
 <body>
@@ -226,7 +537,7 @@
   <!-- FULL SCREEN SPLIT LOGIN LAYOUT -->
   <div id="loginScreen">
     
-    <!-- LEFT PANEL: LOGO TOP-LEFT, SEMI-TRANSPARENT CENTERED FORM -->
+    <!-- LEFT PANEL: LOGO TOP-LEFT, CLEAN REDUCED TRANSPARENCY FORM -->
     <div class="login-left-panel">
       
       <!-- Top-Left Branding Header -->
@@ -287,19 +598,1441 @@
 
   </div>
 
+  <!-- MAIN APP SCREEN -->
+  <div id="appScreen">
+    <header>
+      <div class="header-left">
+        <button class="menu-toggle-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+        <div>
+          <div class="brand-title">SICAL MULTIMODAL AND RAIL TRANSPORT LIMITED</div>
+          <div class="brand-subtitle">VISITOR GATE PASS SYSTEM 2.0</div>
+        </div>
+      </div>
+      <!-- DYNAMIC USERNAME DISPLAY IN HEADER -->
+      <div style="display: flex; align-items: center; gap: 15px;">
+        <span id="activeUserDisplay" style="font-size: 0.85rem; font-weight: 600; color: #38bdf8;">
+          <i class="fa-solid fa-user-circle"></i> <span id="displayUsername">User</span>
+        </span>
+        <button class="nav-btn" onclick="logout()" style="background: #dc2626; color:white; border:none; padding:8px 14px; border-radius:6px; cursor:pointer;"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+      </div>
+    </header>
+
+    <aside id="sidebar" class="sidebar">
+      <ul class="sidebar-menu">
+        <li id="navDashboard"><button class="active" onclick="switchTab('dashboardTab')"><i class="fa-solid fa-chart-line"></i> Dashboard</button></li>
+        <li id="navEntry"><button onclick="switchTab('entryTab')"><i class="fa-solid fa-id-card"></i> Visitor Entry</button></li>
+        <li id="navReport"><button onclick="switchTab('reportTab')"><i class="fa-solid fa-file-invoice"></i> Reports & Logs</button></li>
+        <li id="navAdmin"><button onclick="switchTab('adminTab')"><i class="fa-solid fa-user-gear"></i> Admin Setup</button></li>
+      </ul>
+    </aside>
+
+    <div id="contentContainer" class="content-container">
+      
+      <!-- DASHBOARD TAB -->
+      <div id="dashboardTab" class="tab-content active">
+        <h3 style="margin-bottom: 15px; color: var(--navy);"><i class="fa-solid fa-chart-line"></i> CFS Visitor Security & Operations Center</h3>
+        
+        <!-- TOP KPI CARDS WITH LIVE PULSING PREMISES COUNTER -->
+        <div class="stats-grid">
+          <div class="stat-card" style="border-left-color: #0284c7;">
+            <h4>Total (Current Month)</h4>
+            <div class="stat-val" id="statMonth">...</div>
+          </div>
+          <div class="stat-card" style="border-left-color: #16a34a;">
+            <h4>Today's Visitors</h4>
+            <div class="stat-val" id="statToday">...</div>
+          </div>
+          <div class="stat-card" style="border-left-color: #f59e0b;">
+            <h4>Yesterday's Visitors</h4>
+            <div class="stat-val" id="statYesterday">...</div>
+          </div>
+          <div class="stat-card" style="border-left-color: #dc2626; background: #fff5f5;">
+            <h4 style="color: #dc2626;"><span class="live-dot"></span> Currently Inside Premises</h4>
+            <div class="stat-val" id="statInside" style="color: #dc2626;">...</div>
+          </div>
+        </div>
+
+        <!-- QUICK ACTIONS SHORTCUT BAR -->
+        <div class="quick-actions-bar">
+          <div class="quick-actions-title">
+            <i class="fa-solid fa-bolt" style="color: #f59e0b; font-size: 1.1rem;"></i> Security Gate Quick Actions:
+          </div>
+          <div class="action-btn-group">
+            <button class="btn-action" style="background: #0f172a;" onclick="exportToCSV()"><i class="fa-solid fa-file-excel"></i> Export Today Logs</button>
+          </div>
+        </div>
+
+        <!-- OVERSTAY SECURITY ALERTS WIDGET WITH ATTENTION SHAKE -->
+        <div id="overstayAlertBanner" class="alert-banner" style="display:none;">
+          <div class="alert-banner-text">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size: 1.3rem;"></i>
+            <span><strong id="overstayCount">0</strong> Visitor(s) Have Exceeded Validity / 12 Hours Duration Inside CFS Premises!</span>
+          </div>
+          <button class="btn-action" style="background:#dc2626; padding: 4px 10px; font-size:0.8rem;" onclick="switchTab('reportTab')">Investigate Logs</button>
+        </div>
+
+        <!-- MIDDLE LAYER: LIVE IN-GATE FEED & DEPARTMENT DISTRIBUTION -->
+        <div class="dashboard-grid-2">
+          
+          <!-- LIVE IN-GATE ACTIVITY FEED -->
+          <div class="card">
+            <h3><i class="fa-solid fa-clock-rotate-left"></i> Live In-Gate Activity Log (Recent Check-Ins)</h3>
+            <div style="overflow-x: auto;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Pass No</th>
+                    <th>Visitor Name</th>
+                    <th>Department To Meet</th>
+                    <th>Time In</th>
+                  </tr>
+                </thead>
+                <tbody id="dashLiveLogsBody">
+                  <tr><td colspan="4" style="text-align:center;">Loading recent activity...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- VISITORS BY DEPARTMENT -->
+          <div class="card">
+            <h3><i class="fa-solid fa-chart-pie"></i> Traffic By Department</h3>
+            <div class="chart-box">
+              <div class="donut-chart" id="deptDonutChart">
+                <div class="donut-chart-center">
+                  <span id="donutTotalCount">0</span>
+                  <span style="font-size: 0.55rem; color:#64748b; font-weight: normal;">Visitors</span>
+                </div>
+              </div>
+              <ul class="chart-legend" id="deptLegendList">
+                <li><span class="legend-dot" style="background: #0284c7;"></span> Import: <b id="pctImport">0%</b></li>
+                <li><span class="legend-dot" style="background: #16a34a;"></span> Export: <b id="pctExport">0%</b></li>
+                <li><span class="legend-dot" style="background: #f59e0b;"></span> Customs: <b id="pctCustoms">0%</b></li>
+                <li><span class="legend-dot" style="background: #e11d48;"></span> Bond: <b id="pctBond">0%</b></li>
+                <li><span class="legend-dot" style="background: #0d9488;"></span> Admin: <b id="pctAdmin">0%</b></li>
+                <li><span class="legend-dot" style="background: #7c3aed;"></span> SICAL IT: <b id="pctIt">0%</b></li>
+                <li><span class="legend-dot" style="background: #64748b;"></span> Other Depts: <b id="pctOther">0%</b></li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- LOWER LAYER: PURPOSE OF VISIT BREAKDOWN -->
+        <div class="dashboard-grid-3">
+          <div class="card" style="grid-column: span 2;">
+            <h3><i class="fa-solid fa-bars-staggered"></i> Visitor Distribution by Entry Purpose</h3>
+            <div class="progress-list" id="purposeProgressList">
+              <div class="progress-item">
+                <div class="progress-meta"><span>Customs Clearance / EXIM Delivery</span><span id="lblPurpEXIM">0%</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="barPurpEXIM" style="background: #0284c7;"></div></div>
+              </div>
+              <div class="progress-item">
+                <div class="progress-meta"><span>Meeting / Official</span><span id="lblPurpMeeting">0%</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="barPurpMeeting" style="background: #16a34a;"></div></div>
+              </div>
+              <div class="progress-item">
+                <div class="progress-meta"><span>Vendor / Delivery / Maintenance</span><span id="lblPurpVendor">0%</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="barPurpVendor" style="background: #f59e0b;"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- VISITOR ENTRY TAB -->
+      <div id="entryTab" class="tab-content">
+        <div class="grid-2">
+          <div class="card" id="entryFormCard">
+            <h3><i class="fa-solid fa-user-plus"></i> Visitor Entry & Pass Retrieval</h3>
+
+            <div class="quick-search-box">
+              <label><i class="fa-solid fa-qrcode"></i> Scan QR (Visitor Gate Check-Out) / Search Pass/Mobile</label>
+              <div class="search-input-group">
+                <input type="text" id="entrySearchInput" placeholder="Scan QR or type Pass/Mobile..." onkeydown="if(event.key==='Enter'){ handleQrScan(); event.preventDefault(); }">
+                <button type="button" class="btn-action" onclick="startQrCameraScanner()" style="padding: 8px 12px; font-size: 0.8rem; background: #7c3aed;"><i class="fa-solid fa-camera"></i> Visitor Out Gate Scanner</button>
+                <button type="button" class="btn-action" onclick="searchAndLoadVisitor(false)" style="padding: 8px 12px; font-size: 0.8rem;">Auto-Fill New Pass</button>
+                <button type="button" class="btn-action" onclick="searchAndLoadVisitor(true)" style="padding: 8px 12px; font-size: 0.8rem; background: #0f172a;">View/Reprint Pass</button>
+                <button type="button" class="btn-action" onclick="clearSearch()" style="padding: 8px 12px; font-size: 0.8rem; background: #dc2626;">Clear</button>
+              </div>
+            </div>
+
+            <!-- VISITOR OUT GATE CAMERA SCANNER MODAL -->
+            <div id="qrScannerContainer" style="display:none; background: #f1f5f9; padding: 15px; border-radius: 8px; border: 2px dashed #0284c7; margin-bottom: 15px; text-align: center;">
+              <h4 style="margin-bottom: 10px; color: #0f172a;"><i class="fa-solid fa-expand"></i> Visitor Out Gate Camera Scanner Active</h4>
+              <div id="reader" style="width: 100%; max-width: 320px; margin: 0 auto;"></div>
+              <button type="button" class="btn-action" style="margin-top: 10px; background: #dc2626;" onclick="stopQrCameraScanner()">Close Gate Camera</button>
+            </div>
+
+            <form id="visitorForm">
+              <div class="form-grid">
+                <div class="input-group full-width">
+                  <label>Visitor Name *</label>
+                  <input type="text" id="visitorName" required>
+                </div>
+                <div class="input-group">
+                  <label>Mobile Number *</label>
+                  <input type="tel" id="mobileNumber" required>
+                </div>
+                <div class="input-group">
+                  <label>Company / From *</label>
+                  <input type="text" id="companyFrom" required>
+                </div>
+
+                <div class="input-group">
+                  <label>Identity Proof Type *</label>
+                  <select id="idType" required>
+                    <option value="Aadhaar Card">Aadhaar Card</option>
+                    <option value="Driver's License">Driver's License</option>
+                    <option value="PAN Card">PAN Card</option>
+                    <option value="Voter ID">Voter ID</option>
+                    <option value="Passport">Passport</option>
+                    <option value="Company ID">Company ID</option>
+                    <option value="CHA ID Card">CHA ID Card</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div class="input-group">
+                  <label>Identity / Card Number</label>
+                  <input type="text" id="idNumber" placeholder="Enter ID number">
+                </div>
+
+                <div class="input-group">
+                  <label>Person to Meet *</label>
+                  <input type="text" id="personToMeet" required>
+                </div>
+
+                <div class="input-group">
+                  <label>Department *</label>
+                  <select id="department" required>
+                    <option value="Admin">Admin</option>
+                    <option value="CFS HEAD">CFS HEAD</option>
+                    <option value="MEP">MEP</option>
+                    <option value="Import">Import</option>
+                    <option value="Export">Export</option>
+                    <option value="Bond">Bond</option>
+                    <option value="Customs">Customs</option>
+                    <option value="Accounts">Accounts</option>
+                    <option value="SICAL IT">SICAL IT</option>
+                    <option value="Electrical">Electrical</option>
+                    <option value="Security">Security</option>
+                    <option value="EHS">EHS</option>
+                    <option value="General">General</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+
+                <div class="input-group full-width">
+                  <label>Pass Validity *</label>
+                  <div class="checkbox-group">
+                    <label><input type="radio" name="validity" value="Daily" checked> Daily (24 Hours)</label>
+                    <label><input type="radio" name="validity" value="Weekly"> Weekly (7 Days)</label>
+                    <label><input type="radio" name="validity" value="Monthly"> Monthly (30 Days)</label>
+                  </div>
+                </div>
+
+                <div class="input-group full-width">
+                  <label>Purpose *</label>
+                  <select id="purposeSelect" required>
+                    <option value="Meeting">Meeting</option>
+                    <option value="Vendor/Delivery">Vendor/Delivery</option>
+                    <option value="Work/Maint.">Work/Maint.</option>
+                    <option value="Customs Clearance">Customs Clearance</option>
+                    <option value="EXIM Delivery">EXIM Delivery</option>
+                  </select>
+                </div>
+
+                <div class="input-group full-width">
+                  <label>Vehicle No. (Optional)</label>
+                  <input type="text" id="vehicleNo" placeholder="e.g. TN-01-AB-1234">
+                </div>
+
+                <div class="input-group full-width">
+                  <label>Visitor Face Photo Capture</label>
+                  <div class="webcam-container">
+                    <video id="videoFeed" autoplay playsinline></video>
+                    <canvas id="photoCanvas" style="display:none;" width="320" height="240"></canvas>
+                    <div class="cam-btns">
+                      <button type="button" class="btn-cam" onclick="startCamera()"><i class="fa-solid fa-video"></i> Start Camera</button>
+                      <button type="button" class="btn-cam" style="background:#16a34a;" onclick="takePhoto()"><i class="fa-solid fa-camera"></i> Take Photo</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+                <button type="button" id="savePassBtn" class="btn-action btn-success" style="flex:1;" onclick="saveEntryOnly()"><i class="fa-solid fa-floppy-disk"></i> Save Visitor Pass</button>
+                <button type="button" class="btn-action" style="background:#0284c7;" onclick="printOnly()"><i class="fa-solid fa-print"></i> Print Gate Pass Card</button>
+                <button type="button" class="btn-action" style="background:#64748b;" onclick="resetForm()"><i class="fa-solid fa-rotate-left"></i> Clear Form / Next Visitor</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- DYNAMIC GATE PASS VISITOR CARD -->
+          <div id="passPreviewCard">
+            <!-- MOBILE DOWNLOAD PDF BUTTON -->
+            <div id="mobilePdfBtnContainer">
+              <button class="btn-action btn-success" style="padding: 12px 20px; font-size: 1rem; width: 100%;" onclick="window.print()"><i class="fa-solid fa-file-pdf"></i> Download Pass as PDF / Print</button>
+            </div>
+
+            <div id="printablePass" class="pass-badge">
+              <div class="badge-header">
+                <h2>SICAL MULTIMODAL AND RAIL TRANSPORT LIMITED</h2>
+                <p class="address-text">Vallur, Chennai - 600120</p>
+                
+                <div class="top-right-logo">
+                  <span class="logo-main">SICAL</span>
+                  <span class="logo-sub">Pristine Group Company</span>
+                </div>
+              </div>
+
+              <div class="badge-title-strip">VISITOR GATE PASS</div>
+
+              <div class="badge-meta">
+                <span>PASS: <span id="prevPassNo">VP-2026-1001</span></span>
+                <span>DATE: <span id="prevDate">--/--/----</span></span>
+              </div>
+
+              <div class="badge-body-container">
+                <div class="badge-details">
+                  <div class="badge-row"><div class="badge-label">Name:</div><div class="badge-val" id="prevName">-</div></div>
+                  <div class="badge-row"><div class="badge-label">Mobile:</div><div class="badge-val" id="prevMobile">-</div></div>
+                  <div class="badge-row"><div class="badge-label">ID Proof:</div><div class="badge-val"><span id="prevIdType">Aadhaar Card</span> (<span id="prevIdNumber">-</span>)</div></div>
+                  <div class="badge-row"><div class="badge-label">Company:</div><div class="badge-val" id="prevCompany">-</div></div>
+                  <div class="badge-row"><div class="badge-label">To Meet:</div><div class="badge-val" id="prevHost">-</div></div>
+                  <div class="badge-row"><div class="badge-label">Dept:</div><div class="badge-val" id="prevDept">Admin</div></div>
+                  <div class="badge-row"><div class="badge-label">Purpose:</div><div class="badge-val" id="prevPurpose">Meeting</div></div>
+                  <div class="badge-row"><div class="badge-label">Validity:</div><div class="badge-val" id="prevValidity">Daily</div></div>
+                  <div class="badge-row"><div class="badge-label">Time In/Out:</div><div class="badge-val">IN: <span id="prevTimeIn">--:--</span> &nbsp;|&nbsp; OUT: <span id="prevTimeOut">_______</span></div></div>
+                </div>
+
+                <div class="visitor-photo-frame" id="prevPhotoFrame">
+                  NO PHOTO
+                </div>
+              </div>
+
+              <div id="validityBanner" class="status-banner"></div>
+
+              <div class="signature-container">
+                <div class="sig-box">VISITOR SIGNATURE</div>
+                <div class="sig-box">PERSON TO MEET SIGN</div>
+                <div class="sig-box">SECURITY SIGN</div>
+              </div>
+
+              <div class="rules-and-qr-footer">
+                <div class="rules-box">
+                  <h5>SECURITY & SAFETY RULES FOR VISITORS</h5>
+                  • <strong>Display Pass:</strong> Must be carried at all times.<br>
+                  • <strong>Authorized Zones:</strong> Strictly designated floors.<br>
+                  • <strong>Person To Meet Sign:</strong> Mandatory person to meet verification.<br>
+                  • <strong>Checkout:</strong> Return pass or scan QR code at Security Gate.
+                </div>
+                <div class="qrcode-container">
+                  <div id="passQrCode"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORT TAB -->
+      <div id="reportTab" class="tab-content">
+        <div class="card">
+          <h3><i class="fa-solid fa-list-check"></i> Visitor Entry Logs & Backup Management</h3>
+          
+          <div class="filter-bar">
+            <div class="input-group search-box">
+              <label>Search Pass No / Mobile / Name / ID No</label>
+              <input type="text" id="searchInput" placeholder="Search..." oninput="filterLogs()">
+            </div>
+            <div class="input-group">
+              <label>From Date</label>
+              <input type="date" id="fromDate" onchange="filterLogs()">
+            </div>
+            <div class="input-group">
+              <label>To Date</label>
+              <input type="date" id="toDate" onchange="filterLogs()">
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+            <button class="btn-action btn-success" onclick="exportToCSV()"><i class="fa-solid fa-file-excel"></i> Download Excel Report</button>
+            <button class="btn-action btn-purple" onclick="fetchCloudData()"><i class="fa-solid fa-rotate"></i> Refresh Database Logs</button>
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table id="logsTable">
+              <thead>
+                <tr>
+                  <th>Pass No</th>
+                  <th>Date</th>
+                  <th>Time In</th>
+                  <th>Time Out</th>
+                  <th>Visitor Name</th>
+                  <th>Mobile</th>
+                  <th>ID Proof</th>
+                  <th>Company</th>
+                  <th>Person to Meet</th>
+                  <th>Dept</th>
+                  <th>Validity</th>
+                  <th>Purpose</th>
+                  <th>Photo</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="logsTableBody">
+                <tr><td colspan="14" style="text-align:center;">Loading logs from Google Sheet...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN TAB -->
+      <div id="adminTab" class="tab-content">
+        <div class="card">
+          <h3><i class="fa-solid fa-user-gear"></i> Admin Setup — User & Permission Control</h3>
+          
+          <form id="addUserForm" onsubmit="addUser(event)">
+            <div class="admin-form-grid">
+              <div class="input-group">
+                <label>Username *</label>
+                <input type="text" id="newUsername" required>
+              </div>
+              <div class="input-group">
+                <label>Password *</label>
+                <input type="password" id="newPassword" required>
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label>Assign Menu Access Permissions:</label>
+              <div class="checkbox-group">
+                <label><input type="checkbox" id="permDashboard" checked> Dashboard</label>
+                <label><input type="checkbox" id="permEntry" checked> Visitor Entry</label>
+                <label><input type="checkbox" id="permReport" checked> Reports & Logs</label>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-action btn-success" style="margin-top: 15px;"><i class="fa-solid fa-user-plus"></i> Create User Account</button>
+          </form>
+
+          <h4 style="margin-top: 30px; margin-bottom: 10px;">Registered System Users (Synced via Database)</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Assigned Menus</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="userTableBody">
+              <tr><td colspan="3" style="text-align:center;">Loading users...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <script>
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwY1O9ibw5-cV7zK76OCn9GSqtNsDCQ94hgMqMOw9K00L724OKJHgBM4GoCIatmVPIaxA/exec";
+
+    let globalCloudLogs = [];
+    
+    /* SUPPORT BOTH 'SICAL ADMIN' AND 'SICAL CFS' BY DEFAULT */
+    let globalUsersList = [
+      { username: 'SICAL ADMIN', pass: 'SICAL$321', role: 'admin', menus: ['dashboard', 'entry', 'report', 'admin'] },
+      { username: 'SICAL CFS', pass: 'SICAL$321', role: 'admin', menus: ['dashboard', 'entry', 'report', 'admin'] }
+    ];
+
+    let html5QrcodeScanner = null;
+    let loadedVisitorPhoto = null;
+    let isPassAlreadySaved = false;
+
+    // HELPER: CONVERT GOOGLE DRIVE VIEW LINKS TO DIRECT THUMBNAIL URLS
+    function getDirectDriveImageUrl(url) {
+      if (!url || url === 'No Photo' || url === 'NO_PHOTO' || url === 'undefined' || url === 'N/A') return null;
+      if (url.startsWith('data:image')) return url;
+      
+      let fileId = null;
+      if (url.includes('drive.google.com/file/d/')) {
+        fileId = url.split('/d/')[1].split('/')[0].split('?')[0];
+      } else if (url.includes('googleusercontent.com/d/')) {
+        fileId = url.split('/d/')[1].split('/')[0].split('?')[0];
+      } else if (url.includes('id=')) {
+        fileId = url.split('id=')[1].split('&')[0];
+      }
+      
+      if (fileId) {
+        return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+      }
+      return url;
+    }
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const content = document.getElementById('contentContainer');
+      sidebar.classList.toggle('collapsed');
+      sidebar.classList.toggle('active-mobile');
+      content.classList.toggle('full-width');
+    }
+
+    let activeUser = null;
+
+    // UPDATE LOGGED IN USER NAME IN HEADER
+    function updateHeaderUsername(name) {
+      const displayElem = document.getElementById('displayUsername');
+      if (displayElem && name) {
+        displayElem.textContent = name;
+      }
+    }
+
+    // AUTO-LOAD VISITOR ENTRY FROM MOBILE QR SCAN LINK
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const passParam = urlParams.get('pass');
+
+      // PUBLIC PASS VIEW MODE: IF SCANNED VIA MOBILE QR CODE
+      if (passParam) {
+        document.body.classList.add('public-pass-view');
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('appScreen').style.display = 'block';
+        
+        // Show Visitor Entry tab properly
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.getElementById('entryTab').classList.add('active');
+        document.getElementById('entryFormCard').style.display = 'none';
+
+        fetchCloudData().then(() => {
+          document.getElementById('entrySearchInput').value = passParam;
+          searchAndLoadVisitor(true);
+        });
+        return;
+      }
+
+      const savedUser = sessionStorage.getItem('sical_active_session');
+      if (savedUser) {
+        activeUser = JSON.parse(savedUser);
+        updateHeaderUsername(activeUser.username);
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('appScreen').style.display = 'block';
+        applyPermissions();
+        initApp();
+      }
+    });
+
+    const loginForm = document.getElementById('loginForm');
+    loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const user = document.getElementById('username').value.trim();
       const pass = document.getElementById('password').value.trim();
 
-      if (user !== "" && pass !== "") {
-        alert("Login Successful!");
+      let matched = globalUsersList.find(u => u.username.toLowerCase() === user.toLowerCase() && u.pass === pass);
+
+      if (!matched) {
+        await fetchCloudData();
+        matched = globalUsersList.find(u => u.username.toLowerCase() === user.toLowerCase() && u.pass === pass);
+      }
+
+      if (matched) {
+        activeUser = matched;
+        updateHeaderUsername(matched.username);
+        sessionStorage.setItem('sical_active_session', JSON.stringify(matched));
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('appScreen').style.display = 'block';
         document.getElementById('loginError').style.display = 'none';
+        applyPermissions();
+        initApp();
       } else {
         document.getElementById('loginError').style.display = 'block';
       }
     });
+
+    function applyPermissions() {
+      const menus = activeUser.menus || ['dashboard', 'entry', 'report', 'admin'];
+      document.getElementById('navDashboard').style.display = menus.includes('dashboard') ? 'block' : 'none';
+      document.getElementById('navEntry').style.display = menus.includes('entry') ? 'block' : 'none';
+      document.getElementById('navReport').style.display = menus.includes('report') ? 'block' : 'none';
+      document.getElementById('navAdmin').style.display = menus.includes('admin') ? 'block' : 'none';
+
+      if (menus.includes('dashboard')) switchTab('dashboardTab');
+      else if (menus.includes('entry')) switchTab('entryTab');
+      else if (menus.includes('report')) switchTab('reportTab');
+    }
+
+    function logout() {
+      stopCamera();
+      stopQrCameraScanner();
+      sessionStorage.removeItem('sical_active_session');
+      document.getElementById('appScreen').style.display = 'none';
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('password').value = '';
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.sidebar-menu button').forEach(el => el.classList.remove('active'));
+      
+      document.getElementById(tabId).classList.add('active');
+
+      const btnMap = {
+        'dashboardTab': '#navDashboard button',
+        'entryTab': '#navEntry button',
+        'reportTab': '#navReport button',
+        'adminTab': '#navAdmin button'
+      };
+
+      if(btnMap[tabId]) document.querySelector(btnMap[tabId]).classList.add('active');
+
+      if(tabId === 'reportTab') {
+        stopCamera();
+        stopQrCameraScanner();
+        fetchCloudData();
+      } else if(tabId === 'entryTab') {
+        startCamera();
+      } else if(tabId === 'dashboardTab') {
+        stopCamera();
+        stopQrCameraScanner();
+        fetchCloudData();
+      } else if(tabId === 'adminTab') {
+        stopCamera();
+        stopQrCameraScanner();
+        fetchCloudData();
+      }
+    }
+
+    function shortcutOpenScanner() {
+      switchTab('entryTab');
+      setTimeout(() => {
+        startQrCameraScanner();
+      }, 300);
+    }
+
+    let videoStream = null;
+    let capturedPhotoData = null;
+
+    async function startCamera() {
+      try {
+        videoStream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240 } });
+        const video = document.getElementById('videoFeed');
+        video.srcObject = videoStream;
+      } catch (err) {
+        console.log("Camera inactive: " + err.message);
+      }
+    }
+
+    function stopCamera() {
+      if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+        videoStream = null;
+      }
+    }
+
+    function takePhoto() {
+      const video = document.getElementById('videoFeed');
+      const canvas = document.getElementById('photoCanvas');
+      if (!videoStream) {
+        alert("Please start camera first!");
+        return;
+      }
+
+      const context = canvas.getContext('2d');
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      capturedPhotoData = canvas.toDataURL('image/jpeg');
+      loadedVisitorPhoto = capturedPhotoData;
+
+      updatePhotoFrame(capturedPhotoData);
+    }
+
+    function updatePhotoFrame(photoSrc) {
+      const frame = document.getElementById('prevPhotoFrame');
+      const directUrl = getDirectDriveImageUrl(photoSrc);
+
+      let fileId = null;
+      if (photoSrc && photoSrc.includes('/d/')) {
+        fileId = photoSrc.split('/d/')[1].split('/')[0].split('?')[0];
+      } else if (photoSrc && photoSrc.includes('id=')) {
+        fileId = photoSrc.split('id=')[1].split('&')[0];
+      }
+
+      if (directUrl) {
+        if (fileId) {
+          frame.innerHTML = `<img src="${directUrl}" alt="Visitor Photo" onerror="if(this.src!='https://lh3.googleusercontent.com/d/${fileId}'){ this.src='https://lh3.googleusercontent.com/d/${fileId}'; } else { this.onerror=null; this.parentElement.innerHTML='NO PHOTO'; }">`;
+        } else {
+          frame.innerHTML = `<img src="${directUrl}" alt="Visitor Photo" onerror="this.onerror=null; this.parentElement.innerHTML='NO PHOTO';">`;
+        }
+      } else {
+        frame.innerHTML = 'NO PHOTO';
+      }
+    }
+
+    // VISITOR OUT-GATE CAMERA SCANNER ENGINE
+    function startQrCameraScanner() {
+      document.getElementById('qrScannerContainer').style.display = 'block';
+      if (!html5QrcodeScanner) {
+        html5QrcodeScanner = new Html5QrcodeScanner(
+          "reader", { fps: 10, qrbox: 250 }, false
+        );
+        html5QrcodeScanner.render((decodedText) => {
+          document.getElementById('entrySearchInput').value = decodedText;
+          handleQrScan();
+          stopQrCameraScanner();
+        }, (errorMessage) => {
+          // Scanning...
+        });
+      }
+    }
+
+    function stopQrCameraScanner() {
+      if (html5QrcodeScanner) {
+        html5QrcodeScanner.clear();
+        html5QrcodeScanner = null;
+      }
+      document.getElementById('qrScannerContainer').style.display = 'none';
+    }
+
+    let currentPassNumber = 1001;
+
+    function initApp(autoPass = null) {
+      fetchCloudData().then(() => {
+        if (autoPass) {
+          document.getElementById('entrySearchInput').value = autoPass;
+          searchAndLoadVisitor(true);
+        }
+      });
+      resetForm();
+    }
+
+    async function fetchCloudData() {
+      document.getElementById('statMonth').textContent = "...";
+      document.getElementById('statToday').textContent = "...";
+      document.getElementById('statYesterday').textContent = "...";
+      document.getElementById('statInside').textContent = "...";
+
+      if (GOOGLE_SCRIPT_URL) {
+        try {
+          const response = await fetch(GOOGLE_SCRIPT_URL);
+          const data = await response.json();
+
+          if (data && data.status === "success") {
+            document.getElementById('statMonth').textContent = data.statMonth;
+            document.getElementById('statToday').textContent = data.statToday;
+            document.getElementById('statYesterday').textContent = data.statYesterday;
+
+            globalCloudLogs = data.logs || [];
+            if (data.users && data.users.length > 0) {
+              globalUsersList = data.users;
+            }
+
+            if (globalCloudLogs.length > 0) {
+              const lastPass = globalCloudLogs[globalCloudLogs.length - 1].passNo;
+              const lastSeq = parseInt(lastPass.split('-')[2]);
+              if (!isNaN(lastSeq)) currentPassNumber = lastSeq + 1;
+            } else {
+              currentPassNumber = 1001;
+            }
+
+            // UPDATE ANALYTICS & DASHBOARD WIDGETS
+            computeDashboardAnalytics(globalCloudLogs);
+            renderLogsTable(globalCloudLogs);
+            renderUsersTable();
+            updatePreview();
+            return;
+          }
+        } catch (err) {
+          console.log("Failed to fetch cloud data: " + err.message);
+        }
+      }
+
+      computeDashboardAnalytics(globalCloudLogs);
+      renderLogsTable(globalCloudLogs);
+      renderUsersTable();
+      updatePreview();
+    }
+
+    // CALCULATE REAL-TIME OPERATIONAL METRICS FOR DASHBOARD
+    function computeDashboardAnalytics(logs) {
+      if (!logs) logs = [];
+
+      let insideCount = 0;
+      let overstayCount = 0;
+      let deptCounts = { Import: 0, Export: 0, Customs: 0, Bond: 0, Admin: 0, SicalIT: 0, Other: 0 };
+      let purposeCounts = { EXIM: 0, Meeting: 0, Vendor: 0 };
+
+      logs.forEach(log => {
+        const isCheckedOut = (log.timeOut && log.timeOut !== '_______' && log.timeOut !== '--:--');
+        if (!isCheckedOut) {
+          insideCount++;
+          if (log.date !== getCurrentDate()) {
+            overstayCount++;
+          }
+        }
+
+        const d = (log.department || '').toLowerCase();
+        if (d.includes('import')) deptCounts.Import++;
+        else if (d.includes('export')) deptCounts.Export++;
+        else if (d.includes('custom')) deptCounts.Customs++;
+        else if (d.includes('bond')) deptCounts.Bond++;
+        else if (d.includes('admin')) deptCounts.Admin++;
+        else if (d.includes('sical it') || d.includes('it')) deptCounts.SicalIT++;
+        else deptCounts.Other++;
+
+        const p = (log.purpose || '').toLowerCase();
+        if (p.includes('exim') || p.includes('clearance')) purposeCounts.EXIM++;
+        else if (p.includes('meeting')) purposeCounts.Meeting++;
+        else purposeCounts.Vendor++;
+      });
+
+      document.getElementById('statInside').textContent = insideCount;
+
+      const alertBanner = document.getElementById('overstayAlertBanner');
+      if (overstayCount > 0) {
+        alertBanner.style.display = 'flex';
+        document.getElementById('overstayCount').textContent = overstayCount;
+      } else {
+        alertBanner.style.display = 'none';
+      }
+
+      const hasLogs = logs.length > 0;
+      const totalLogs = logs.length || 1;
+
+      const pctImp = hasLogs ? Math.round((deptCounts.Import / totalLogs) * 100) : 0;
+      const pctExp = hasLogs ? Math.round((deptCounts.Export / totalLogs) * 100) : 0;
+      const pctCus = hasLogs ? Math.round((deptCounts.Customs / totalLogs) * 100) : 0;
+      const pctBnd = hasLogs ? Math.round((deptCounts.Bond / totalLogs) * 100) : 0;
+      const pctAdm = hasLogs ? Math.round((deptCounts.Admin / totalLogs) * 100) : 0;
+      const pctIt  = hasLogs ? Math.round((deptCounts.SicalIT / totalLogs) * 100) : 0;
+      const pctOth = hasLogs ? Math.max(0, 100 - (pctImp + pctExp + pctCus + pctBnd + pctAdm + pctIt)) : 0;
+
+      document.getElementById('pctImport').textContent = pctImp + '%';
+      document.getElementById('pctExport').textContent = pctExp + '%';
+      document.getElementById('pctCustoms').textContent = pctCus + '%';
+      document.getElementById('pctBond').textContent = pctBnd + '%';
+      document.getElementById('pctAdmin').textContent = pctAdm + '%';
+      document.getElementById('pctIt').textContent = pctIt + '%';
+      document.getElementById('pctOther').textContent = pctOth + '%';
+      document.getElementById('donutTotalCount').textContent = logs.length;
+
+      if (hasLogs) {
+        const c1 = pctImp;
+        const c2 = c1 + pctExp;
+        const c3 = c2 + pctCus;
+        const c4 = c3 + pctBnd;
+        const c5 = c4 + pctAdm;
+        const c6 = c5 + pctIt;
+        document.getElementById('deptDonutChart').style.background = `conic-gradient(#0284c7 0% ${c1}%, #16a34a ${c1}% ${c2}%, #f59e0b ${c2}% ${c3}%, #e11d48 ${c3}% ${c4}%, #0d9488 ${c4}% ${c5}%, #7c3aed ${c5}% ${c6}%, #64748b ${c6}% 100%)`;
+      } else {
+        document.getElementById('deptDonutChart').style.background = `#cbd5e1`;
+      }
+
+      const pctPurpEXIM = hasLogs ? Math.round((purposeCounts.EXIM / totalLogs) * 100) : 0;
+      const pctPurpMeeting = hasLogs ? Math.round((purposeCounts.Meeting / totalLogs) * 100) : 0;
+      const pctPurpVendor = hasLogs ? Math.round((purposeCounts.Vendor / totalLogs) * 100) : 0;
+
+      document.getElementById('lblPurpEXIM').textContent = pctPurpEXIM + '%';
+      document.getElementById('lblPurpMeeting').textContent = pctPurpMeeting + '%';
+      document.getElementById('lblPurpVendor').textContent = pctPurpVendor + '%';
+
+      setTimeout(() => {
+        document.getElementById('barPurpEXIM').style.width = pctPurpEXIM + '%';
+        document.getElementById('barPurpMeeting').style.width = pctPurpMeeting + '%';
+        document.getElementById('barPurpVendor').style.width = pctPurpVendor + '%';
+      }, 100);
+
+      renderDashLiveLogs(logs.slice(-5).reverse());
+    }
+
+    function renderDashLiveLogs(recentLogs) {
+      const tbody = document.getElementById('dashLiveLogsBody');
+      tbody.innerHTML = '';
+
+      if (!recentLogs || recentLogs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No recent check-ins recorded.</td></tr>';
+        return;
+      }
+
+      recentLogs.forEach(log => {
+        const row = `<tr>
+          <td><strong>${log.passNo}</strong></td>
+          <td>${log.name}</td>
+          <td>${log.department || 'Admin'}</td>
+          <td>${log.timeIn}</td>
+        </tr>`;
+        tbody.innerHTML += row;
+      });
+    }
+
+    function getFormattedPassNo() {
+      const year = new Date().getFullYear();
+      return `VP-${year}-${currentPassNumber}`;
+    }
+
+    function getCurrentTime() {
+      return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+    }
+
+    function getCurrentDate() {
+      const d = new Date();
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const year = d.getFullYear();
+      return `${day}-${month}-${year}`;
+    }
+
+    function formatDateToDDMMYYYY(dateString) {
+      if(!dateString) return '';
+      const parts = dateString.split('-');
+      if(parts.length === 3 && parts[0].length === 4) {
+        return `${parts[2]}-${parts[1]}-${parts[0]}`;
+      }
+      return dateString;
+    }
+
+    function getQrWebUrl(passNo) {
+      const currUrl = window.location.href.split('?')[0];
+      if (currUrl.startsWith('http')) {
+        return `${currUrl}?pass=${encodeURIComponent(passNo)}`;
+      }
+      return passNo;
+    }
+
+    function checkPassExpiration(entryDateStr, validityType) {
+      if (!entryDateStr) return { isExpired: false, label: "VALID PASS" };
+
+      const parts = entryDateStr.split('-');
+      if (parts.length !== 3) return { isExpired: false, label: "VALID PASS" };
+
+      const passDate = new Date(parts[2], parts[1] - 1, parts[0]);
+      const now = new Date();
+
+      let allowedDays = 1;
+      if (validityType === 'Weekly') allowedDays = 7;
+      if (validityType === 'Monthly') allowedDays = 30;
+
+      const diffTime = Math.abs(now - passDate);
+      const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+      if (diffDays > allowedDays) {
+        return { isExpired: true, label: `EXPIRED PASS (${validityType} limit ${allowedDays} day/s exceeded)` };
+      }
+      return { isExpired: false, label: `VALID PASS (${validityType})` };
+    }
+
+    function handleQrScan() {
+      let rawVal = document.getElementById('entrySearchInput').value.trim();
+      
+      let extractedPass = rawVal;
+      if (rawVal.includes("pass=")) {
+        const match = rawVal.match(/pass=([^&]+)/i);
+        if (match) extractedPass = decodeURIComponent(match[1]).trim();
+      } else if (rawVal.includes("VP-")) {
+        const match = rawVal.match(/(VP-\d{4}-\d+)/i);
+        if (match) extractedPass = match[1].trim();
+      }
+
+      const match = [...globalCloudLogs].reverse().find(log => 
+        log.passNo.toLowerCase() === extractedPass.toLowerCase() || log.mobile.toLowerCase() === extractedPass.toLowerCase()
+      );
+
+      if (match) {
+        if (match.timeOut === '_______' || match.timeOut === '--:--' || !match.timeOut) {
+          recordTimeOut(match.passNo);
+          document.getElementById('entrySearchInput').value = '';
+        } else {
+          searchAndLoadVisitor(true);
+        }
+      } else {
+        alert("Invalid QR Code or No record found for: " + extractedPass);
+      }
+    }
+
+    function searchAndLoadVisitor(reprintExactPass = false) {
+      let query = document.getElementById('entrySearchInput').value.trim().toLowerCase();
+      if (!query) {
+        alert("Please enter or scan Pass No / Mobile No!");
+        return;
+      }
+
+      if (query.includes("pass=")) {
+        const matchPass = query.match(/pass=([^&]+)/i);
+        if (matchPass) query = decodeURIComponent(matchPass[1]).toLowerCase();
+      } else if (query.includes("vp-")) {
+        const matchPass = query.match(/(vp-\d{4}-\d+)/i);
+        if (matchPass) query = matchPass[1].toLowerCase();
+      }
+
+      const match = [...globalCloudLogs].reverse().find(log => 
+        log.passNo.toLowerCase() === query || log.mobile.toLowerCase() === query
+      );
+
+      if (match) {
+        document.getElementById('visitorName').value = match.name;
+        document.getElementById('mobileNumber').value = match.mobile;
+        document.getElementById('companyFrom').value = match.company;
+        document.getElementById('personToMeet').value = match.personToMeet;
+        document.getElementById('department').value = match.department || 'Admin';
+        document.getElementById('purposeSelect').value = match.purpose || 'Meeting';
+        document.getElementById('vehicleNo').value = match.vehicle !== 'N/A' ? match.vehicle : '';
+        document.getElementById('idType').value = match.idType !== 'N/A' ? match.idType : 'Aadhaar Card';
+        document.getElementById('idNumber').value = match.idNumber !== 'N/A' ? match.idNumber : '';
+
+        const validityRadio = document.querySelector(`input[name="validity"][value="${match.validity}"]`);
+        if (validityRadio) validityRadio.checked = true;
+
+        loadedVisitorPhoto = (match.photoUrl && match.photoUrl !== 'No Photo' && match.photoUrl !== 'NO_PHOTO') ? match.photoUrl : null;
+        capturedPhotoData = loadedVisitorPhoto;
+
+        updatePreview();
+        updatePhotoFrame(loadedVisitorPhoto);
+
+        const status = checkPassExpiration(match.date, match.validity);
+        const banner = document.getElementById('validityBanner');
+        banner.textContent = status.label;
+        banner.className = 'status-banner ' + (status.isExpired ? 'expired' : 'valid');
+
+        if (reprintExactPass) {
+          document.getElementById('prevPassNo').textContent = match.passNo;
+          document.getElementById('prevDate').textContent = match.date;
+          document.getElementById('prevTimeIn').textContent = match.timeIn;
+          document.getElementById('prevTimeOut').textContent = (match.timeOut && match.timeOut !== '_______') ? match.timeOut : '_______';
+          document.getElementById('prevPurpose').textContent = match.purpose || 'Meeting';
+          
+          generateQrCode("passQrCode", getQrWebUrl(match.passNo), 100);
+        } else {
+          alert(`Visitor details loaded for ${match.name}! Ready to issue a NEW Pass.`);
+        }
+      } else {
+        alert("No record found matching: " + query);
+      }
+    }
+
+    function clearSearch() {
+      document.getElementById('entrySearchInput').value = '';
+      resetForm();
+    }
+
+    const formInputs = ['visitorName', 'mobileNumber', 'companyFrom', 'personToMeet', 'department', 'purposeSelect', 'vehicleNo', 'idType', 'idNumber'];
+    formInputs.forEach(id => {
+      document.getElementById(id).addEventListener('input', updatePreview);
+      document.getElementById(id).addEventListener('change', updatePreview);
+    });
+
+    document.querySelectorAll('input[name="validity"]').forEach(el => {
+      el.addEventListener('change', updatePreview);
+    });
+
+    function generateQrCode(containerId, textData, size = 100) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      container.innerHTML = '';
+      
+      try {
+        new QRCode(container, {
+          text: textData,
+          width: size,
+          height: size,
+          colorDark: "#000000",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.H
+        });
+      } catch (e) {
+        console.log("QR Generation Error: " + e.message);
+      }
+    }
+
+    function updatePreview() {
+      const currentPass = getFormattedPassNo();
+      const dateVal = getCurrentDate();
+      const timeVal = getCurrentTime();
+      const nameVal = document.getElementById('visitorName').value || '-';
+      const mobileVal = document.getElementById('mobileNumber').value || '-';
+      const companyVal = document.getElementById('companyFrom').value || '-';
+      const idTypeVal = document.getElementById('idType').value || 'Aadhaar Card';
+      const idNumVal = document.getElementById('idNumber').value || '-';
+      const hostVal = document.getElementById('personToMeet').value || '-';
+      const deptVal = document.getElementById('department').value || 'Admin';
+      const purposeVal = document.getElementById('purposeSelect').value || 'Meeting';
+      const validityVal = document.querySelector('input[name="validity"]:checked')?.value || 'Daily';
+
+      document.getElementById('prevPassNo').textContent = currentPass;
+      document.getElementById('prevDate').textContent = dateVal;
+      document.getElementById('prevTimeIn').textContent = timeVal;
+      document.getElementById('prevTimeOut').textContent = '_______';
+
+      document.getElementById('prevName').textContent = nameVal;
+      document.getElementById('prevMobile').textContent = mobileVal;
+      document.getElementById('prevCompany').textContent = companyVal;
+      document.getElementById('prevIdType').textContent = idTypeVal;
+      document.getElementById('prevIdNumber').textContent = idNumVal;
+
+      document.getElementById('prevHost').textContent = hostVal;
+      document.getElementById('prevDept').textContent = deptVal;
+      document.getElementById('prevPurpose').textContent = purposeVal;
+      document.getElementById('prevValidity').textContent = validityVal;
+
+      updatePhotoFrame(loadedVisitorPhoto || capturedPhotoData);
+
+      generateQrCode("passQrCode", getQrWebUrl(currentPass), 100);
+    }
+
+    async function saveEntryOnly() {
+      if (isPassAlreadySaved) {
+        alert("This pass has already been saved! Click 'Clear Form / Next Visitor' to issue a new pass.");
+        return;
+      }
+
+      const form = document.getElementById('visitorForm');
+      if (!form.checkValidity()) {
+        alert("Please fill required fields (*)");
+        return;
+      }
+
+      const saveBtn = document.getElementById('savePassBtn');
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = '0.6';
+      saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+      const passNo = getFormattedPassNo();
+      const newEntry = {
+        passNo: passNo,
+        date: getCurrentDate(),
+        timeIn: getCurrentTime(),
+        timeOut: '_______',
+        name: document.getElementById('visitorName').value,
+        mobile: document.getElementById('mobileNumber').value,
+        company: document.getElementById('companyFrom').value,
+        personToMeet: document.getElementById('personToMeet').value,
+        department: document.getElementById('department').value,
+        validity: document.querySelector('input[name="validity"][value="Daily"]').checked ? 'Daily' : document.querySelector('input[name="validity"]:checked').value,
+        purpose: document.getElementById('purposeSelect').value,
+        vehicle: document.getElementById('vehicleNo').value || 'N/A',
+        idType: document.getElementById('idType').value,
+        idNumber: document.getElementById('idNumber').value || 'N/A',
+        photo: capturedPhotoData || 'NO_PHOTO'
+      };
+
+      if (GOOGLE_SCRIPT_URL) {
+        try {
+          await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(newEntry)
+          });
+        } catch (err) {
+          console.log("Cloud sync error: " + err.message);
+        }
+      }
+
+      isPassAlreadySaved = true;
+      saveBtn.innerHTML = '<i class="fa-solid fa-check"></i> Pass Saved';
+
+      alert(`Pass ${passNo} saved & sent to Google Sheet!`);
+      currentPassNumber++;
+      setTimeout(() => { fetchCloudData(); }, 1000);
+    }
+
+    function printOnly() {
+      window.print();
+    }
+
+    function resetForm() {
+      document.getElementById('visitorForm').reset();
+      document.getElementById('entrySearchInput').value = '';
+      capturedPhotoData = null;
+      loadedVisitorPhoto = null;
+      isPassAlreadySaved = false;
+
+      const saveBtn = document.getElementById('savePassBtn');
+      saveBtn.disabled = false;
+      saveBtn.style.opacity = '1';
+      saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Visitor Pass';
+
+      const banner = document.getElementById('validityBanner');
+      banner.style.display = 'none';
+
+      updatePhotoFrame(null);
+      updatePreview();
+    }
+
+    async function addUser(e) {
+      e.preventDefault();
+      const userVal = document.getElementById('newUsername').value.trim();
+      const passVal = document.getElementById('newPassword').value.trim();
+
+      const existingUser = globalUsersList.find(u => u.username.toLowerCase() === userVal.toLowerCase());
+      if (existingUser) {
+        alert(`User "${userVal}" already exists!`);
+        return;
+      }
+
+      const menus = [];
+      if (document.getElementById('permDashboard').checked) menus.push('dashboard');
+      if (document.getElementById('permEntry').checked) menus.push('entry');
+      if (document.getElementById('permReport').checked) menus.push('report');
+
+      if (GOOGLE_SCRIPT_URL) {
+        try {
+          await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              action: "addUser",
+              username: userVal,
+              pass: passVal,
+              role: "user",
+              menus: menus
+            })
+          });
+        } catch (err) {
+          console.log("Error adding user: " + err.message);
+        }
+      }
+
+      alert(`User ${userVal} created successfully! Syncing to sheet...`);
+      document.getElementById('addUserForm').reset();
+      setTimeout(() => { fetchCloudData(); }, 1000);
+    }
+
+    async function editUserPermissions(index) {
+      const userObj = globalUsersList[index];
+      
+      const hasDash = confirm(`Allow "${userObj.username}" access to DASHBOARD?\n\nClick OK for YES, Cancel for NO.`);
+      const hasEntry = confirm(`Allow "${userObj.username}" access to VISITOR ENTRY?\n\nClick OK for YES, Cancel for NO.`);
+      const hasReport = confirm(`Allow "${userObj.username}" access to REPORTS & LOGS?\n\nClick OK for YES, Cancel for NO.`);
+      
+      const newMenus = [];
+      if (hasDash) newMenus.push('dashboard');
+      if (hasEntry) newMenus.push('entry');
+      if (hasReport) newMenus.push('report');
+
+      if (GOOGLE_SCRIPT_URL) {
+        try {
+          await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              action: "updatePermissions",
+              username: userObj.username,
+              menus: newMenus
+            })
+          });
+        } catch (err) {
+          console.log("Error updating permissions: " + err.message);
+        }
+      }
+
+      alert(`Permissions updated for ${userObj.username}!`);
+      setTimeout(() => { fetchCloudData(); }, 1000);
+    }
+
+    async function resetUserPassword(index) {
+      const userObj = globalUsersList[index];
+      const newPass = prompt(`Enter new password for "${userObj.username}":`);
+      if (!newPass || !newPass.trim()) return;
+
+      if (GOOGLE_SCRIPT_URL) {
+        try {
+          await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              action: "resetPassword",
+              username: userObj.username,
+              newPass: newPass.trim()
+            })
+          });
+        } catch (err) {
+          console.log("Error resetting password: " + err.message);
+        }
+      }
+
+      alert(`Password updated for ${userObj.username}!`);
+      setTimeout(() => { fetchCloudData(); }, 1000);
+    }
+
+    async function deleteUser(index) {
+      const userObj = globalUsersList[index];
+      if (confirm(`Delete user "${userObj.username}"?`)) {
+        if (GOOGLE_SCRIPT_URL) {
+          try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: JSON.stringify({
+                action: "deleteUser",
+                username: userObj.username
+              })
+            });
+          } catch (err) {
+            console.log("Error deleting user: " + err.message);
+          }
+        }
+        alert(`User ${userObj.username} deleted!`);
+        setTimeout(() => { fetchCloudData(); }, 1000);
+      }
+    }
+
+    function renderUsersTable() {
+      const tbody = document.getElementById('userTableBody');
+      tbody.innerHTML = '';
+      
+      if (!globalUsersList || globalUsersList.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No users registered.</td></tr>';
+        return;
+      }
+
+      globalUsersList.forEach((u, i) => {
+        const menuDisplay = Array.isArray(u.menus) ? u.menus.join(', ') : u.menus;
+        const editPermBtn = u.role === 'admin' 
+          ? '' 
+          : `<button class="btn-action" style="background:#0284c7; padding:4px 8px; font-size:0.75rem; margin-right:5px;" onclick="editUserPermissions(${i})"><i class="fa-solid fa-pen-to-square"></i> Edit Permissions</button>`;
+        const resetBtn = `<button class="btn-reset" onclick="resetUserPassword(${i})"><i class="fa-solid fa-key"></i> Reset Pass</button>`;
+        const deleteBtn = u.role === 'admin' 
+          ? `<span style="color:#64748b; font-weight:bold; font-size:0.75rem;">Master Admin</span>` 
+          : `<button class="btn-out" onclick="deleteUser(${i})"><i class="fa-solid fa-trash"></i> Delete</button>`;
+        
+        tbody.innerHTML += `<tr>
+          <td><strong>${u.username}</strong></td>
+          <td>${menuDisplay}</td>
+          <td>${editPermBtn}${resetBtn}${deleteBtn}</td>
+        </tr>`;
+      });
+    }
+
+    async function recordTimeOut(passNo) {
+      const outTime = getCurrentTime();
+
+      if (GOOGLE_SCRIPT_URL) {
+        try {
+          await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              action: "updateTimeOut",
+              passNo: passNo,
+              timeOut: outTime
+            })
+          });
+        } catch (err) {
+          console.log("Error updating Time Out: " + err.message);
+        }
+      }
+
+      alert(`Checked OUT Pass ${passNo} at ${outTime}!`);
+      setTimeout(() => { fetchCloudData(); }, 1000);
+    }
+
+    function filterLogs() {
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      const from = formatDateToDDMMYYYY(document.getElementById('fromDate').value);
+      const to = formatDateToDDMMYYYY(document.getElementById('toDate').value);
+
+      const filtered = globalCloudLogs.filter(log => {
+        const matchesQuery = !query || 
+          log.passNo.toLowerCase().includes(query) || 
+          log.mobile.toLowerCase().includes(query) ||
+          log.name.toLowerCase().includes(query) ||
+          log.idNumber.toLowerCase().includes(query);
+
+        if (from && log.date < from) return false;
+        if (to && log.date > to) return false;
+
+        return matchesQuery;
+      });
+
+      renderLogsTable(filtered);
+    }
+
+    function renderLogsTable(logs) {
+      const tbody = document.getElementById('logsTableBody');
+      tbody.innerHTML = '';
+
+      if (!logs || logs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="14" style="text-align:center;">No visitor entries found.</td></tr>';
+        return;
+      }
+
+      [...logs].reverse().forEach(log => {
+        const outBtn = (log.timeOut === '_______' || log.timeOut === '--:--' || !log.timeOut)
+          ? `<button class="btn-out" onclick="recordTimeOut('${log.passNo}')">Mark Out</button>`
+          : `<span style="color:#16a34a; font-weight:bold;">OUT</span>`;
+
+        const directImgUrl = getDirectDriveImageUrl(log.photoUrl);
+        const photoCell = (directImgUrl && directImgUrl.startsWith('http')) 
+          ? `<a href="${directImgUrl}" target="_blank" style="color:#0284c7; font-weight:bold;">Drive Photo</a>` 
+          : `No Photo`;
+
+        const idProofText = log.idType !== 'N/A' ? `${log.idType} (${log.idNumber})` : 'N/A';
+
+        const row = `<tr>
+          <td><strong>${log.passNo}</strong></td>
+          <td>${log.date}</td>
+          <td>${log.timeIn}</td>
+          <td><strong style="color: ${(log.timeOut !== '_______' && log.timeOut !== '--:--') ? '#0284c7' : '#94a3b8'}">${log.timeOut}</strong></td>
+          <td>${log.name}</td>
+          <td>${log.mobile}</td>
+          <td>${idProofText}</td>
+          <td>${log.company}</td>
+          <td>${log.personToMeet}</td>
+          <td>${log.department}</td>
+          <td>${log.validity}</td>
+          <td>${log.purpose}</td>
+          <td>${photoCell}</td>
+          <td>${outBtn}</td>
+        </tr>`;
+        tbody.innerHTML += row;
+      });
+    }
+
+    function exportToCSV() {
+      if (globalCloudLogs.length === 0) {
+        alert("No data available to export.");
+        return;
+      }
+
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += "Pass No,Date (DD-MM-YYYY),Time In,Time Out,Visitor Name,Mobile Number,ID Type,ID Number,Company/From,Person To Meet,Department,Validity,Purpose,Vehicle No,Photo Link\n";
+
+      globalCloudLogs.forEach(log => {
+        const row = [
+          `"${log.passNo}"`,
+          `"${log.date}"`,
+          `"${log.timeIn}"`,
+          `"${log.timeOut}"`,
+          `"${log.name}"`,
+          `"${log.mobile}"`,
+          `"${log.idType || 'N/A'}"`,
+          `"${log.idNumber || 'N/A'}"`,
+          `"${log.company}"`,
+          `"${log.personToMeet}"`,
+          `"${log.department}"`,
+          `"${log.validity}"`,
+          `"${log.purpose}"`,
+          `"${log.vehicle}"`,
+          `"${log.photoUrl || 'N/A'}"`
+        ].join(",");
+        csvContent += row + "\n";
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `SICAL_Visitor_Report_${getCurrentDate()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   </script>
 </body>
 </html>
