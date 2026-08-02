@@ -23,31 +23,166 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
     body { background-color: var(--gray-bg); color: var(--text-dark); min-height: 100vh; }
 
-    /* LOGIN BACKGROUND IMAGE */
+    /* SPLIT-SCREEN LOGIN LAYOUT */
     #loginScreen {
-      display: flex; justify-content: center; align-items: center; min-height: 100vh;
-      background: linear-gradient(rgba(15, 23, 42, 0.35), rgba(15, 23, 42, 0.50)), 
-                  url('SICAL_CFS_VMS_BG.jpg') center/cover no-repeat !important;
+      display: flex;
+      min-height: 100vh;
+      width: 100%;
+      background: #ffffff;
     }
 
-    .login-box {
-      background: white; padding: 35px; border-radius: 12px; width: 100%; max-width: 440px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.4); text-align: center;
+    /* Left Side: Information & Form Panel */
+    .login-left-panel {
+      flex: 1.1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 40px 60px;
+      background: #ffffff;
+      overflow-y: auto;
     }
-   .login-box h2 { color: #dc2626; margin-bottom: 6px; font-size: 1.3rem; }
-    .login-box p.portal-title { color: var(--blue); font-size: 0.9rem; font-weight: bold; margin-bottom: 24px; letter-spacing: 0.5px; }
+
+    /* Right Side: Visual Showcase with Unchanged Background */
+    .login-right-panel {
+      flex: 1.3;
+      background: linear-gradient(rgba(15, 23, 42, 0.45), rgba(15, 23, 42, 0.60)), 
+                  url('SICAL_CFS_VMS_BG.jpg') center/cover no-repeat !important;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 50px;
+      color: white;
+    }
+
+    /* Header & Branding */
+    .brand-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+    .brand-logo-text {
+      line-height: 1.1;
+    }
+    .brand-logo-text .main-title {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #dc2626;
+      letter-spacing: 0.5px;
+    }
+    .brand-logo-text .sub-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #312e81;
+    }
+
+    .portal-heading h2 {
+      font-size: 1.1rem;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .portal-heading p.portal-subtitle {
+      color: var(--blue);
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-top: 2px;
+      margin-bottom: 20px;
+    }
+
+    /* Portal Information Section */
+    .vms-info-box {
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--blue);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 25px;
+    }
+    .vms-info-box h4 {
+      font-size: 0.9rem;
+      color: var(--navy);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .vms-info-box ul {
+      list-style: none;
+      font-size: 0.82rem;
+      color: #475569;
+    }
+    .vms-info-box ul li {
+      margin-bottom: 6px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .vms-info-box ul li i {
+      color: var(--blue);
+      margin-top: 3px;
+    }
+
+    /* Form Styling */
+    .login-form-container {
+      max-width: 440px;
+      width: 100%;
+    }
     .input-group { margin-bottom: 16px; text-align: left; }
     .input-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; }
     .input-group input, .input-group select {
-      width: 100%; padding: 10px; border: 1px solid var(--border-color);
+      width: 100%; padding: 11px 14px; border: 1px solid var(--border-color);
       border-radius: 6px; font-size: 0.95rem; background: white;
+      transition: border-color 0.2s;
+    }
+    .input-group input:focus {
+      outline: none;
+      border-color: var(--blue);
     }
     .btn-login {
       width: 100%; padding: 12px; background: var(--blue); color: white; border: none;
       border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px;
+      transition: background 0.2s;
     }
     .btn-login:hover { background: #0369a1; }
     .error-msg { color: #dc2626; font-size: 0.85rem; margin-top: 10px; display: none; }
+
+    /* Footer Credits */
+    .login-footer {
+      margin-top: 30px;
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+
+    /* Right Panel Text Content */
+    .right-panel-content {
+      max-width: 500px;
+    }
+    .right-panel-content h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+    .right-panel-content p {
+      font-size: 0.95rem;
+      color: #cbd5e1;
+      line-height: 1.6;
+    }
+
+    /* Responsive Design for Split-Screen */
+    @media (max-width: 960px) {
+      #loginScreen {
+        flex-direction: column-reverse;
+      }
+      .login-right-panel {
+        min-height: 250px;
+        padding: 30px;
+      }
+      .login-left-panel {
+        padding: 30px 20px;
+      }
+    }
 
     /* Main App Layout */
     #appScreen { display: none; min-height: 100vh; position: relative; }
@@ -365,24 +500,65 @@
 </head>
 <body>
 
-  <!-- LOGIN PAGE -->
+  <!-- SPLIT-SCREEN LOGIN PAGE -->
   <div id="loginScreen">
-    <div class="login-box">
-      <h2>SICAL MULTIMODAL AND RAIL TRANSPORT LIMITED</h2>
-      <p class="portal-title">VISITOR PASS PORTAL 2.0</p>
-      <form id="loginForm">
-        <div class="input-group">
-          <label>Username</label>
-          <input type="text" id="username" placeholder="Enter username" required>
+    
+    <!-- LEFT PANEL: LOGO, PORTAL UNDERSTANDING & LOGIN FORM -->
+    <div class="login-left-panel">
+      <div>
+        <!-- SICAL Branding -->
+        <div class="brand-header">
+          <div class="brand-logo-text">
+            <div class="main-title">SICAL</div>
+            <div class="sub-title">Pristine Group Company</div>
+          </div>
         </div>
-        <div class="input-group">
-          <label>Password</label>
-          <input type="password" id="password" placeholder="Enter password" required>
+
+        <div class="portal-heading">
+          <h2>SICAL Multimodal and Rail Transport Limited</h2>
+          <p class="portal-subtitle">Visitor Management System (VMS Portal 2.0)</p>
         </div>
-        <button type="submit" class="btn-login">Login Portal</button>
-        <div id="loginError" class="error-msg">Invalid Username or Password!</div>
-      </form>
+
+        <!-- Overview Details & System Capabilities -->
+        <div class="vms-info-box">
+          <h4><i class="fa-solid fa-shield-halved"></i> About VMS Operations</h4>
+          <ul>
+            <li><i class="fa-solid fa-check-circle"></i> Digital gate pass issuance for CFS Terminal visitors and CHA agents.</li>
+            <li><i class="fa-solid fa-check-circle"></i> Automated check-in/out tracking with QR Code camera scanning.</li>
+            <li><i class="fa-solid fa-check-circle"></i> Integrated photo capture and security overstay detection alerts.</li>
+          </ul>
+        </div>
+
+        <!-- Login Credentials Form -->
+        <div class="login-form-container">
+          <form id="loginForm">
+            <div class="input-group">
+              <label><i class="fa-solid fa-user"></i> Username</label>
+              <input type="text" id="username" placeholder="Enter username" required>
+            </div>
+            <div class="input-group">
+              <label><i class="fa-solid fa-lock"></i> Password</label>
+              <input type="password" id="password" placeholder="Enter password" required>
+            </div>
+            <button type="submit" class="btn-login"><i class="fa-solid fa-right-to-bracket"></i> Login Portal</button>
+            <div id="loginError" class="error-msg">Invalid Username or Password!</div>
+          </form>
+        </div>
+      </div>
+
+      <div class="login-footer">
+        &copy; 2026 SICAL Multimodal and Rail Transport Limited. All rights reserved.
+      </div>
     </div>
+
+    <!-- RIGHT PANEL: UNCHANGED BACKGROUND IMAGE SHOWCASE -->
+    <div class="login-right-panel">
+      <div class="right-panel-content">
+        <h1>Container Freight Station Operations</h1>
+        <p>Streamlining security verification, visitor access control, and operational entry logging with full logistics infrastructure integration.</p>
+      </div>
+    </div>
+
   </div>
 
   <!-- MAIN APP SCREEN -->
@@ -442,7 +618,7 @@
         <!-- QUICK ACTIONS SHORTCUT BAR -->
         <div class="quick-actions-bar">
           <div class="quick-actions-title">
-            <i class="fa-solid fa-bolt" style="color: #f59e0b; font-size: 1.1rem;"></i> Quick Actions:
+            <i class="fa-solid fa-bolt" style="color: #f59e0b; font-size: 1.1rem;"></i> Security Gate Quick Actions:
           </div>
           <div class="action-btn-group">
             <button class="btn-action" style="background: #0f172a;" onclick="exportToCSV()"><i class="fa-solid fa-file-excel"></i> Export Today Logs</button>
