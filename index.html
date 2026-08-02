@@ -23,7 +23,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
     body { background-color: var(--gray-bg); color: var(--text-dark); min-height: 100vh; overflow-x: hidden; }
 
-    /* FULL VIEWPORT BACKGROUND IMAGE APPLIED TO ENTIRE LOGIN WRAPPER */
+    /* FULL VIEWPORT BACKGROUND IMAGE APPLIED TO ENTIRE WRAPPER */
     #loginScreen {
       display: flex;
       min-height: 100vh;
@@ -455,26 +455,28 @@
     .filter-bar { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 20px; flex-wrap: wrap; }
     .search-box { flex: 1; min-width: 200px; }
     
-    /* NO SCROLL BAR TABLE STYLING - FULL WIDTH RESPONSIVE LAYOUT */
+    /* RESPONSIVE TABLE WRAPPER WITH CLEAN HORIZONTAL SCROLL FOR SMALL SCREENS */
     .table-responsive-wrapper {
       width: 100%;
-      overflow-x: visible;
+      overflow-x: auto;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
     }
 
     table { 
       width: 100%; 
+      min-width: 1100px; /* Ensures text columns never compress unreadably */
       border-collapse: collapse; 
-      font-size: 0.78rem; 
-      margin-top: 10px; 
-      table-layout: auto;
+      font-size: 0.82rem; 
+      background: #ffffff;
     }
     th, td { 
       border: 1px solid var(--border-color); 
-      padding: 6px 8px; 
+      padding: 8px 10px; 
       text-align: left; 
       vertical-align: middle; 
       line-height: 1.3;
-      word-break: break-word;
+      word-break: normal;
     }
     th { 
       background: var(--light-blue); 
@@ -485,7 +487,7 @@
     }
     tr:nth-child(even) { background: #f8fafc; }
 
-    /* Specific Column Alignment Tweaks for Clean Fit */
+    /* Column Width & Alignment Tweaks for Data Cleanliness */
     #logsTable th:nth-child(1), #logsTable td:nth-child(1), /* Pass No */
     #logsTable th:nth-child(2), #logsTable td:nth-child(2), /* Date */
     #logsTable th:nth-child(3), #logsTable td:nth-child(3), /* Time In */
@@ -498,7 +500,7 @@
       white-space: nowrap;
     }
 
-    #logsTable td:nth-child(1) strong { font-size: 0.80rem; letter-spacing: 0.2px; }
+    #logsTable td:nth-child(1) strong { font-size: 0.82rem; letter-spacing: 0.2px; }
 
     .btn-action { background: var(--blue); color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem; transition: background 0.2s ease, transform 0.15s ease; }
     .btn-action:hover { background: #0369a1; transform: translateY(-1px); }
@@ -508,7 +510,7 @@
     .btn-purple:hover { background: #6d28d9; }
     .btn-reset { background: #f59e0b; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; margin-right: 5px; transition: background 0.2s ease; }
     .btn-reset:hover { background: #d97706; }
-    .btn-out { background: #e11d48; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.72rem; font-weight: bold; transition: background 0.2s ease; display: inline-block; }
+    .btn-out { background: #e11d48; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; transition: background 0.2s ease; display: inline-block; }
     .btn-out:hover { background: #be123c; }
 
     /* MOBILE PUBLIC PASS VIEW STYLING */
@@ -1105,6 +1107,30 @@
     let loadedVisitorPhoto = null;
     let isPassAlreadySaved = false;
 
+    // HELPER: CONVERT RAW GOOGLE SHEETS DATE/TIME TIMESTAMPS TO CLEAN FORMATS
+    function cleanDateTimeDisplay(val, type) {
+      if (!val || val === '_______' || val === '--:--' || val === 'N/A') return val || '_______';
+      
+      var strVal = String(val).trim();
+
+      // Check if value is a raw JS/Google Date String (e.g., "Sun Mar 08 2026...")
+      if (strVal.includes('GMT') || strVal.includes('Standard Time') || !isNaN(Date.parse(strVal))) {
+        var d = new Date(strVal);
+        if (!isNaN(d.getTime())) {
+          if (type === 'date') {
+            var day = String(d.getDate()).padStart(2, '0');
+            var month = String(d.getMonth() + 1).padStart(2, '0');
+            var year = d.getFullYear();
+            return day + '-' + month + '-' + year;
+          }
+          if (type === 'time') {
+            return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+          }
+        }
+      }
+      return strVal;
+    }
+
     // HELPER: CONVERT GOOGLE DRIVE VIEW LINKS TO DIRECT THUMBNAIL URLS
     function getDirectDriveImageUrl(url) {
       if (!url || url === 'No Photo' || url === 'NO_PHOTO' || url === 'undefined' || url === 'N/A') return null;
@@ -1375,7 +1401,12 @@
             document.getElementById('statToday').textContent = data.statToday;
             document.getElementById('statYesterday').textContent = data.statYesterday;
 
-            globalCloudLogs = data.logs || [];
+            globalCloudLogs = (data.logs || []).map(log => ({
+              ...log,
+              date: cleanDateTimeDisplay(log.date, 'date'),
+              timeIn: cleanDateTimeDisplay(log.timeIn, 'time'),
+              timeOut: cleanDateTimeDisplay(log.timeOut, 'time')
+            }));
             
             if (data.users && data.users.length > 0) {
               globalUsersList = data.users.map(u => ({
@@ -1657,9 +1688,9 @@
 
         if (reprintExactPass) {
           document.getElementById('prevPassNo').textContent = match.passNo;
-          document.getElementById('prevDate').textContent = match.date;
-          document.getElementById('prevTimeIn').textContent = match.timeIn;
-          document.getElementById('prevTimeOut').textContent = (match.timeOut && match.timeOut !== '_______') ? match.timeOut : '_______';
+          document.getElementById('prevDate').textContent = cleanDateTimeDisplay(match.date, 'date');
+          document.getElementById('prevTimeIn').textContent = cleanDateTimeDisplay(match.timeIn, 'time');
+          document.getElementById('prevTimeOut').textContent = (match.timeOut && match.timeOut !== '_______') ? cleanDateTimeDisplay(match.timeOut, 'time') : '_______';
           document.getElementById('prevPurpose').textContent = match.purpose || 'Meeting';
           
           generateQrCode("passQrCode", getQrWebUrl(match.passNo), 100);
