@@ -37,9 +37,10 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 40px 60px;
+      padding: 30px 60px;
       background: #ffffff;
       overflow-y: auto;
+      position: relative;
     }
 
     /* Right Side: Visual Showcase with Unchanged Background */
@@ -54,12 +55,12 @@
       color: white;
     }
 
-    /* Header & Branding */
+    /* Header & Branding (Fixed Top Left) */
     .brand-header {
       display: flex;
       align-items: center;
       gap: 15px;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
     }
     .brand-logo-text {
       line-height: 1.1;
@@ -76,6 +77,20 @@
       color: #312e81;
     }
 
+    /* Centered Login Content Area */
+    .login-center-content {
+      margin: auto 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .portal-heading {
+      text-align: center;
+      width: 100%;
+      max-width: 440px;
+    }
     .portal-heading h2 {
       font-size: 1.1rem;
       color: var(--navy);
@@ -98,6 +113,8 @@
       border-radius: 8px;
       padding: 16px;
       margin-bottom: 25px;
+      width: 100%;
+      max-width: 440px;
     }
     .vms-info-box h4 {
       font-size: 0.9rem;
@@ -145,13 +162,13 @@
       transition: background 0.2s;
     }
     .btn-login:hover { background: #0369a1; }
-    .error-msg { color: #dc2626; font-size: 0.85rem; margin-top: 10px; display: none; }
+    .error-msg { color: #dc2626; font-size: 0.85rem; margin-top: 10px; display: none; text-align: center; }
 
     /* Footer Credits */
     .login-footer {
-      margin-top: 30px;
       font-size: 0.75rem;
       color: #94a3b8;
+      padding-top: 20px;
     }
 
     /* Right Panel Text Content */
@@ -503,17 +520,18 @@
   <!-- SPLIT-SCREEN LOGIN PAGE -->
   <div id="loginScreen">
     
-    <!-- LEFT PANEL: LOGO, PORTAL UNDERSTANDING & LOGIN FORM -->
+    <!-- LEFT PANEL: LOGO (TOP LEFT), CENTERED LOGIN CONTENT -->
     <div class="login-left-panel">
-      <div>
-        <!-- SICAL Branding -->
-        <div class="brand-header">
-          <div class="brand-logo-text">
-            <div class="main-title">SICAL</div>
-            <div class="sub-title">Pristine Group Company</div>
-          </div>
+      <!-- 1. Top Left Branding Logo -->
+      <div class="brand-header">
+        <div class="brand-logo-text">
+          <div class="main-title">SICAL</div>
+          <div class="sub-title">Pristine Group Company</div>
         </div>
+      </div>
 
+      <!-- Centered Details & Login Form -->
+      <div class="login-center-content">
         <div class="portal-heading">
           <h2>SICAL Multimodal and Rail Transport Limited</h2>
           <p class="portal-subtitle">Visitor Management System (VMS Portal 2.0)</p>
@@ -637,7 +655,7 @@
         <!-- MIDDLE LAYER: LIVE IN-GATE FEED & DEPARTMENT DISTRIBUTION -->
         <div class="dashboard-grid-2">
           
-          <!-- LIVE IN-GATE ACTIVITY FEED (ACTION / VIEW PASS COLUMN REMOVED) -->
+          <!-- LIVE IN-GATE ACTIVITY FEED -->
           <div class="card">
             <h3><i class="fa-solid fa-clock-rotate-left"></i> Live In-Gate Activity Log (Recent Check-Ins)</h3>
             <div style="overflow-x: auto;">
@@ -657,7 +675,7 @@
             </div>
           </div>
 
-          <!-- VISITORS BY DEPARTMENT (ANIMATED DONUT PIE CHART) -->
+          <!-- VISITORS BY DEPARTMENT -->
           <div class="card">
             <h3><i class="fa-solid fa-chart-pie"></i> Traffic By Department</h3>
             <div class="chart-box">
@@ -687,7 +705,7 @@
             <h3><i class="fa-solid fa-bars-staggered"></i> Visitor Distribution by Entry Purpose</h3>
             <div class="progress-list" id="purposeProgressList">
               <div class="progress-item">
-                <div class="progress-meta"><span>Clearance / EXIM Delivery</span><span id="lblPurpEXIM">0%</span></div>
+                <div class="progress-meta"><span>Customs Clearance / EXIM Delivery</span><span id="lblPurpEXIM">0%</span></div>
                 <div class="progress-bar-bg"><div class="progress-bar-fill" id="barPurpEXIM" style="background: #0284c7;"></div></div>
               </div>
               <div class="progress-item">
@@ -766,10 +784,12 @@
                   <input type="text" id="personToMeet" required>
                 </div>
 
+                <!-- 2. UPDATED DEPARTMENT LIST OF VALUES INCLUDING 'CFS HEAD' -->
                 <div class="input-group">
                   <label>Department *</label>
                   <select id="department" required>
                     <option value="Admin">Admin</option>
+                    <option value="CFS HEAD">CFS HEAD</option>
                     <option value="MEP">MEP</option>
                     <option value="Import">Import</option>
                     <option value="Export">Export</option>
@@ -794,14 +814,14 @@
                   </div>
                 </div>
 
+                <!-- 3. UPDATED PURPOSE LIST OF VALUES ('Customs Clearance' AS A SINGLE WORD) -->
                 <div class="input-group full-width">
                   <label>Purpose *</label>
                   <select id="purposeSelect" required>
                     <option value="Meeting">Meeting</option>
                     <option value="Vendor/Delivery">Vendor/Delivery</option>
                     <option value="Work/Maint.">Work/Maint.</option>
-                    <option value="Customs">Customs</option>
-                    <option value="Clearance">Clearance</option>
+                    <option value="Customs Clearance">Customs Clearance</option>
                     <option value="EXIM Delivery">EXIM Delivery</option>
                   </select>
                 </div>
@@ -1397,7 +1417,7 @@
         document.getElementById('deptDonutChart').style.background = `#cbd5e1`;
       }
 
-      // Update Purpose Progress Bars (with CSS smooth fill animation)
+      // Update Purpose Progress Bars
       const pctPurpEXIM = hasLogs ? Math.round((purposeCounts.EXIM / totalLogs) * 100) : 0;
       const pctPurpMeeting = hasLogs ? Math.round((purposeCounts.Meeting / totalLogs) * 100) : 0;
       const pctPurpVendor = hasLogs ? Math.round((purposeCounts.Vendor / totalLogs) * 100) : 0;
@@ -1412,7 +1432,7 @@
         document.getElementById('barPurpVendor').style.width = pctPurpVendor + '%';
       }, 100);
 
-      // Render Live Activity Table (Recent 5 Check-Ins)
+      // Render Live Activity Table
       renderDashLiveLogs(logs.slice(-5).reverse());
     }
 
