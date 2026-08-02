@@ -23,7 +23,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
     body { background-color: var(--gray-bg); color: var(--text-dark); min-height: 100vh; overflow-x: hidden; }
 
-    /* 1. FULL VIEWPORT BACKGROUND IMAGE APPLIED TO ENTIRE WRAPPER */
+    /* FULL VIEWPORT BACKGROUND IMAGE APPLIED TO ENTIRE LOGIN WRAPPER */
     #loginScreen {
       display: flex;
       min-height: 100vh;
@@ -32,7 +32,7 @@
                   url('SICAL_CFS_VMS_BG.jpg') center/cover no-repeat fixed !important;
     }
 
-    /* 2. LEFT PANEL: SEMI-TRANSPARENT WITH BACKDROP BLUR */
+    /* LEFT PANEL: SEMI-TRANSPARENT WITH BACKDROP BLUR */
     .login-left-panel {
       flex: 1.1;
       display: flex;
@@ -50,7 +50,7 @@
       position: relative;
     }
 
-    /* 3. RIGHT PANEL: FULLY TRANSPARENT */
+    /* RIGHT PANEL: FULLY TRANSPARENT */
     .login-right-panel {
       flex: 1.3;
       display: flex;
@@ -253,7 +253,7 @@
     .sidebar-menu button i { width: 20px; text-align: center; font-size: 1rem; }
 
     .content-container {
-      padding: 25px; max-width: 1300px; margin: 0 auto;
+      padding: 25px; max-width: 100%; margin: 0 auto;
       margin-left: var(--sidebar-width); transition: all 0.3s ease;
     }
     .content-container.full-width { margin-left: 0; }
@@ -454,10 +454,51 @@
 
     .filter-bar { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 20px; flex-wrap: wrap; }
     .search-box { flex: 1; min-width: 200px; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 10px; }
-    th, td { border: 1px solid var(--border-color); padding: 10px; text-align: left; }
-    th { background: var(--light-blue); color: var(--navy); font-weight: bold; }
+    
+    /* NO SCROLL BAR TABLE STYLING - FULL WIDTH RESPONSIVE LAYOUT */
+    .table-responsive-wrapper {
+      width: 100%;
+      overflow-x: visible;
+    }
+
+    table { 
+      width: 100%; 
+      border-collapse: collapse; 
+      font-size: 0.78rem; 
+      margin-top: 10px; 
+      table-layout: auto;
+    }
+    th, td { 
+      border: 1px solid var(--border-color); 
+      padding: 6px 8px; 
+      text-align: left; 
+      vertical-align: middle; 
+      line-height: 1.3;
+      word-break: break-word;
+    }
+    th { 
+      background: var(--light-blue); 
+      color: var(--navy); 
+      font-weight: 700; 
+      text-align: center; 
+      white-space: nowrap; 
+    }
     tr:nth-child(even) { background: #f8fafc; }
+
+    /* Specific Column Alignment Tweaks for Clean Fit */
+    #logsTable th:nth-child(1), #logsTable td:nth-child(1), /* Pass No */
+    #logsTable th:nth-child(2), #logsTable td:nth-child(2), /* Date */
+    #logsTable th:nth-child(3), #logsTable td:nth-child(3), /* Time In */
+    #logsTable th:nth-child(4), #logsTable td:nth-child(4), /* Time Out */
+    #logsTable th:nth-child(6), #logsTable td:nth-child(6), /* Mobile */
+    #logsTable th:nth-child(11), #logsTable td:nth-child(11), /* Validity */
+    #logsTable th:nth-child(13), #logsTable td:nth-child(13), /* Photo */
+    #logsTable th:nth-child(14), #logsTable td:nth-child(14)  /* Action */ {
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    #logsTable td:nth-child(1) strong { font-size: 0.80rem; letter-spacing: 0.2px; }
 
     .btn-action { background: var(--blue); color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem; transition: background 0.2s ease, transform 0.15s ease; }
     .btn-action:hover { background: #0369a1; transform: translateY(-1px); }
@@ -467,7 +508,7 @@
     .btn-purple:hover { background: #6d28d9; }
     .btn-reset { background: #f59e0b; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; margin-right: 5px; transition: background 0.2s ease; }
     .btn-reset:hover { background: #d97706; }
-    .btn-out { background: #e11d48; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; transition: background 0.2s ease; }
+    .btn-out { background: #e11d48; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.72rem; font-weight: bold; transition: background 0.2s ease; display: inline-block; }
     .btn-out:hover { background: #be123c; }
 
     /* MOBILE PUBLIC PASS VIEW STYLING */
@@ -677,7 +718,7 @@
           <!-- LIVE IN-GATE ACTIVITY FEED -->
           <div class="card">
             <h3><i class="fa-solid fa-clock-rotate-left"></i> Live In-Gate Activity Log (Recent Check-Ins)</h3>
-            <div style="overflow-x: auto;">
+            <div class="table-responsive-wrapper">
               <table>
                 <thead>
                   <tr>
@@ -963,7 +1004,7 @@
             <button class="btn-action btn-purple" onclick="fetchCloudData()"><i class="fa-solid fa-rotate"></i> Refresh Database Logs</button>
           </div>
 
-          <div style="overflow-x: auto;">
+          <div class="table-responsive-wrapper">
             <table id="logsTable">
               <thead>
                 <tr>
@@ -1000,11 +1041,11 @@
             <div class="admin-form-grid">
               <div class="input-group">
                 <label>Username *</label>
-                <input type="text" id="newUsername" required>
+                <input type="text" id="newUsername" placeholder="e.g. SECURITY or CFS HEAD" required>
               </div>
               <div class="input-group">
                 <label>Password *</label>
-                <input type="password" id="newPassword" required>
+                <input type="password" id="newPassword" placeholder="Enter password" required>
               </div>
             </div>
 
@@ -1017,22 +1058,33 @@
               </div>
             </div>
 
+            <!-- ACTION PERMISSION CONTROL WHEN CREATING ACCOUNT -->
+            <div class="input-group" style="margin-top: 15px; background: var(--light-blue); padding: 12px; border-radius: 6px; border: 1px solid #93c5fd;">
+              <label style="color: var(--navy); font-weight: bold;"><i class="fa-solid fa-shield-cat"></i> Visitor Checkout Action Permission:</label>
+              <div class="checkbox-group" style="margin-top: 6px;">
+                <label><input type="checkbox" id="permCanMarkOut" checked> <strong>Allow Visitor Mark-Out Access</strong> (Check this ONLY for Security users)</label>
+              </div>
+            </div>
+
             <button type="submit" class="btn-action btn-success" style="margin-top: 15px;"><i class="fa-solid fa-user-plus"></i> Create User Account</button>
           </form>
 
           <h4 style="margin-top: 30px; margin-bottom: 10px;">Registered System Users (Synced via Database)</h4>
-          <table>
-            <thead>
-              <tr>
-                <th>Username</th>
-                <th>Assigned Menus</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="userTableBody">
-              <tr><td colspan="3" style="text-align:center;">Loading users...</td></tr>
-            </tbody>
-          </table>
+          <div class="table-responsive-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Assigned Menus</th>
+                  <th>Can Mark Out?</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="userTableBody">
+                <tr><td colspan="4" style="text-align:center;">Loading users...</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -1044,9 +1096,9 @@
 
     let globalCloudLogs = [];
     
+    /* DEFAULT MASTER ADMIN USER ONLY */
     let globalUsersList = [
-      { username: 'SICAL ADMIN', pass: 'SICAL$321', role: 'admin', menus: ['dashboard', 'entry', 'report', 'admin'] },
-      { username: 'SICAL CFS', pass: 'SICAL$321', role: 'admin', menus: ['dashboard', 'entry', 'report', 'admin'] }
+      { username: 'SICAL ADMIN', pass: 'SICAL$321', role: 'admin', canMarkOut: true, menus: ['dashboard', 'entry', 'report', 'admin'] }
     ];
 
     let html5QrcodeScanner = null;
@@ -1324,8 +1376,12 @@
             document.getElementById('statYesterday').textContent = data.statYesterday;
 
             globalCloudLogs = data.logs || [];
+            
             if (data.users && data.users.length > 0) {
-              globalUsersList = data.users;
+              globalUsersList = data.users.map(u => ({
+                ...u,
+                canMarkOut: (u.canMarkOut === true || u.canMarkOut === "TRUE" || u.canMarkOut === "true")
+              }));
             }
 
             if (globalCloudLogs.length > 0) {
@@ -1523,6 +1579,11 @@
     }
 
     function handleQrScan() {
+      if (activeUser && activeUser.canMarkOut === false) {
+        alert("Action Denied: Your account role does not have permission to mark visitors out.");
+        return;
+      }
+
       let rawVal = document.getElementById('entrySearchInput').value.trim();
       
       let extractedPass = rawVal;
@@ -1763,6 +1824,7 @@
       e.preventDefault();
       const userVal = document.getElementById('newUsername').value.trim();
       const passVal = document.getElementById('newPassword').value.trim();
+      const canMarkOutVal = document.getElementById('permCanMarkOut').checked;
 
       const existingUser = globalUsersList.find(u => u.username.toLowerCase() === userVal.toLowerCase());
       if (existingUser) {
@@ -1785,7 +1847,8 @@
               action: "addUser",
               username: userVal,
               pass: passVal,
-              role: "user",
+              role: canMarkOutVal ? "security" : "viewer",
+              canMarkOut: canMarkOutVal,
               menus: menus
             })
           });
@@ -1794,7 +1857,7 @@
         }
       }
 
-      alert(`User ${userVal} created successfully! Syncing to sheet...`);
+      alert(`User "${userVal}" created successfully! Syncing to sheet...`);
       document.getElementById('addUserForm').reset();
       setTimeout(() => { fetchCloudData(); }, 1000);
     }
@@ -1805,7 +1868,8 @@
       const hasDash = confirm(`Allow "${userObj.username}" access to DASHBOARD?\n\nClick OK for YES, Cancel for NO.`);
       const hasEntry = confirm(`Allow "${userObj.username}" access to VISITOR ENTRY?\n\nClick OK for YES, Cancel for NO.`);
       const hasReport = confirm(`Allow "${userObj.username}" access to REPORTS & LOGS?\n\nClick OK for YES, Cancel for NO.`);
-      
+      const canMarkOut = confirm(`Allow "${userObj.username}" permission to MARK OUT VISITORS?\n\nClick OK for YES (Security), Cancel for NO (Read-only viewers).`);
+
       const newMenus = [];
       if (hasDash) newMenus.push('dashboard');
       if (hasEntry) newMenus.push('entry');
@@ -1820,6 +1884,7 @@
             body: JSON.stringify({
               action: "updatePermissions",
               username: userObj.username,
+              canMarkOut: canMarkOut,
               menus: newMenus
             })
           });
@@ -1886,12 +1951,16 @@
       tbody.innerHTML = '';
       
       if (!globalUsersList || globalUsersList.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No users registered.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No users registered.</td></tr>';
         return;
       }
 
       globalUsersList.forEach((u, i) => {
         const menuDisplay = Array.isArray(u.menus) ? u.menus.join(', ') : u.menus;
+        const markOutText = u.canMarkOut !== false 
+          ? `<span style="color:#16a34a; font-weight:bold;"><i class="fa-solid fa-check"></i> Allowed</span>` 
+          : `<span style="color:#dc2626; font-weight:bold;"><i class="fa-solid fa-xmark"></i> Disabled</span>`;
+
         const editPermBtn = u.role === 'admin' 
           ? '' 
           : `<button class="btn-action" style="background:#0284c7; padding:4px 8px; font-size:0.75rem; margin-right:5px;" onclick="editUserPermissions(${i})"><i class="fa-solid fa-pen-to-square"></i> Edit Permissions</button>`;
@@ -1903,12 +1972,18 @@
         tbody.innerHTML += `<tr>
           <td><strong>${u.username}</strong></td>
           <td>${menuDisplay}</td>
+          <td style="text-align:center;">${markOutText}</td>
           <td>${editPermBtn}${resetBtn}${deleteBtn}</td>
         </tr>`;
       });
     }
 
     async function recordTimeOut(passNo) {
+      if (activeUser && activeUser.canMarkOut === false) {
+        alert("Action Denied: Your account role does not have permission to mark visitors out.");
+        return;
+      }
+
       const outTime = getCurrentTime();
 
       if (GOOGLE_SCRIPT_URL) {
@@ -1962,10 +2037,20 @@
         return;
       }
 
+      // Check active user's permissions for the Mark Out action
+      const userCanMarkOut = !activeUser || activeUser.canMarkOut !== false;
+
       [...logs].reverse().forEach(log => {
-        const outBtn = (log.timeOut === '_______' || log.timeOut === '--:--' || !log.timeOut)
-          ? `<button class="btn-out" onclick="recordTimeOut('${log.passNo}')">Mark Out</button>`
-          : `<span style="color:#16a34a; font-weight:bold;">OUT</span>`;
+        let actionContent = '';
+        if (log.timeOut === '_______' || log.timeOut === '--:--' || !log.timeOut) {
+          if (userCanMarkOut) {
+            actionContent = `<button class="btn-out" onclick="recordTimeOut('${log.passNo}')">Mark Out</button>`;
+          } else {
+            actionContent = `<span style="color:#64748b; font-weight:600; font-size:0.8rem;">INSIDE</span>`;
+          }
+        } else {
+          actionContent = `<span style="color:#16a34a; font-weight:bold;">OUT</span>`;
+        }
 
         const directImgUrl = getDirectDriveImageUrl(log.photoUrl);
         const photoCell = (directImgUrl && directImgUrl.startsWith('http')) 
@@ -1988,7 +2073,7 @@
           <td>${log.validity}</td>
           <td>${log.purpose}</td>
           <td>${photoCell}</td>
-          <td>${outBtn}</td>
+          <td>${actionContent}</td>
         </tr>`;
         tbody.innerHTML += row;
       });
