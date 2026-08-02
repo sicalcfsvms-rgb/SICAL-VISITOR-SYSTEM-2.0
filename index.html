@@ -21,21 +21,27 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
-    
-    /* DEFAULT 80% SCALING WITH BROWSER ZOOM OVERRIDE SUPPORT */
-    html {
-      zoom: 0.85; /* Default optimal scale */
+
+    /* ENSURE FULL VIEWPORT HEIGHT FOR BODY & LOGIN */
+    html, body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      background-color: var(--gray-bg);
+      color: var(--text-dark);
+      overflow-x: hidden;
     }
 
-    body { background-color: var(--gray-bg); color: var(--text-dark); min-height: 100vh; overflow-x: hidden; }
-
-    /* SPLIT-SCREEN LOGIN LAYOUT */
+    /* FULL VIEWPORT BACKGROUND IMAGE FOR LOGIN - NO WHITE SPACE BELOW */
     #loginScreen {
       display: flex;
+      height: 100vh;
       min-height: 100vh;
-      width: 100%;
+      width: 100vw;
       background: linear-gradient(rgba(15, 23, 42, 0.30), rgba(15, 23, 42, 0.45)), 
                   url('SICAL_CFS_VMS_BG.jpg') center/cover no-repeat fixed !important;
+      overflow: hidden;
     }
 
     .login-left-panel {
@@ -134,13 +140,17 @@
     .right-panel-content p { font-size: 0.98rem; color: #f1f5f9; line-height: 1.6; }
 
     @media (max-width: 960px) {
-      #loginScreen { flex-direction: column-reverse; }
+      #loginScreen { flex-direction: column-reverse; height: auto; min-height: 100vh; }
       .login-right-panel { min-height: 200px; padding: 30px; }
       .login-left-panel { padding: 30px 20px; }
     }
 
-    /* MAIN APP LAYOUT */
-    #appScreen { display: none; min-height: 100vh; position: relative; }
+    /* MAIN APP LAYOUT (SCALED PROPORTIONALLY FOR PORTAL VIEWS) */
+    #appScreen { 
+      display: none; 
+      min-height: 100vh; 
+      position: relative;
+    }
     
     header {
       background: var(--navy); color: white; padding: 12px 20px;
@@ -237,7 +247,6 @@
     .progress-bar-bg { background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden; }
     .progress-bar-fill { height: 100%; border-radius: 4px; width: 0%; transition: width 1s ease; }
 
-    /* VISITOR ENTRY GRID & CARD PREVIEW BALANCED SCALING */
     .grid-2 { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 25px; align-items: start; }
     
     .quick-search-box {
@@ -339,7 +348,7 @@
     .btn-reset { background: #f59e0b; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; margin-right: 5px; }
     .btn-out { background: #e11d48; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; display: inline-block; }
 
-    /* MOBILE PUBLIC PASS VIEW */
+    /* MOBILE PUBLIC PASS VIEW STYLING */
     body.public-pass-view header,
     body.public-pass-view .sidebar,
     body.public-pass-view .card,
@@ -354,7 +363,7 @@
 
     @media print {
       @page { size: portrait; margin: 0; }
-      html, body { background: #fff !important; margin: 0 !important; padding: 0 !important; height: 100% !important; overflow: hidden !important; zoom: 1 !important; }
+      html, body { background: #fff !important; margin: 0 !important; padding: 0 !important; height: 100% !important; overflow: hidden !important; }
       #loginScreen, header, .sidebar, .card, h3, .stats-grid, .quick-actions-bar, .dashboard-grid-2, .dashboard-grid-3, .alert-banner, .filter-bar, table, #addUserForm, #userTableBody { display: none !important; }
       body * { visibility: hidden !important; }
       #printablePass, #printablePass * { visibility: visible !important; }
@@ -368,7 +377,7 @@
 </head>
 <body>
 
-  <!-- LOGIN SCREEN -->
+  <!-- FULL SCREEN SPLIT LOGIN LAYOUT -->
   <div id="loginScreen">
     <div class="login-left-panel">
       <div>
@@ -857,7 +866,6 @@
   </div>
 
   <script>
-    // WEB APP GOOGLE APPS SCRIPT URL
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6mWdtlMXTSf3IwUkHTQj6M3uVHEyKBxIRKgHRAqUPbJ0EGSdeheHrs4NFzwMcyyfdKg/exec";
 
     let globalCloudLogs = [];
@@ -869,7 +877,6 @@
     let loadedVisitorPhoto = null;
     let isPassAlreadySaved = false;
 
-    // ROBUST FLEXIBLE DATE PARSER FOR ALL INPUT DATE FORMATS
     function parseToCleanDateObj(rawVal) {
       if (!rawVal) return null;
       var str = String(rawVal).trim();
@@ -939,7 +946,6 @@
       }
     }
 
-    // AUTO-LOAD VISITOR ENTRY FROM MOBILE QR SCAN LINK (NO LOGIN PROMPT REQUIRED)
     window.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
       const passParam = urlParams.get('pass');
@@ -1391,7 +1397,6 @@
       return { isExpired: false, label: `VALID PASS (${validityType})` };
     }
 
-    // SMART OUT-GATE SCANNER AND VERIFICATION
     function handleQrScan() {
       if (activeUser && activeUser.canMarkOut === false) {
         alert("Action Denied: Your account role does not have permission to mark visitors out.");
