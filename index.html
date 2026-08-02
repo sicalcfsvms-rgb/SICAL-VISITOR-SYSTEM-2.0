@@ -37,21 +37,22 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 40px 60px;
+      padding: 45px 65px;
       background: #ffffff;
       overflow-y: auto;
     }
 
-    /* Right Side: Visual Showcase with Unchanged Background */
+    /* Right Side: Visual Showcase Matched to Reference Image */
     .login-right-panel {
       flex: 1.3;
-      background: linear-gradient(rgba(15, 23, 42, 0.45), rgba(15, 23, 42, 0.60)), 
+      background: linear-gradient(rgba(15, 23, 42, 0.25), rgba(15, 23, 42, 0.40)), 
                   url('SICAL_CFS_VMS_BG.jpg') center/cover no-repeat !important;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-      padding: 50px;
+      padding: 60px 50px;
       color: white;
+      position: relative;
     }
 
     /* Header & Branding */
@@ -59,35 +60,36 @@
       display: flex;
       align-items: center;
       gap: 15px;
-      margin-bottom: 25px;
+      margin-bottom: 30px;
     }
     .brand-logo-text {
-      line-height: 1.1;
+      line-height: 1.15;
     }
     .brand-logo-text .main-title {
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       font-weight: 900;
       color: #dc2626;
       letter-spacing: 0.5px;
     }
     .brand-logo-text .sub-title {
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       font-weight: 700;
       color: #312e81;
     }
 
     .portal-heading h2 {
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       color: var(--navy);
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      font-weight: 800;
     }
     .portal-heading p.portal-subtitle {
       color: var(--blue);
       font-size: 0.95rem;
       font-weight: 700;
-      margin-top: 2px;
-      margin-bottom: 20px;
+      margin-top: 4px;
+      margin-bottom: 24px;
     }
 
     /* Portal Information Section */
@@ -96,31 +98,33 @@
       border: 1px solid var(--border-color);
       border-left: 4px solid var(--blue);
       border-radius: 8px;
-      padding: 16px;
+      padding: 18px 20px;
       margin-bottom: 25px;
     }
     .vms-info-box h4 {
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       color: var(--navy);
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       display: flex;
       align-items: center;
       gap: 8px;
+      font-weight: 700;
     }
     .vms-info-box ul {
       list-style: none;
-      font-size: 0.82rem;
+      font-size: 0.84rem;
       color: #475569;
     }
     .vms-info-box ul li {
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       display: flex;
       align-items: flex-start;
       gap: 8px;
+      line-height: 1.4;
     }
     .vms-info-box ul li i {
       color: var(--blue);
-      margin-top: 3px;
+      margin-top: 2px;
     }
 
     /* Form Styling */
@@ -128,20 +132,21 @@
       max-width: 440px;
       width: 100%;
     }
-    .input-group { margin-bottom: 16px; text-align: left; }
-    .input-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; }
+    .input-group { margin-bottom: 18px; text-align: left; }
+    .input-group label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: var(--navy); }
     .input-group input, .input-group select {
-      width: 100%; padding: 11px 14px; border: 1px solid var(--border-color);
+      width: 100%; padding: 12px 14px; border: 1px solid var(--border-color);
       border-radius: 6px; font-size: 0.95rem; background: white;
       transition: border-color 0.2s;
     }
     .input-group input:focus {
       outline: none;
       border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
     }
     .btn-login {
-      width: 100%; padding: 12px; background: var(--blue); color: white; border: none;
-      border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px;
+      width: 100%; padding: 13px; background: var(--blue); color: white; border: none;
+      border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 8px;
       transition: background 0.2s;
     }
     .btn-login:hover { background: #0369a1; }
@@ -150,24 +155,39 @@
     /* Footer Credits */
     .login-footer {
       margin-top: 30px;
-      font-size: 0.75rem;
+      font-size: 0.78rem;
       color: #94a3b8;
     }
 
-    /* Right Panel Text Content */
+    /* Right Panel Highlight Text Content (Exact Image Match) */
     .right-panel-content {
-      max-width: 500px;
+      max-width: 580px;
     }
     .right-panel-content h1 {
-      font-size: 2.2rem;
-      font-weight: 800;
+      font-size: 2.5rem;
+      font-weight: 900;
       margin-bottom: 12px;
-      line-height: 1.2;
+      line-height: 1.25;
+      color: white;
     }
-    .right-panel-content p {
+    .highlight-badge {
+      background-color: #1d4ed8;
+      padding: 2px 12px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+    .subtext-badge {
+      background-color: #1d4ed8;
+      padding: 4px 10px;
+      border-radius: 4px;
+      display: inline;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
       font-size: 0.95rem;
-      color: #cbd5e1;
-      line-height: 1.6;
+      color: white;
+      line-height: 1.8;
+      font-weight: 500;
     }
 
     /* Responsive Design for Split-Screen */
@@ -176,11 +196,14 @@
         flex-direction: column-reverse;
       }
       .login-right-panel {
-        min-height: 250px;
+        min-height: 280px;
         padding: 30px;
       }
       .login-left-panel {
         padding: 30px 20px;
+      }
+      .right-panel-content h1 {
+        font-size: 1.8rem;
       }
     }
 
@@ -515,7 +538,7 @@
         </div>
 
         <div class="portal-heading">
-          <h2>SICAL Multimodal and Rail Transport Limited</h2>
+          <h2>SICAL MULTIMODAL AND RAIL TRANSPORT LIMITED</h2>
           <p class="portal-subtitle">Visitor Management System (VMS Portal 2.0)</p>
         </div>
 
@@ -523,9 +546,9 @@
         <div class="vms-info-box">
           <h4><i class="fa-solid fa-shield-halved"></i> About VMS Operations</h4>
           <ul>
-            <li><i class="fa-solid fa-check-circle"></i> Digital gate pass issuance for CFS Terminal visitors and CHA agents.</li>
-            <li><i class="fa-solid fa-check-circle"></i> Automated check-in/out tracking with QR Code camera scanning.</li>
-            <li><i class="fa-solid fa-check-circle"></i> Integrated photo capture and security overstay detection alerts.</li>
+            <li><i class="fa-solid fa-circle-check"></i> Digital gate pass issuance for CFS Terminal visitors and CHA agents.</li>
+            <li><i class="fa-solid fa-circle-check"></i> Automated check-in/out tracking with QR Code camera scanning.</li>
+            <li><i class="fa-solid fa-circle-check"></i> Integrated photo capture and security overstay detection alerts.</li>
           </ul>
         </div>
 
@@ -551,11 +574,16 @@
       </div>
     </div>
 
-    <!-- RIGHT PANEL: UNCHANGED BACKGROUND IMAGE SHOWCASE -->
+    <!-- RIGHT PANEL: MATCHED TO REFERENCE IMAGE DESIGN -->
     <div class="login-right-panel">
       <div class="right-panel-content">
-        <h1>Container Freight Station Operations</h1>
-        <p>Streamlining security verification, visitor access control, and operational entry logging with full logistics infrastructure integration.</p>
+        <h1>
+          <span class="highlight-badge">Container Freight Station</span><br>
+          <span class="highlight-badge">Operations</span>
+        </h1>
+        <p>
+          <span class="subtext-badge">Streamlining security verification, visitor access control, and operational entry logging with full logistics infrastructure integration.</span>
+        </p>
       </div>
     </div>
 
