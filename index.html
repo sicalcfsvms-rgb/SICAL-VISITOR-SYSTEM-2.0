@@ -381,6 +381,57 @@
       .content-container { margin-left: 0 !important; max-width: 100vw !important; }
     }
 
+    /* GATE PASS CARD PREVIEW STYLING RESTORED */
+    .pass-badge { 
+      background: #ffffff; 
+      border: 1.5px solid #0f172a; 
+      border-radius: 10px; 
+      padding: 0; 
+      font-size: 0.80rem; 
+      position: relative; 
+      color: #0f172a; 
+      overflow: hidden; 
+      width: 100%; 
+      max-width: 420px; 
+      margin: 0 auto; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+    }
+
+    .badge-header { background: #ffffff; color: #0f172a; padding: 8px 12px; position: relative; border-bottom: 2px solid #0f172a; }
+    .badge-header h2 { font-size: 0.80rem; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.2px; line-height: 1.2; width: 68%; }
+    .badge-header p.address-text { font-size: 0.60rem; color: #475569; margin-top: 2px; }
+
+    .top-right-logo { position: absolute; top: 6px; right: 8px; text-align: right; }
+    .top-right-logo .logo-main { font-size: 1.2rem; font-weight: 900; color: #dc2626; font-family: Arial, sans-serif; letter-spacing: 0.5px; line-height: 1; display: block; }
+    .top-right-logo .logo-sub { font-size: 0.45rem; font-weight: bold; color: #312e81; font-family: Arial, sans-serif; display: block; margin-top: 1px; }
+
+    .badge-title-strip { background: #ffffff; color: #0f172a; font-size: 0.90rem; font-weight: 800; text-align: center; padding: 4px; border-bottom: 1px solid #cbd5e1; letter-spacing: 0.5px; }
+
+    .badge-meta { display: flex; justify-content: space-between; align-items: center; padding: 5px 12px; font-weight: bold; font-size: 0.75rem; border-bottom: 1px solid #cbd5e1; background: #fff; }
+
+    .badge-body-container { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; background: #ffffff; }
+    .badge-details { flex: 1; }
+    .visitor-photo-frame { width: 100px; height: 120px; border: 1.5px solid #64748b; border-radius: 4px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; overflow: hidden; text-align: center; font-size: 0.65rem; color: #64748b; font-weight: bold; flex-shrink: 0; }
+    .visitor-photo-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+    .badge-row { display: flex; margin-bottom: 4px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 2px; font-size: 0.75rem; }
+    .badge-label { width: 34%; font-weight: 800; color: #0f172a; }
+    .badge-val { width: 66%; font-weight: 600; color: #1e293b; }
+
+    .status-banner { text-align: center; font-weight: bold; font-size: 0.72rem; padding: 3px; display: none; margin: 0 12px 6px 12px; border-radius: 4px; }
+    .status-banner.expired { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; display: block; }
+    .status-banner.valid { background: #f0fdf4; color: #16a34a; border: 1px solid #86efac; display: block; }
+
+    .signature-container { display: flex; justify-content: space-between; padding: 18px 12px 6px 12px; text-align: center; }
+    .sig-box { width: 32%; border-top: 1.5px solid #0f172a; padding-top: 3px; font-size: 0.54rem; font-weight: 800; color: #0f172a; }
+
+    .rules-and-qr-footer { display: flex; justify-content: space-between; align-items: flex-end; padding: 8px 12px 10px 12px; background: #ffffff; border-top: 1px solid #cbd5e1; gap: 8px; }
+    .rules-box { flex: 1; font-size: 0.55rem; color: #334155; line-height: 1.3; }
+    .rules-box h5 { margin-bottom: 2px; color: #0f172a; font-size: 0.58rem; font-weight: 800; }
+
+    .qrcode-container { flex-shrink: 0; background: #fff; padding: 2px; border: 1.5px solid #0f172a; border-radius: 4px; }
+    .qrcode-container img, .qrcode-container canvas { display: block; width: 80px !important; height: 80px !important; }
+
     /* RESPONSIVE TABLE WRAPPER WITH CLEAN HORIZONTAL SCROLLBAR */
     .table-responsive-wrapper {
       width: 100%;
@@ -837,7 +888,7 @@
             </form>
           </div>
 
-          <!-- DYNAMIC GATE PASS VISITOR CARD -->
+          <!-- DYNAMIC GATE PASS VISITOR CARD (VISITOR ENTRY PREVIEW) -->
           <div id="passPreviewCard">
             <!-- MOBILE DOWNLOAD PDF BUTTON -->
             <div id="mobilePdfBtnContainer">
@@ -1019,7 +1070,7 @@
   </div>
 
   <script>
-    // UPDATED WITH YOUR NEW GOOGLE APPS SCRIPT DEPLOYMENT URL
+    // WEB APP GOOGLE APPS SCRIPT URL
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyYj4kHgL3xu3IM_ytAjCIXDK5k7fZ5X8A-s9XIkJcW5UsxETiryv8Y3s4k2ueKfsb78A/exec";
 
     let globalCloudLogs = [];
@@ -1033,7 +1084,7 @@
     let loadedVisitorPhoto = null;
     let isPassAlreadySaved = false;
 
-    // UNIVERSAL DATE/TIME CLEANER & NORMALIZER
+    // FLEXIBLE PARSER FOR VARIOUS GOOGLE SHEET DATE FORMATS
     function parseToCleanDateObj(rawVal) {
       if (!rawVal) return null;
       var str = String(rawVal).trim();
@@ -1048,7 +1099,7 @@
         var p = str.split('-');
         return new Date(p[0], p[1] - 1, p[2]);
       }
-      // General date parse (for ISO / GMT strings)
+      // General Date parse (for ISO / GMT strings)
       var parsed = new Date(str);
       return isNaN(parsed.getTime()) ? null : parsed;
     }
@@ -1376,7 +1427,7 @@
       updatePreview();
     }
 
-    // CALCULATE REAL-TIME OPERATIONAL METRICS FOR DASHBOARD WITH ROBUST DATE NORMALIZATION
+    // CALCULATE REAL-TIME OPERATIONAL METRICS FOR DASHBOARD WITH ACCURATE DATE COMPARISON
     function computeDashboardAnalytics(logs) {
       if (!logs) logs = [];
 
@@ -1403,7 +1454,7 @@
         var logCleanDate = cleanDateTimeDisplay(log.date, 'date');
         var logObj = parseToCleanDateObj(log.date);
 
-        // 1. KPI COUNTS
+        // 1. KPI COUNTS CALCULATION
         if (logCleanDate === todayDateStr) countToday++;
         if (logCleanDate === yesterdayDateStr) countYesterday++;
         if (logObj && logObj.getMonth() === currentMonth && logObj.getFullYear() === currentYear) {
@@ -1436,7 +1487,7 @@
         else purposeCounts.Vendor++;
       });
 
-      // Update Cards
+      // Update KPI Cards Immediately
       document.getElementById('statMonth').textContent = countMonth;
       document.getElementById('statToday').textContent = countToday;
       document.getElementById('statYesterday').textContent = countYesterday;
