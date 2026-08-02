@@ -30,25 +30,25 @@
       display: flex;
       min-height: 100vh;
       width: 100%;
-      background: linear-gradient(rgba(15, 23, 42, 0.35), rgba(15, 23, 42, 0.50)), 
+      background: linear-gradient(rgba(15, 23, 42, 0.25), rgba(15, 23, 42, 0.40)), 
                   url('SICAL_CFS_VMS_BG.jpg') center/cover no-repeat fixed !important;
     }
 
-    /* LEFT PANEL: TRUE SEMI-TRANSPARENT GLASS PANEL */
+    /* LEFT PANEL: ADJUSTED SEMI-TRANSPARENCY (MORE OPAQUE & SHARP) */
     .login-left-panel {
       flex: 1.1;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 30px 60px;
+      padding: 35px 60px;
       
-      /* Lower opacity (0.45) so background image shows through clearly */
-      background: rgba(255, 255, 255, 0.45);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      /* Reduced transparency (0.72 opacity) for a cleaner, crisp look */
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       
-      border-right: 1px solid rgba(255, 255, 255, 0.3);
-      box-shadow: 10px 0 30px rgba(0, 0, 0, 0.2);
+      border-right: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 10px 0 30px rgba(0, 0, 0, 0.15);
       overflow-y: auto;
       position: relative;
     }
@@ -79,7 +79,6 @@
       font-weight: 900;
       color: #dc2626;
       letter-spacing: 0.5px;
-      text-shadow: 0 1px 2px rgba(255,255,255,0.8);
     }
     .brand-logo-text .sub-title {
       font-size: 0.8rem;
@@ -109,7 +108,7 @@
       font-weight: 900;
     }
     .portal-heading p.portal-subtitle {
-      color: #0369a1;
+      color: #0284c7;
       font-size: 0.95rem;
       font-weight: 800;
       margin-top: 2px;
@@ -118,15 +117,15 @@
 
     /* PORTAL INFO SECTION */
     .vms-info-box {
-      background: rgba(255, 255, 255, 0.60);
-      border: 1px solid rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(203, 213, 225, 0.9);
       border-left: 4px solid var(--blue);
       border-radius: 8px;
       padding: 16px;
       margin-bottom: 25px;
       width: 100%;
       max-width: 440px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
     }
     .vms-info-box h4 {
       font-size: 0.9rem;
@@ -135,11 +134,12 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      font-weight: 800;
     }
     .vms-info-box ul {
       list-style: none;
-      font-size: 0.82rem;
-      color: #0f172a;
+      font-size: 0.83rem;
+      color: #1e293b;
       font-weight: 600;
     }
     .vms-info-box ul li {
@@ -161,15 +161,16 @@
     .input-group { margin-bottom: 16px; text-align: left; }
     .input-group label { display: block; font-size: 0.85rem; font-weight: 800; margin-bottom: 6px; color: var(--navy); }
     .input-group input {
-      width: 100%; padding: 11px 14px; border: 1px solid rgba(15, 23, 42, 0.2);
-      border-radius: 6px; font-size: 0.95rem; background: rgba(255, 255, 255, 0.85);
+      width: 100%; padding: 11px 14px; border: 1px solid rgba(15, 23, 42, 0.25);
+      border-radius: 6px; font-size: 0.95rem; background: rgba(255, 255, 255, 0.95);
       transition: border-color 0.2s, box-shadow 0.2s;
       font-weight: 600;
+      color: #0f172a;
     }
     .input-group input:focus {
       outline: none;
       border-color: var(--blue);
-      background: rgba(255, 255, 255, 0.95);
+      background: #ffffff;
       box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
     }
     .btn-login {
@@ -226,7 +227,7 @@
   <!-- FULL SCREEN SPLIT LOGIN LAYOUT -->
   <div id="loginScreen">
     
-    <!-- LEFT PANEL: LOGO TOP-LEFT, SEMI-TRANSPARENT CENTERED FORM -->
+    <!-- LEFT PANEL: LOGO TOP-LEFT, CLEAN REDUCED TRANSPARENCY FORM -->
     <div class="login-left-panel">
       
       <!-- Top-Left Branding Header -->
