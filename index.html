@@ -21,9 +21,15 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
+    
+    /* DEFAULT 80% SCALING WITH BROWSER ZOOM OVERRIDE SUPPORT */
+    html {
+      zoom: 0.85; /* Default optimal scale */
+    }
+
     body { background-color: var(--gray-bg); color: var(--text-dark); min-height: 100vh; overflow-x: hidden; }
 
-    /* FULL VIEWPORT BACKGROUND IMAGE APPLIED TO ENTIRE WRAPPER */
+    /* SPLIT-SCREEN LOGIN LAYOUT */
     #loginScreen {
       display: flex;
       min-height: 100vh;
@@ -32,25 +38,21 @@
                   url('SICAL_CFS_VMS_BG.jpg') center/cover no-repeat fixed !important;
     }
 
-    /* LEFT PANEL: SEMI-TRANSPARENT WITH BACKDROP BLUR */
     .login-left-panel {
       flex: 1.1;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       padding: 35px 60px;
-      
       background: rgba(255, 255, 255, 0.45);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-      
       border-right: 1px solid rgba(255, 255, 255, 0.4);
       box-shadow: 10px 0 30px rgba(0, 0, 0, 0.2);
       overflow-y: auto;
       position: relative;
     }
 
-    /* RIGHT PANEL: FULLY TRANSPARENT */
     .login-right-panel {
       flex: 1.3;
       display: flex;
@@ -61,15 +63,11 @@
       background: transparent !important;
     }
 
-    /* HEADER & BRANDING (TOP-LEFT CORNER) */
     .brand-header {
       display: flex;
       align-items: center;
       gap: 15px;
       margin-bottom: 20px;
-    }
-    .brand-logo-text {
-      line-height: 1.1;
     }
     .brand-logo-text .main-title {
       font-size: 1.6rem;
@@ -83,7 +81,6 @@
       color: #1e1b4b;
     }
 
-    /* CENTERED LOGIN DETAILS AREA */
     .login-center-content {
       margin: auto 0;
       width: 100%;
@@ -92,27 +89,10 @@
       align-items: center;
     }
 
-    .portal-heading {
-      text-align: center;
-      width: 100%;
-      max-width: 440px;
-    }
-    .portal-heading h2 {
-      font-size: 1.15rem;
-      color: var(--navy);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-weight: 900;
-    }
-    .portal-heading p.portal-subtitle {
-      color: #0284c7;
-      font-size: 0.95rem;
-      font-weight: 800;
-      margin-top: 2px;
-      margin-bottom: 20px;
-    }
+    .portal-heading { text-align: center; width: 100%; max-width: 440px; }
+    .portal-heading h2 { font-size: 1.15rem; color: var(--navy); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 900; }
+    .portal-heading p.portal-subtitle { color: #0284c7; font-size: 0.95rem; font-weight: 800; margin-top: 2px; margin-bottom: 20px; }
 
-    /* PORTAL INFO SECTION */
     .vms-info-box {
       background: rgba(255, 255, 255, 0.65);
       border: 1px solid rgba(255, 255, 255, 0.8);
@@ -124,94 +104,42 @@
       max-width: 440px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
-    .vms-info-box h4 {
-      font-size: 0.9rem;
-      color: var(--navy);
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: 800;
-    }
-    .vms-info-box ul {
-      list-style: none;
-      font-size: 0.83rem;
-      color: #0f172a;
-      font-weight: 600;
-    }
-    .vms-info-box ul li {
-      margin-bottom: 6px;
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-    }
-    .vms-info-box ul li i {
-      color: var(--blue);
-      margin-top: 3px;
-    }
+    .vms-info-box h4 { font-size: 0.9rem; color: var(--navy); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; font-weight: 800; }
+    .vms-info-box ul { list-style: none; font-size: 0.83rem; color: #0f172a; font-weight: 600; }
+    .vms-info-box ul li { margin-bottom: 6px; display: flex; align-items: flex-start; gap: 8px; }
+    .vms-info-box ul li i { color: var(--blue); margin-top: 3px; }
 
-    /* FORM CONTAINER */
-    .login-form-container {
-      max-width: 440px;
-      width: 100%;
-    }
+    .login-form-container { max-width: 440px; width: 100%; }
     .input-group { margin-bottom: 16px; text-align: left; }
     .input-group label { display: block; font-size: 0.85rem; font-weight: 800; margin-bottom: 6px; color: var(--navy); }
     .input-group input, .input-group select {
       width: 100%; padding: 11px 14px; border: 1px solid rgba(15, 23, 42, 0.25);
       border-radius: 6px; font-size: 0.95rem; background: rgba(255, 255, 255, 0.85);
-      transition: border-color 0.2s, box-shadow 0.2s;
-      font-weight: 600;
-      color: #0f172a;
+      transition: border-color 0.2s, box-shadow 0.2s; font-weight: 600; color: #0f172a;
     }
-    .input-group input:focus {
-      outline: none;
-      border-color: var(--blue);
-      background: rgba(255, 255, 255, 0.95);
-      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
-    }
+    .input-group input:focus { outline: none; border-color: var(--blue); background: rgba(255, 255, 255, 0.95); box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2); }
+    
     .btn-login {
       width: 100%; padding: 12px; background: var(--blue); color: white; border: none;
       border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px;
-      transition: background 0.2s, transform 0.15s;
-      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
+      transition: background 0.2s, transform 0.15s; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
     }
     .btn-login:hover { background: #0369a1; transform: translateY(-1px); }
     .error-msg { color: #dc2626; font-size: 0.85rem; margin-top: 10px; display: none; text-align: center; font-weight: 800; }
 
-    /* FOOTER CREDITS */
-    .login-footer {
-      font-size: 0.75rem;
-      color: #1e293b;
-      padding-top: 20px;
-      font-weight: 700;
-    }
+    .login-footer { font-size: 0.75rem; color: #1e293b; padding-top: 20px; font-weight: 700; }
 
-    /* RIGHT PANEL CONTENT */
-    .right-panel-content {
-      max-width: 500px;
-      text-shadow: 0 2px 6px rgba(0,0,0,0.6);
-    }
-    .right-panel-content h1 {
-      font-size: 2.3rem;
-      font-weight: 800;
-      margin-bottom: 12px;
-      line-height: 1.2;
-    }
-    .right-panel-content p {
-      font-size: 0.98rem;
-      color: #f1f5f9;
-      line-height: 1.6;
-    }
+    .right-panel-content { max-width: 500px; text-shadow: 0 2px 6px rgba(0,0,0,0.6); }
+    .right-panel-content h1 { font-size: 2.3rem; font-weight: 800; margin-bottom: 12px; line-height: 1.2; }
+    .right-panel-content p { font-size: 0.98rem; color: #f1f5f9; line-height: 1.6; }
 
-    /* RESPONSIVE DESIGN */
     @media (max-width: 960px) {
       #loginScreen { flex-direction: column-reverse; }
       .login-right-panel { min-height: 200px; padding: 30px; }
       .login-left-panel { padding: 30px 20px; }
     }
 
-    /* Main App Layout */
+    /* MAIN APP LAYOUT */
     #appScreen { display: none; min-height: 100vh; position: relative; }
     
     header {
@@ -220,23 +148,17 @@
       position: sticky; top: 0; z-index: 99;
     }
     .header-left { display: flex; align-items: center; gap: 15px; }
-    .menu-toggle-btn {
-      background: transparent; color: white; border: none; font-size: 1.4rem; cursor: pointer; padding: 5px;
-    }
+    .menu-toggle-btn { background: transparent; color: white; border: none; font-size: 1.4rem; cursor: pointer; padding: 5px; }
     .brand-title { font-size: 1rem; font-weight: bold; letter-spacing: 0.5px; }
     .brand-subtitle { font-size: 0.7rem; color: #94a3b8; }
 
-    /* CONTENT CONTAINER SCREEN FITTING */
     .content-container {
-      padding: 20px; 
-      max-width: calc(100vw - var(--sidebar-width)); 
+      padding: 20px 30px; 
+      width: calc(100% - var(--sidebar-width)); 
       margin-left: var(--sidebar-width); 
       transition: all 0.3s ease;
     }
-    .content-container.full-width { 
-      margin-left: 0; 
-      max-width: 100vw;
-    }
+    .content-container.full-width { margin-left: 0; width: 100%; }
 
     .sidebar {
       position: fixed; top: 57px; left: 0; bottom: 0; width: var(--sidebar-width);
@@ -257,44 +179,24 @@
     }
     .sidebar-menu button i { width: 20px; text-align: center; font-size: 1rem; }
 
-    .tab-content { 
-      display: none; 
-      opacity: 0;
-      transform: translateY(10px);
-      transition: opacity 0.35s ease, transform 0.35s ease;
-    }
-    .tab-content.active { 
-      display: block; 
-      opacity: 1;
-      transform: translateY(0);
-    }
+    .tab-content { display: none; opacity: 0; transform: translateY(10px); transition: opacity 0.35s ease, transform 0.35s ease; }
+    .tab-content.active { display: block; opacity: 1; transform: translateY(0); }
 
-    .stats-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px;
-    }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px; }
     
     .stat-card, .card {
       background: white; padding: 20px; border-radius: 10px; border: 1px solid var(--border-color);
       box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 5px solid var(--blue);
       transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
-    .stat-card:hover, .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
-    }
+    .stat-card:hover, .card:hover { transform: translateY(-3px); box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08); }
 
     .stat-card h4 { font-size: 0.85rem; color: #64748b; margin-bottom: 8px; text-transform: uppercase; }
     .stat-card .stat-val { font-size: 2rem; font-weight: 800; color: var(--navy); }
 
     .live-dot {
-      display: inline-block;
-      width: 9px;
-      height: 9px;
-      background-color: #dc2626;
-      border-radius: 50%;
-      margin-right: 6px;
-      vertical-align: middle;
-      box-shadow: 0 0 0 rgba(220, 38, 38, 0.4);
+      display: inline-block; width: 9px; height: 9px; background-color: #dc2626; border-radius: 50%;
+      margin-right: 6px; vertical-align: middle; box-shadow: 0 0 0 rgba(220, 38, 38, 0.4);
       animation: livePulse 1.8s infinite;
     }
 
@@ -310,7 +212,7 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     }
 
-    .dashboard-grid-2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; margin-bottom: 25px; }
+    .dashboard-grid-2 { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; margin-bottom: 25px; }
     .dashboard-grid-3 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
     .alert-banner {
@@ -321,22 +223,13 @@
 
     .chart-box { display: flex; align-items: center; justify-content: space-around; gap: 15px; padding: 10px 0; }
     .donut-chart {
-      width: 120px; height: 120px; border-radius: 50%;
-      background: #cbd5e1;
+      width: 120px; height: 120px; border-radius: 50%; background: #cbd5e1;
       position: relative; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-      transition: background 0.8s ease-in-out, transform 0.4s ease;
     }
-    .donut-chart:hover {
-      transform: scale(1.06) rotate(6deg);
-    }
-
     .donut-chart-center {
       width: 70px; height: 70px; background: white; border-radius: 50%; display: flex;
       flex-direction: column; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; color: var(--navy);
     }
-    .chart-legend { list-style: none; font-size: 0.8rem; }
-    .chart-legend li { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-    .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
 
     .progress-list { list-style: none; padding-top: 5px; }
     .progress-item { margin-bottom: 12px; }
@@ -344,15 +237,31 @@
     .progress-bar-bg { background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden; }
     .progress-bar-fill { height: 100%; border-radius: 4px; width: 0%; transition: width 1s ease; }
 
-    .grid-2 { display: grid; grid-template-columns: 1.2fr 1fr; gap: 25px; align-items: start; }
-    @media (max-width: 900px) { 
-      .grid-2, .dashboard-grid-2, .dashboard-grid-3 { grid-template-columns: 1fr; }
-      .sidebar { left: calc(var(--sidebar-width) * -1); }
-      .sidebar.active-mobile { left: 0; }
-      .content-container { margin-left: 0 !important; max-width: 100vw !important; }
+    /* VISITOR ENTRY GRID & CARD PREVIEW BALANCED SCALING */
+    .grid-2 { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 25px; align-items: start; }
+    
+    .quick-search-box {
+      background: var(--light-blue); border: 1px solid #93c5fd; padding: 12px 16px; border-radius: 8px; margin-bottom: 18px;
     }
+    .quick-search-box label { font-size: 0.8rem; font-weight: bold; color: var(--navy); display: block; margin-bottom: 6px; }
+    .search-input-group { display: flex; gap: 8px; flex-wrap: wrap; }
+    .search-input-group input { flex: 1; min-width: 160px; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.9rem; }
 
-    /* GATE PASS BADGE STYLING RESTORED */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .full-width { grid-column: span 2; }
+    .checkbox-group { display: flex; gap: 15px; margin-top: 6px; flex-wrap: wrap; align-items: center; }
+    .checkbox-group label { font-weight: normal; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+
+    .admin-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
+
+    .webcam-container {
+      display: flex; flex-direction: column; align-items: center; background: #f1f5f9; border: 1px dashed var(--border-color); padding: 12px; border-radius: 8px; margin-top: 10px;
+    }
+    #videoFeed { width: 100%; max-width: 220px; height: 165px; background: #000; border-radius: 6px; object-fit: cover; }
+    .cam-btns { margin-top: 8px; display: flex; gap: 10px; }
+    .btn-cam { background: var(--blue); color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; cursor: pointer; }
+
+    /* GATE PASS BADGE STYLING */
     .pass-badge { 
       background: #ffffff; 
       border: 1.5px solid #0f172a; 
@@ -403,36 +312,11 @@
     .qrcode-container { flex-shrink: 0; background: #fff; padding: 2px; border: 1.5px solid #0f172a; border-radius: 4px; }
     .qrcode-container img, .qrcode-container canvas { display: block; width: 80px !important; height: 80px !important; }
 
-    /* RESPONSIVE TABLE WRAPPER WITH CLEAN HORIZONTAL SCROLLBAR */
-    .table-responsive-wrapper {
-      width: 100%;
-      overflow-x: auto;
-      border-radius: 6px;
-      border: 1px solid var(--border-color);
-    }
-
-    table { 
-      width: 100%; 
-      min-width: 1100px;
-      border-collapse: collapse; 
-      font-size: 0.82rem; 
-      background: #ffffff;
-    }
-    th, td { 
-      border: 1px solid var(--border-color); 
-      padding: 8px 10px; 
-      text-align: left; 
-      vertical-align: middle; 
-      line-height: 1.3;
-      word-break: normal;
-    }
-    th { 
-      background: var(--light-blue); 
-      color: var(--navy); 
-      font-weight: 700; 
-      text-align: center; 
-      white-space: nowrap; 
-    }
+    /* RESPONSIVE TABLE WRAPPER WITH SCROLLBAR */
+    .table-responsive-wrapper { width: 100%; overflow-x: auto; border-radius: 6px; border: 1px solid var(--border-color); }
+    table { width: 100%; min-width: 1000px; border-collapse: collapse; font-size: 0.82rem; background: #ffffff; }
+    th, td { border: 1px solid var(--border-color); padding: 8px 10px; text-align: left; vertical-align: middle; line-height: 1.3; }
+    th { background: var(--light-blue); color: var(--navy); font-weight: 700; text-align: center; white-space: nowrap; }
     tr:nth-child(even) { background: #f8fafc; }
 
     #logsTable th:nth-child(1), #logsTable td:nth-child(1),
@@ -443,109 +327,63 @@
     #logsTable th:nth-child(11), #logsTable td:nth-child(11),
     #logsTable th:nth-child(13), #logsTable td:nth-child(13),
     #logsTable th:nth-child(14), #logsTable td:nth-child(14) {
-      text-align: center;
-      white-space: nowrap;
+      text-align: center; white-space: nowrap;
     }
 
-    #logsTable td:nth-child(1) strong { font-size: 0.82rem; letter-spacing: 0.2px; }
-
-    .btn-action { background: var(--blue); color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem; transition: background 0.2s ease, transform 0.15s ease; }
-    .btn-action:hover { background: #0369a1; transform: translateY(-1px); }
+    .btn-action { background: var(--blue); color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem; }
+    .btn-action:hover { background: #0369a1; }
     .btn-success { background: #16a34a; }
     .btn-success:hover { background: #15803d; }
     .btn-purple { background: #7c3aed; }
     .btn-purple:hover { background: #6d28d9; }
-    .btn-reset { background: #f59e0b; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; margin-right: 5px; transition: background 0.2s ease; }
-    .btn-reset:hover { background: #d97706; }
-    .btn-out { background: #e11d48; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; transition: background 0.2s ease; display: inline-block; }
-    .btn-out:hover { background: #be123c; }
+    .btn-reset { background: #f59e0b; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; margin-right: 5px; }
+    .btn-out { background: #e11d48; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; display: inline-block; }
 
-    /* MOBILE PUBLIC PASS VIEW STYLING */
+    /* MOBILE PUBLIC PASS VIEW */
     body.public-pass-view header,
     body.public-pass-view .sidebar,
     body.public-pass-view .card,
-    body.public-pass-view #loginScreen {
-      display: none !important;
-    }
-    body.public-pass-view #appScreen {
-      display: block !important;
-      background: var(--gray-bg);
-      padding: 15px 10px;
-    }
-    body.public-pass-view .content-container {
-      margin-left: 0 !important;
-      padding: 0 !important;
-      max-width: 500px !important;
-    }
-    body.public-pass-view .grid-2 {
-      display: block !important;
-    }
+    body.public-pass-view #loginScreen { display: none !important; }
+    
+    body.public-pass-view #appScreen { display: block !important; background: var(--gray-bg); padding: 15px 10px; }
+    body.public-pass-view .content-container { margin-left: 0 !important; padding: 0 !important; max-width: 500px !important; width: 100% !important; }
+    body.public-pass-view .grid-2 { display: block !important; }
 
-    #mobilePdfBtnContainer {
-      display: none;
-      text-align: center;
-      margin-bottom: 15px;
-    }
-    body.public-pass-view #mobilePdfBtnContainer {
-      display: block !important;
-    }
+    #mobilePdfBtnContainer { display: none; text-align: center; margin-bottom: 15px; }
+    body.public-pass-view #mobilePdfBtnContainer { display: block !important; }
 
-    /* SINGLE-PAGE MOBILE PDF & PRINT FIX */
     @media print {
       @page { size: portrait; margin: 0; }
-      html, body { 
-        background: #fff !important; 
-        margin: 0 !important; 
-        padding: 0 !important; 
-        height: 100% !important;
-        overflow: hidden !important;
-      }
-      #loginScreen, header, .sidebar, .card, h3, .stats-grid, .quick-actions-bar, .dashboard-grid-2, .dashboard-grid-3, .alert-banner, .filter-bar, table, #addUserForm, #userTableBody, #qrScannerModal { display: none !important; }
+      html, body { background: #fff !important; margin: 0 !important; padding: 0 !important; height: 100% !important; overflow: hidden !important; zoom: 1 !important; }
+      #loginScreen, header, .sidebar, .card, h3, .stats-grid, .quick-actions-bar, .dashboard-grid-2, .dashboard-grid-3, .alert-banner, .filter-bar, table, #addUserForm, #userTableBody { display: none !important; }
       body * { visibility: hidden !important; }
       #printablePass, #printablePass * { visibility: visible !important; }
       #printablePass { 
-        position: absolute !important; 
-        left: 0 !important; 
-        right: 0 !important; 
-        top: 5mm !important; 
-        margin: 0 auto !important;
-        width: 95mm !important; 
-        max-width: 95mm !important; 
-        border: 1.5px solid #000 !important; 
-        box-shadow: none !important;
-        box-sizing: border-box !important;
-        page-break-inside: avoid !important;
-        page-break-after: avoid !important;
-        transform: scale(0.90);
-        transform-origin: top center;
+        position: absolute !important; left: 0 !important; right: 0 !important; top: 5mm !important; 
+        margin: 0 auto !important; width: 95mm !important; max-width: 95mm !important; border: 1.5px solid #000 !important; 
+        box-shadow: none !important; transform: scale(0.90); transform-origin: top center;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- FULL SCREEN SPLIT LOGIN LAYOUT -->
+  <!-- LOGIN SCREEN -->
   <div id="loginScreen">
-    
-    <!-- LEFT PANEL: LOGO TOP-LEFT, SEMI-TRANSPARENT CENTERED FORM -->
     <div class="login-left-panel">
-      
-      <!-- Top-Left Branding Header -->
-      <div class="brand-header">
-        <div class="brand-logo-text">
-          <div class="main-title">SICAL</div>
-          <div class="sub-title">Pristine Group Company</div>
+      <div>
+        <div class="brand-header">
+          <div class="brand-logo-text">
+            <div class="main-title">SICAL</div>
+            <div class="sub-title">Pristine Group Company</div>
+          </div>
         </div>
-      </div>
 
-      <!-- Vertically & Horizontally Centered Login Section -->
-      <div class="login-center-content">
         <div class="portal-heading">
           <h2>SICAL Multimodal and Rail Transport Limited</h2>
           <p class="portal-subtitle">Visitor Management System (VMS Portal 2.0)</p>
         </div>
 
-        <!-- Overview Box -->
         <div class="vms-info-box">
           <h4><i class="fa-solid fa-shield-halved"></i> About VMS System </h4>
           <ul>
@@ -555,7 +393,6 @@
           </ul>
         </div>
 
-        <!-- Form Credentials -->
         <div class="login-form-container">
           <form id="loginForm">
             <div class="input-group">
@@ -572,20 +409,17 @@
         </div>
       </div>
 
-      <!-- Footer Credits -->
       <div class="login-footer">
         &copy; 2026 SICAL Multimodal and Rail Transport Limited. All rights reserved.
       </div>
     </div>
 
-    <!-- RIGHT PANEL: OPERATIONAL TITLE SHOWCASE -->
     <div class="login-right-panel">
       <div class="right-panel-content">
         <h1>Container Freight Station Operations</h1>
         <p>Streamlining security verification, visitor access control, and operational entry logging with full logistics infrastructure integration.</p>
       </div>
     </div>
-
   </div>
 
   <!-- MAIN APP SCREEN -->
@@ -598,7 +432,6 @@
           <div class="brand-subtitle">VISITOR GATE PASS SYSTEM 2.0</div>
         </div>
       </div>
-      <!-- DYNAMIC USERNAME DISPLAY IN HEADER -->
       <div style="display: flex; align-items: center; gap: 15px;">
         <span id="activeUserDisplay" style="font-size: 0.85rem; font-weight: 600; color: #38bdf8;">
           <i class="fa-solid fa-user-circle"></i> <span id="displayUsername">User</span>
@@ -622,7 +455,6 @@
       <div id="dashboardTab" class="tab-content active">
         <h3 style="margin-bottom: 15px; color: var(--navy);"><i class="fa-solid fa-chart-line"></i> CFS Visitor Security & Operations Center</h3>
         
-        <!-- TOP KPI CARDS WITH LIVE PULSING PREMISES COUNTER -->
         <div class="stats-grid">
           <div class="stat-card" style="border-left-color: #0284c7;">
             <h4>Total (Current Month)</h4>
@@ -642,7 +474,6 @@
           </div>
         </div>
 
-        <!-- QUICK ACTIONS SHORTCUT BAR -->
         <div class="quick-actions-bar">
           <div class="quick-actions-title">
             <i class="fa-solid fa-bolt" style="color: #f59e0b; font-size: 1.1rem;"></i> Security Gate Quick Actions:
@@ -652,7 +483,6 @@
           </div>
         </div>
 
-        <!-- OVERSTAY SECURITY ALERTS WIDGET WITH ATTENTION SHAKE -->
         <div id="overstayAlertBanner" class="alert-banner" style="display:none;">
           <div class="alert-banner-text">
             <i class="fa-solid fa-triangle-exclamation" style="font-size: 1.3rem;"></i>
@@ -661,10 +491,7 @@
           <button class="btn-action" style="background:#dc2626; padding: 4px 10px; font-size:0.8rem;" onclick="switchTab('reportTab')">Investigate Logs</button>
         </div>
 
-        <!-- MIDDLE LAYER: LIVE IN-GATE FEED & DEPARTMENT DISTRIBUTION -->
         <div class="dashboard-grid-2">
-          
-          <!-- LIVE IN-GATE ACTIVITY FEED -->
           <div class="card">
             <h3><i class="fa-solid fa-clock-rotate-left"></i> Live In-Gate Activity Log (Recent Check-Ins)</h3>
             <div class="table-responsive-wrapper">
@@ -684,7 +511,6 @@
             </div>
           </div>
 
-          <!-- VISITORS BY DEPARTMENT -->
           <div class="card">
             <h3><i class="fa-solid fa-chart-pie"></i> Traffic By Department</h3>
             <div class="chart-box">
@@ -705,10 +531,8 @@
               </ul>
             </div>
           </div>
-
         </div>
 
-        <!-- LOWER LAYER: PURPOSE OF VISIT BREAKDOWN -->
         <div class="dashboard-grid-3">
           <div class="card" style="grid-column: span 2;">
             <h3><i class="fa-solid fa-bars-staggered"></i> Visitor Distribution by Entry Purpose</h3>
@@ -728,7 +552,6 @@
             </div>
           </div>
         </div>
-
       </div>
 
       <!-- VISITOR ENTRY TAB -->
@@ -748,7 +571,6 @@
               </div>
             </div>
 
-            <!-- VISITOR OUT GATE CAMERA SCANNER MODAL -->
             <div id="qrScannerContainer" style="display:none; background: #f1f5f9; padding: 15px; border-radius: 8px; border: 2px dashed #0284c7; margin-bottom: 15px; text-align: center;">
               <h4 style="margin-bottom: 10px; color: #0f172a;"><i class="fa-solid fa-expand"></i> Visitor Out Gate Camera Scanner Active</h4>
               <div id="reader" style="width: 100%; max-width: 320px; margin: 0 auto;"></div>
@@ -918,7 +740,6 @@
                   <div id="passQrCode"></div>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
@@ -1037,7 +858,7 @@
 
   <script>
     // WEB APP GOOGLE APPS SCRIPT URL
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz5L0dsW-_FALPxgL37rDYscV5a3m-O4eaWhhKsPrnF7r0-S0YOc9rNmGc4rrJr32K2bA/exec";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6mWdtlMXTSf3IwUkHTQj6M3uVHEyKBxIRKgHRAqUPbJ0EGSdeheHrs4NFzwMcyyfdKg/exec";
 
     let globalCloudLogs = [];
     let globalUsersList = [
