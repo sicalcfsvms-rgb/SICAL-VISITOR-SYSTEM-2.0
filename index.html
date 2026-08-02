@@ -206,16 +206,9 @@
 
     /* RESPONSIVE DESIGN */
     @media (max-width: 960px) {
-      #loginScreen {
-        flex-direction: column-reverse;
-      }
-      .login-right-panel {
-        min-height: 200px;
-        padding: 30px;
-      }
-      .login-left-panel {
-        padding: 30px 20px;
-      }
+      #loginScreen { flex-direction: column-reverse; }
+      .login-right-panel { min-height: 200px; padding: 30px; }
+      .login-left-panel { padding: 30px 20px; }
     }
 
     /* Main App Layout */
@@ -233,7 +226,7 @@
     .brand-title { font-size: 1rem; font-weight: bold; letter-spacing: 0.5px; }
     .brand-subtitle { font-size: 0.7rem; color: #94a3b8; }
 
-    /* CONTENT CONTAINER SCREEN FITTING FIX */
+    /* CONTENT CONTAINER SCREEN FITTING */
     .content-container {
       padding: 20px; 
       max-width: calc(100vw - var(--sidebar-width)); 
@@ -381,7 +374,7 @@
       .content-container { margin-left: 0 !important; max-width: 100vw !important; }
     }
 
-    /* GATE PASS CARD PREVIEW STYLING RESTORED */
+    /* GATE PASS BADGE STYLING RESTORED */
     .pass-badge { 
       background: #ffffff; 
       border: 1.5px solid #0f172a; 
@@ -1071,7 +1064,7 @@
 
   <script>
     // WEB APP GOOGLE APPS SCRIPT URL
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyYj4kHgL3xu3IM_ytAjCIXDK5k7fZ5X8A-s9XIkJcW5UsxETiryv8Y3s4k2ueKfsb78A/exec";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz5L0dsW-_FALPxgL37rDYscV5a3m-O4eaWhhKsPrnF7r0-S0YOc9rNmGc4rrJr32K2bA/exec";
 
     let globalCloudLogs = [];
     
@@ -1084,22 +1077,19 @@
     let loadedVisitorPhoto = null;
     let isPassAlreadySaved = false;
 
-    // FLEXIBLE PARSER FOR VARIOUS GOOGLE SHEET DATE FORMATS
+    // UNIVERSAL DATE Normalizer
     function parseToCleanDateObj(rawVal) {
       if (!rawVal) return null;
       var str = String(rawVal).trim();
-      
-      // If DD-MM-YYYY format
-      if (/^\d{2}-\d{2}-\d{4}$/.test(str)) {
-        var p = str.split('-');
-        return new Date(p[2], p[1] - 1, p[0]);
+
+      if (/^\d{1,2}[-\/]\d{1,2}[-\/]\d{4}$/.test(str)) {
+        var p = str.split(/[-\/]/);
+        return new Date(p[2], parseInt(p[1], 10) - 1, parseInt(p[0], 10));
       }
-      // If YYYY-MM-DD format
-      if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
-        var p = str.split('-');
-        return new Date(p[0], p[1] - 1, p[2]);
+      if (/^\d{4}[-\/]\d{1,2}[-\/]\d{1,2}$/.test(str)) {
+        var p = str.split(/[-\/]/);
+        return new Date(p[0], parseInt(p[1], 10) - 1, parseInt(p[2], 10));
       }
-      // General Date parse (for ISO / GMT strings)
       var parsed = new Date(str);
       return isNaN(parsed.getTime()) ? null : parsed;
     }
@@ -1164,13 +1154,11 @@
       const urlParams = new URLSearchParams(window.location.search);
       const passParam = urlParams.get('pass');
 
-      // PUBLIC PASS VIEW MODE: IF SCANNED VIA MOBILE QR CODE
       if (passParam) {
         document.body.classList.add('public-pass-view');
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('appScreen').style.display = 'block';
         
-        // Show Visitor Entry tab properly
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
         document.getElementById('entryTab').classList.add('active');
         document.getElementById('entryFormCard').style.display = 'none';
@@ -1273,13 +1261,6 @@
       }
     }
 
-    function shortcutOpenScanner() {
-      switchTab('entryTab');
-      setTimeout(() => {
-        startQrCameraScanner();
-      }, 300);
-    }
-
     let videoStream = null;
     let capturedPhotoData = null;
 
@@ -1338,20 +1319,15 @@
       }
     }
 
-    // VISITOR OUT-GATE CAMERA SCANNER ENGINE
     function startQrCameraScanner() {
       document.getElementById('qrScannerContainer').style.display = 'block';
       if (!html5QrcodeScanner) {
-        html5QrcodeScanner = new Html5QrcodeScanner(
-          "reader", { fps: 10, qrbox: 250 }, false
-        );
+        html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 }, false);
         html5QrcodeScanner.render((decodedText) => {
           document.getElementById('entrySearchInput').value = decodedText;
           handleQrScan();
           stopQrCameraScanner();
-        }, (errorMessage) => {
-          // Scanning...
-        });
+        }, (errorMessage) => {});
       }
     }
 
@@ -1409,7 +1385,6 @@
               currentPassNumber = 1001;
             }
 
-            // UPDATE ANALYTICS & DASHBOARD WIDGETS
             computeDashboardAnalytics(globalCloudLogs);
             renderLogsTable(globalCloudLogs);
             renderUsersTable();
@@ -1427,7 +1402,7 @@
       updatePreview();
     }
 
-    // CALCULATE REAL-TIME OPERATIONAL METRICS FOR DASHBOARD WITH ACCURATE DATE COMPARISON
+    // ACCURATE CALCULATIONS FOR LIVE KPI DASHBOARD COUNTS
     function computeDashboardAnalytics(logs) {
       if (!logs) logs = [];
 
@@ -1438,34 +1413,40 @@
       let countMonth = 0;
 
       let now = new Date();
-      let todayDateStr = cleanDateTimeDisplay(now, 'date');
+      let nowDay = now.getDate();
+      let nowMonth = now.getMonth();
+      let nowYear = now.getFullYear();
 
       let yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      let yesterdayDateStr = cleanDateTimeDisplay(yesterday, 'date');
-
-      let currentMonth = now.getMonth();
-      let currentYear = now.getFullYear();
+      yesterday.setDate(now.getDate() - 1);
+      let yDay = yesterday.getDate();
+      let yMonth = yesterday.getMonth();
+      let yYear = yesterday.getFullYear();
 
       let deptCounts = { Import: 0, Export: 0, Customs: 0, Bond: 0, Admin: 0, SicalIT: 0, Other: 0 };
       let purposeCounts = { EXIM: 0, Meeting: 0, Vendor: 0 };
 
       logs.forEach(log => {
-        var logCleanDate = cleanDateTimeDisplay(log.date, 'date');
-        var logObj = parseToCleanDateObj(log.date);
+        var dObj = parseToCleanDateObj(log.date);
 
-        // 1. KPI COUNTS CALCULATION
-        if (logCleanDate === todayDateStr) countToday++;
-        if (logCleanDate === yesterdayDateStr) countYesterday++;
-        if (logObj && logObj.getMonth() === currentMonth && logObj.getFullYear() === currentYear) {
-          countMonth++;
+        // 1. KPI COUNTS BY DATE OBJECT MATCHING
+        if (dObj) {
+          if (dObj.getDate() === nowDay && dObj.getMonth() === nowMonth && dObj.getFullYear() === nowYear) {
+            countToday++;
+          }
+          if (dObj.getDate() === yDay && dObj.getMonth() === yMonth && dObj.getFullYear() === yYear) {
+            countYesterday++;
+          }
+          if (dObj.getMonth() === nowMonth && dObj.getFullYear() === nowYear) {
+            countMonth++;
+          }
         }
 
         // 2. IN PREMISES & OVERSTAY COUNTER
         const isCheckedOut = (log.timeOut && log.timeOut !== '_______' && log.timeOut !== '--:--');
         if (!isCheckedOut) {
           insideCount++;
-          if (logCleanDate !== todayDateStr) {
+          if (dObj && (dObj.getDate() !== nowDay || dObj.getMonth() !== nowMonth || dObj.getFullYear() !== nowYear)) {
             overstayCount++;
           }
         }
@@ -1487,7 +1468,7 @@
         else purposeCounts.Vendor++;
       });
 
-      // Update KPI Cards Immediately
+      // Update Cards
       document.getElementById('statMonth').textContent = countMonth;
       document.getElementById('statToday').textContent = countToday;
       document.getElementById('statYesterday').textContent = countYesterday;
