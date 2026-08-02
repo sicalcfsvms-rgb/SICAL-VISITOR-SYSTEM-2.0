@@ -21,8 +21,7 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
-
-    /* ENSURE FULL VIEWPORT HEIGHT FOR BODY & LOGIN */
+    
     html, body {
       height: 100%;
       width: 100%;
@@ -31,9 +30,10 @@
       background-color: var(--gray-bg);
       color: var(--text-dark);
       overflow-x: hidden;
+      zoom: 0.85; /* Default optimal scale */
     }
 
-    /* FULL VIEWPORT BACKGROUND IMAGE FOR LOGIN - NO WHITE SPACE BELOW */
+    /* FULL VIEWPORT LOGIN SCREEN */
     #loginScreen {
       display: flex;
       height: 100vh;
@@ -44,12 +44,13 @@
       overflow: hidden;
     }
 
+    /* LEFT PANEL: LOGO TOP-LEFT, CONTENT PERFECTLY CENTERED */
     .login-left-panel {
       flex: 1.1;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 35px 60px;
+      padding: 30px 50px;
       background: rgba(255, 255, 255, 0.45);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
@@ -73,67 +74,71 @@
       display: flex;
       align-items: center;
       gap: 15px;
-      margin-bottom: 20px;
+      margin-bottom: 5px;
+      flex-shrink: 0;
     }
     .brand-logo-text .main-title {
       font-size: 1.6rem;
       font-weight: 900;
       color: #dc2626;
       letter-spacing: 0.5px;
+      line-height: 1.1;
     }
     .brand-logo-text .sub-title {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: 800;
       color: #1e1b4b;
     }
 
+    /* PERFECTLY CENTERED LOGIN CONTENT WRAPPER */
     .login-center-content {
-      margin: auto 0;
+      margin: auto;
       width: 100%;
+      max-width: 440px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
     }
 
-    .portal-heading { text-align: center; width: 100%; max-width: 440px; }
-    .portal-heading h2 { font-size: 1.15rem; color: var(--navy); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 900; }
-    .portal-heading p.portal-subtitle { color: #0284c7; font-size: 0.95rem; font-weight: 800; margin-top: 2px; margin-bottom: 20px; }
+    .portal-heading { text-align: center; width: 100%; margin-bottom: 15px; }
+    .portal-heading h2 { font-size: 1.1rem; color: var(--navy); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 900; line-height: 1.3; }
+    .portal-heading p.portal-subtitle { color: #0284c7; font-size: 0.9rem; font-weight: 800; margin-top: 2px; }
 
     .vms-info-box {
-      background: rgba(255, 255, 255, 0.65);
-      border: 1px solid rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.9);
       border-left: 4px solid var(--blue);
       border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 25px;
+      padding: 14px;
+      margin-bottom: 20px;
       width: 100%;
-      max-width: 440px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
-    .vms-info-box h4 { font-size: 0.9rem; color: var(--navy); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; font-weight: 800; }
-    .vms-info-box ul { list-style: none; font-size: 0.83rem; color: #0f172a; font-weight: 600; }
-    .vms-info-box ul li { margin-bottom: 6px; display: flex; align-items: flex-start; gap: 8px; }
+    .vms-info-box h4 { font-size: 0.85rem; color: var(--navy); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; font-weight: 800; }
+    .vms-info-box ul { list-style: none; font-size: 0.8rem; color: #0f172a; font-weight: 600; }
+    .vms-info-box ul li { margin-bottom: 4px; display: flex; align-items: flex-start; gap: 8px; }
     .vms-info-box ul li i { color: var(--blue); margin-top: 3px; }
 
-    .login-form-container { max-width: 440px; width: 100%; }
-    .input-group { margin-bottom: 16px; text-align: left; }
-    .input-group label { display: block; font-size: 0.85rem; font-weight: 800; margin-bottom: 6px; color: var(--navy); }
+    .login-form-container { width: 100%; }
+    .input-group { margin-bottom: 14px; text-align: left; }
+    .input-group label { display: block; font-size: 0.85rem; font-weight: 800; margin-bottom: 5px; color: var(--navy); }
     .input-group input, .input-group select {
-      width: 100%; padding: 11px 14px; border: 1px solid rgba(15, 23, 42, 0.25);
-      border-radius: 6px; font-size: 0.95rem; background: rgba(255, 255, 255, 0.85);
+      width: 100%; padding: 10px 14px; border: 1px solid rgba(15, 23, 42, 0.25);
+      border-radius: 6px; font-size: 0.95rem; background: rgba(255, 255, 255, 0.9);
       transition: border-color 0.2s, box-shadow 0.2s; font-weight: 600; color: #0f172a;
     }
-    .input-group input:focus { outline: none; border-color: var(--blue); background: rgba(255, 255, 255, 0.95); box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2); }
+    .input-group input:focus { outline: none; border-color: var(--blue); background: rgba(255, 255, 255, 1); box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2); }
     
     .btn-login {
-      width: 100%; padding: 12px; background: var(--blue); color: white; border: none;
-      border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px;
+      width: 100%; padding: 11px; background: var(--blue); color: white; border: none;
+      border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 5px;
       transition: background 0.2s, transform 0.15s; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
     }
     .btn-login:hover { background: #0369a1; transform: translateY(-1px); }
-    .error-msg { color: #dc2626; font-size: 0.85rem; margin-top: 10px; display: none; text-align: center; font-weight: 800; }
+    .error-msg { color: #dc2626; font-size: 0.85rem; margin-top: 8px; display: none; text-align: center; font-weight: 800; }
 
-    .login-footer { font-size: 0.75rem; color: #1e293b; padding-top: 20px; font-weight: 700; }
+    .login-footer { font-size: 0.75rem; color: #1e293b; padding-top: 10px; font-weight: 700; flex-shrink: 0; }
 
     .right-panel-content { max-width: 500px; text-shadow: 0 2px 6px rgba(0,0,0,0.6); }
     .right-panel-content h1 { font-size: 2.3rem; font-weight: 800; margin-bottom: 12px; line-height: 1.2; }
@@ -145,12 +150,8 @@
       .login-left-panel { padding: 30px 20px; }
     }
 
-    /* MAIN APP LAYOUT (SCALED PROPORTIONALLY FOR PORTAL VIEWS) */
-    #appScreen { 
-      display: none; 
-      min-height: 100vh; 
-      position: relative;
-    }
+    /* MAIN APP LAYOUT */
+    #appScreen { display: none; min-height: 100vh; position: relative; }
     
     header {
       background: var(--navy); color: white; padding: 12px 20px;
@@ -363,7 +364,7 @@
 
     @media print {
       @page { size: portrait; margin: 0; }
-      html, body { background: #fff !important; margin: 0 !important; padding: 0 !important; height: 100% !important; overflow: hidden !important; }
+      html, body { background: #fff !important; margin: 0 !important; padding: 0 !important; height: 100% !important; overflow: hidden !important; zoom: 1 !important; }
       #loginScreen, header, .sidebar, .card, h3, .stats-grid, .quick-actions-bar, .dashboard-grid-2, .dashboard-grid-3, .alert-banner, .filter-bar, table, #addUserForm, #userTableBody { display: none !important; }
       body * { visibility: hidden !important; }
       #printablePass, #printablePass * { visibility: visible !important; }
@@ -379,20 +380,26 @@
 
   <!-- FULL SCREEN SPLIT LOGIN LAYOUT -->
   <div id="loginScreen">
+    
+    <!-- LEFT PANEL: LOGO TOP-LEFT, CONTENT PERFECTLY CENTERED -->
     <div class="login-left-panel">
-      <div>
-        <div class="brand-header">
-          <div class="brand-logo-text">
-            <div class="main-title">SICAL</div>
-            <div class="sub-title">Pristine Group Company</div>
-          </div>
+      
+      <!-- Top-Left Branding Header -->
+      <div class="brand-header">
+        <div class="brand-logo-text">
+          <div class="main-title">SICAL</div>
+          <div class="sub-title">Pristine Group Company</div>
         </div>
+      </div>
 
+      <!-- Vertically & Horizontally Centered Login Content Area -->
+      <div class="login-center-content">
         <div class="portal-heading">
           <h2>SICAL Multimodal and Rail Transport Limited</h2>
           <p class="portal-subtitle">Visitor Management System (VMS Portal 2.0)</p>
         </div>
 
+        <!-- Overview Box -->
         <div class="vms-info-box">
           <h4><i class="fa-solid fa-shield-halved"></i> About VMS System </h4>
           <ul>
@@ -402,6 +409,7 @@
           </ul>
         </div>
 
+        <!-- Form Credentials -->
         <div class="login-form-container">
           <form id="loginForm">
             <div class="input-group">
@@ -418,17 +426,20 @@
         </div>
       </div>
 
+      <!-- Footer Credits -->
       <div class="login-footer">
         &copy; 2026 SICAL Multimodal and Rail Transport Limited. All rights reserved.
       </div>
     </div>
 
+    <!-- RIGHT PANEL: OPERATIONAL TITLE SHOWCASE -->
     <div class="login-right-panel">
       <div class="right-panel-content">
         <h1>Container Freight Station Operations</h1>
         <p>Streamlining security verification, visitor access control, and operational entry logging with full logistics infrastructure integration.</p>
       </div>
     </div>
+
   </div>
 
   <!-- MAIN APP SCREEN -->
@@ -441,6 +452,7 @@
           <div class="brand-subtitle">VISITOR GATE PASS SYSTEM 2.0</div>
         </div>
       </div>
+      <!-- DYNAMIC USERNAME DISPLAY IN HEADER -->
       <div style="display: flex; align-items: center; gap: 15px;">
         <span id="activeUserDisplay" style="font-size: 0.85rem; font-weight: 600; color: #38bdf8;">
           <i class="fa-solid fa-user-circle"></i> <span id="displayUsername">User</span>
@@ -464,6 +476,7 @@
       <div id="dashboardTab" class="tab-content active">
         <h3 style="margin-bottom: 15px; color: var(--navy);"><i class="fa-solid fa-chart-line"></i> CFS Visitor Security & Operations Center</h3>
         
+        <!-- TOP KPI CARDS WITH LIVE PULSING PREMISES COUNTER -->
         <div class="stats-grid">
           <div class="stat-card" style="border-left-color: #0284c7;">
             <h4>Total (Current Month)</h4>
@@ -483,6 +496,7 @@
           </div>
         </div>
 
+        <!-- QUICK ACTIONS SHORTCUT BAR -->
         <div class="quick-actions-bar">
           <div class="quick-actions-title">
             <i class="fa-solid fa-bolt" style="color: #f59e0b; font-size: 1.1rem;"></i> Security Gate Quick Actions:
@@ -492,6 +506,7 @@
           </div>
         </div>
 
+        <!-- OVERSTAY SECURITY ALERTS WIDGET WITH ATTENTION SHAKE -->
         <div id="overstayAlertBanner" class="alert-banner" style="display:none;">
           <div class="alert-banner-text">
             <i class="fa-solid fa-triangle-exclamation" style="font-size: 1.3rem;"></i>
@@ -500,7 +515,10 @@
           <button class="btn-action" style="background:#dc2626; padding: 4px 10px; font-size:0.8rem;" onclick="switchTab('reportTab')">Investigate Logs</button>
         </div>
 
+        <!-- MIDDLE LAYER: LIVE IN-GATE FEED & DEPARTMENT DISTRIBUTION -->
         <div class="dashboard-grid-2">
+          
+          <!-- LIVE IN-GATE ACTIVITY FEED -->
           <div class="card">
             <h3><i class="fa-solid fa-clock-rotate-left"></i> Live In-Gate Activity Log (Recent Check-Ins)</h3>
             <div class="table-responsive-wrapper">
@@ -520,6 +538,7 @@
             </div>
           </div>
 
+          <!-- VISITORS BY DEPARTMENT -->
           <div class="card">
             <h3><i class="fa-solid fa-chart-pie"></i> Traffic By Department</h3>
             <div class="chart-box">
@@ -540,8 +559,10 @@
               </ul>
             </div>
           </div>
+
         </div>
 
+        <!-- LOWER LAYER: PURPOSE OF VISIT BREAKDOWN -->
         <div class="dashboard-grid-3">
           <div class="card" style="grid-column: span 2;">
             <h3><i class="fa-solid fa-bars-staggered"></i> Visitor Distribution by Entry Purpose</h3>
@@ -561,6 +582,7 @@
             </div>
           </div>
         </div>
+
       </div>
 
       <!-- VISITOR ENTRY TAB -->
@@ -580,6 +602,7 @@
               </div>
             </div>
 
+            <!-- VISITOR OUT GATE CAMERA SCANNER MODAL -->
             <div id="qrScannerContainer" style="display:none; background: #f1f5f9; padding: 15px; border-radius: 8px; border: 2px dashed #0284c7; margin-bottom: 15px; text-align: center;">
               <h4 style="margin-bottom: 10px; color: #0f172a;"><i class="fa-solid fa-expand"></i> Visitor Out Gate Camera Scanner Active</h4>
               <div id="reader" style="width: 100%; max-width: 320px; margin: 0 auto;"></div>
@@ -1588,7 +1611,7 @@
         company: document.getElementById('companyFrom').value,
         personToMeet: document.getElementById('personToMeet').value,
         department: document.getElementById('department').value,
-        validity: document.querySelector('input[name="validity"][value="Daily"]').checked ? 'Daily' : document.querySelector('input[name="validity"]:checked').value,
+        validity: document.querySelector('input[name="validity"][value="Daily"]').checked ? 'Daily' : document.querySelector('input[name="validity"][value="Daily"]').value,
         purpose: document.getElementById('purposeSelect').value,
         vehicle: document.getElementById('vehicleNo').value || 'N/A',
         idType: document.getElementById('idType').value,
