@@ -18,24 +18,23 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
     
-    /* FULL VIEWPORT BACKGROUND IMAGE */
     body { 
-      background: linear-gradient(rgba(15, 23, 42, 0.40), rgba(15, 23, 42, 0.55)), 
-                  url('SICAL_CFS_VMS_BG.jpg') center/cover no-repeat fixed !important;
       min-height: 100vh; 
       width: 100vw;
       color: var(--text-dark);
-      display: flex;
+      overflow-x: hidden;
     }
 
-    /* FULL-SCREEN SPLIT CONTAINER */
+    /* FULL VIEWPORT BACKGROUND IMAGE APPLIED TO MAIN CONTAINER */
     #loginScreen {
       display: flex;
       min-height: 100vh;
       width: 100%;
+      background: linear-gradient(rgba(15, 23, 42, 0.35), rgba(15, 23, 42, 0.50)), 
+                  url('SICAL_CFS_VMS_BG.jpg') center/cover no-repeat fixed !important;
     }
 
-    /* LEFT PANEL: SEMI-TRANSPARENT FROSTED GLASS LOOK */
+    /* LEFT PANEL: TRUE SEMI-TRANSPARENT GLASS PANEL */
     .login-left-panel {
       flex: 1.1;
       display: flex;
@@ -43,18 +42,18 @@
       justify-content: space-between;
       padding: 30px 60px;
       
-      /* Semi-transparent background + Frosted glass effect */
-      background: rgba(255, 255, 255, 0.82);
+      /* Lower opacity (0.45) so background image shows through clearly */
+      background: rgba(255, 255, 255, 0.45);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       
       border-right: 1px solid rgba(255, 255, 255, 0.3);
-      box-shadow: 10px 0 30px rgba(0, 0, 0, 0.15);
+      box-shadow: 10px 0 30px rgba(0, 0, 0, 0.2);
       overflow-y: auto;
       position: relative;
     }
 
-    /* RIGHT PANEL: OVERLAY AREA FOR HERO TEXT */
+    /* RIGHT PANEL: TRANSPARENT CONTAINER FOR SHOWCASE TEXT */
     .login-right-panel {
       flex: 1.3;
       display: flex;
@@ -62,6 +61,7 @@
       justify-content: flex-end;
       padding: 50px;
       color: white;
+      background: transparent;
     }
 
     /* HEADER & BRANDING (TOP-LEFT CORNER) */
@@ -79,11 +79,12 @@
       font-weight: 900;
       color: #dc2626;
       letter-spacing: 0.5px;
+      text-shadow: 0 1px 2px rgba(255,255,255,0.8);
     }
     .brand-logo-text .sub-title {
       font-size: 0.8rem;
-      font-weight: 700;
-      color: #312e81;
+      font-weight: 800;
+      color: #1e1b4b;
     }
 
     /* CENTERED LOGIN DETAILS AREA */
@@ -105,27 +106,27 @@
       color: var(--navy);
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      font-weight: 800;
+      font-weight: 900;
     }
     .portal-heading p.portal-subtitle {
-      color: var(--blue);
+      color: #0369a1;
       font-size: 0.95rem;
-      font-weight: 700;
+      font-weight: 800;
       margin-top: 2px;
       margin-bottom: 20px;
     }
 
     /* PORTAL INFO SECTION */
     .vms-info-box {
-      background: rgba(255, 255, 255, 0.65);
-      border: 1px solid rgba(203, 213, 225, 0.8);
+      background: rgba(255, 255, 255, 0.60);
+      border: 1px solid rgba(255, 255, 255, 0.8);
       border-left: 4px solid var(--blue);
       border-radius: 8px;
       padding: 16px;
       margin-bottom: 25px;
       width: 100%;
       max-width: 440px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
     .vms-info-box h4 {
       font-size: 0.9rem;
@@ -138,7 +139,8 @@
     .vms-info-box ul {
       list-style: none;
       font-size: 0.82rem;
-      color: #334155;
+      color: #0f172a;
+      font-weight: 600;
     }
     .vms-info-box ul li {
       margin-bottom: 6px;
@@ -157,37 +159,40 @@
       width: 100%;
     }
     .input-group { margin-bottom: 16px; text-align: left; }
-    .input-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--navy); }
+    .input-group label { display: block; font-size: 0.85rem; font-weight: 800; margin-bottom: 6px; color: var(--navy); }
     .input-group input {
-      width: 100%; padding: 11px 14px; border: 1px solid var(--border-color);
-      border-radius: 6px; font-size: 0.95rem; background: rgba(255, 255, 255, 0.9);
+      width: 100%; padding: 11px 14px; border: 1px solid rgba(15, 23, 42, 0.2);
+      border-radius: 6px; font-size: 0.95rem; background: rgba(255, 255, 255, 0.85);
       transition: border-color 0.2s, box-shadow 0.2s;
+      font-weight: 600;
     }
     .input-group input:focus {
       outline: none;
       border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
     }
     .btn-login {
       width: 100%; padding: 12px; background: var(--blue); color: white; border: none;
       border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px;
       transition: background 0.2s, transform 0.15s;
+      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
     }
     .btn-login:hover { background: #0369a1; transform: translateY(-1px); }
-    .error-msg { color: #dc2626; font-size: 0.85rem; margin-top: 10px; display: none; text-align: center; font-weight: 600; }
+    .error-msg { color: #dc2626; font-size: 0.85rem; margin-top: 10px; display: none; text-align: center; font-weight: 800; }
 
     /* FOOTER CREDITS */
     .login-footer {
       font-size: 0.75rem;
-      color: #64748b;
+      color: #334155;
       padding-top: 20px;
-      font-weight: 500;
+      font-weight: 700;
     }
 
     /* RIGHT PANEL CONTENT */
     .right-panel-content {
       max-width: 500px;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+      text-shadow: 0 2px 6px rgba(0,0,0,0.6);
     }
     .right-panel-content h1 {
       font-size: 2.3rem;
@@ -197,7 +202,7 @@
     }
     .right-panel-content p {
       font-size: 0.98rem;
-      color: #e2e8f0;
+      color: #f1f5f9;
       line-height: 1.6;
     }
 
@@ -207,7 +212,7 @@
         flex-direction: column-reverse;
       }
       .login-right-panel {
-        min-height: 220px;
+        min-height: 200px;
         padding: 30px;
       }
       .login-left-panel {
@@ -283,15 +288,13 @@
   </div>
 
   <script>
-    // Simple Form Submission Handling
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
       const user = document.getElementById('username').value.trim();
       const pass = document.getElementById('password').value.trim();
 
-      // Demo validation check
       if (user !== "" && pass !== "") {
-        alert("Login Successful! Redirecting to dashboard...");
+        alert("Login Successful!");
         document.getElementById('loginError').style.display = 'none';
       } else {
         document.getElementById('loginError').style.display = 'block';
