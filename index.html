@@ -1036,7 +1036,7 @@
   </div>
 
   <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyDwhUMOYmMdmVIjl1eSGlUOj91TJGgXgXPvGr0eO4wu_adjSrfjffdOX0X3NZEuUcq5w/exec";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxt5xkc08UOjl-Ieew8ER52gQTO_iXgAamhGb-FI0Jnqukdh9JiWCY87Yxm4535uMZ3Og/exec";
 
     let globalCloudLogs = [];
     let globalUsersList = [
@@ -1482,6 +1482,13 @@
         let deptVal = masterRecord.department || 'Admin';
         if (deptVal.toUpperCase() === 'SICAL IT') deptVal = 'IT';
 
+        let parsedIdType = masterRecord.idType || 'Aadhaar Card';
+        let parsedIdNumber = masterRecord.idNumber || 'N/A';
+        if (masterRecord.idProof && masterRecord.idProof.includes('(')) {
+          parsedIdType = masterRecord.idProof.split('(')[0].trim();
+          parsedIdNumber = masterRecord.idProof.split('(')[1].replace(')', '').trim();
+        }
+
         // 5. CREATE NEW CHECK-IN SESSION WITH FULLY POPULATED MASTER DETAILS
         const newEntry = {
           passNo: masterRecord.passNo,
@@ -1496,8 +1503,8 @@
           validity: masterRecord.validity,
           purpose: masterRecord.purpose,
           vehicle: masterRecord.vehicle || 'N/A',
-          idType: masterRecord.idProof ? masterRecord.idProof.split('(')[0].trim() : (masterRecord.idType || 'Aadhaar Card'),
-          idNumber: masterRecord.idProof && masterRecord.idProof.includes('(') ? masterRecord.idProof.split('(')[1].replace(')', '').trim() : (masterRecord.idNumber || 'N/A'),
+          idType: parsedIdType,
+          idNumber: parsedIdNumber,
           photo: preservedPhoto
         };
 
@@ -1574,8 +1581,11 @@
             
             if (data.users && data.users.length > 0) {
               globalUsersList = data.users.map(u => ({
-                ...u,
-                canMarkOut: (u.canMarkOut === true || u.canMarkOut === "TRUE" || u.canMarkOut === "true")
+                username: u.username,
+                pass: u.pass,
+                role: u.role,
+                canMarkOut: (u.canMarkOut === true || String(u.canMarkOut).toUpperCase() === 'TRUE' || String(u.role).toLowerCase() === 'admin' || String(u.role).toLowerCase() === 'security'),
+                menus: u.menus
               }));
             }
 
@@ -1722,7 +1732,7 @@
     }
 
     function calculateTotalHours(timeInStr, timeOutStr) {
-      if (!timeInStr || !timeOutStr || timeInStr === '--:--' || timeInStr === '_______' || timeOutStr === '--') return "Inside";
+      if (!timeInStr || !timeOutStr || timeInStr === '--:--' || timeOutStr === '_______' || timeOutStr === '--') return "Inside";
       
       try {
         const parseTime12 = (tStr) => {
@@ -1822,7 +1832,6 @@
       if (!passDate) return { isExpired: false, label: "VALID PASS" };
 
       var now = new Date();
-      // Normalize both to midnight for accurate day comparison
       passDate.setHours(0, 0, 0, 0);
       now.setHours(0, 0, 0, 0);
 
