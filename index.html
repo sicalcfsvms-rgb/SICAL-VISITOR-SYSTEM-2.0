@@ -959,6 +959,7 @@
               <thead>
                 <tr>
                   <th>Pass No</th>
+                  <th>Issued Date</th>
                   <th>Visitor Name</th>
                   <th>Mobile</th>
                   <th>Company</th>
@@ -968,7 +969,7 @@
                 </tr>
               </thead>
               <tbody id="longTermLogsBody">
-                <tr><td colspan="7" style="text-align:center;">Loading long-term pass reports...</td></tr>
+                <tr><td colspan="8" style="text-align:center;">Loading long-term pass reports...</td></tr>
               </tbody>
             </table>
           </div>
@@ -1377,7 +1378,7 @@
       document.getElementById('manualOutInput').value = '';
     }
 
-    /* RECURRING IN/OUT SCANNER LOGIC FOR WEEKLY / MONTHLY PASSES */
+    /* RECURRING & VALIDITY SCANNER LOGIC */
     async function processOutGateCode(rawVal) {
       if (activeUser && activeUser.canMarkOut === false) {
         displayOutResult("Action Denied: Your account role does not have permission to mark visitors out.", false);
@@ -1410,68 +1411,75 @@
           return;
         }
 
-        // SCENARIO 2: WEEKLY OR MONTHLY PASS CHECKING IN
+        // SCENARIO 2: DAILY PASS VALIDITY CHECK (Once IN and OUT completed, it's invalid)
+        if (match.validity === 'Daily') {
+          const hasCompletedToday = matchingLogs.some(l => 
+            l.date === todayStr && l.timeOut && l.timeOut !== '_______' && l.timeOut !== '--:--'
+          );
+          if (hasCompletedToday || match.date !== todayStr) {
+            displayOutResult(`INVALID PASS: Daily Pass (${match.passNo}) has already completed its single IN/OUT cycle or belongs to another date.`, false);
+            return;
+          }
+        }
+
+        // SCENARIO 3: WEEKLY OR MONTHLY PASS CHECKING IN (Allows N entries/exits per day)
         if (match.validity === 'Weekly' || match.validity === 'Monthly') {
           const status = checkPassExpiration(match.date, match.validity);
           if (status.isExpired) {
             displayOutResult(`EXPIRED PASS: ${match.name}'s ${match.validity} Pass has expired! Please issue a new pass.`, false);
             return;
           }
-
-          const alreadyCompletedToday = matchingLogs.some(l => 
-            l.date === todayStr && l.timeOut && l.timeOut !== '_______' && l.timeOut !== '--:--'
-          );
-
-          const currentlyInsideToday = matchingLogs.some(l => 
-            l.date === todayStr && (!l.timeOut || l.timeOut === '_______' || l.timeOut === '--:--')
-          );
-
-          if (alreadyCompletedToday || currentlyInsideToday) {
-            displayOutResult(`PASS ALREADY USED TODAY: Weekly/Monthly pass (${match.passNo}) has already completed its visit for today (${todayStr}).`, false);
-            return;
-          }
-
-          const originalRecordWithPhoto = matchingLogs.slice().reverse().find(l => l.photoUrl && l.photoUrl !== 'No Photo' && l.photoUrl !== 'NO_PHOTO');
-          const preservedPhoto = originalRecordWithPhoto ? originalRecordWithPhoto.photoUrl : (match.photoUrl || 'NO_PHOTO');
-
-          const reEntry = {
-            passNo: match.passNo,
-            date: todayStr,
-            timeIn: getCurrentTime(),
-            timeOut: '_______',
-            name: match.name,
-            mobile: match.mobile,
-            company: match.company,
-            personToMeet: match.personToMeet,
-            department: match.department,
-            validity: match.validity,
-            purpose: match.purpose,
-            vehicle: match.vehicle,
-            idType: match.idType,
-            idNumber: match.idNumber,
-            photo: preservedPhoto
-          };
-
-          if (GOOGLE_SCRIPT_URL) {
-            try {
-              await fetch(GOOGLE_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify(reEntry)
-              });
-            } catch (err) {
-              console.log("Cloud sync error: " + err.message);
-            }
-          }
-
-          displayOutResult(`RE-ENTRY RECORDED: ${match.name} (${match.validity} Pass) Checked-IN Today at ${getCurrentTime()}!`, true);
-          setTimeout(() => { fetchCloudData(); }, 1000);
-        } 
-        // SCENARIO 3: DAILY PASS ALREADY OUT
-        else {
-          displayOutResult(`ALREADY OUT: Daily Pass ${match.passNo} (${match.name}) was already checked out at ${match.timeOut}.`, false);
         }
+
+        // Check if currently inside for today already
+        const currentlyInsideToday = matchingLogs.some(l => 
+          l.date === todayStr && (!l.timeOut || l.timeOut === '_______' || l.timeOut === '--:--')
+        );
+
+        if (currentlyInsideToday) {
+          displayOutResult(`ALREADY INSIDE: Pass (${match.passNo}) is already checked into the premises!`, false);
+          return;
+        }
+
+        // Pull original photo from past logs if available
+        const originalRecordWithPhoto = matchingLogs.slice().reverse().find(l => l.photoUrl && l.photoUrl !== 'No Photo' && l.photoUrl !== 'NO_PHOTO');
+        const preservedPhoto = originalRecordWithPhoto ? originalRecordWithPhoto.photoUrl : (match.photoUrl || 'NO_PHOTO');
+
+        // Record new IN entry for N-times weekly/monthly access or new daily entry
+        const reEntry = {
+          passNo: match.passNo,
+          date: todayStr,
+          timeIn: getCurrentTime(),
+          timeOut: '_______',
+          name: match.name,
+          mobile: match.mobile,
+          company: match.company,
+          personToMeet: match.personToMeet,
+          department: match.department,
+          validity: match.validity,
+          purpose: match.purpose,
+          vehicle: match.vehicle,
+          idType: match.idType,
+          idNumber: match.idNumber,
+          photo: preservedPhoto
+        };
+
+        if (GOOGLE_SCRIPT_URL) {
+          try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: JSON.stringify(reEntry)
+            });
+          } catch (err) {
+            console.log("Cloud sync error: " + err.message);
+          }
+        }
+
+        displayOutResult(`CHECK-IN RECORDED: ${match.name} (${match.validity} Pass) Checked-IN at ${getCurrentTime()}!`, true);
+        setTimeout(() => { fetchCloudData(); }, 1000);
+
       } else {
         displayOutResult(`ERROR: No visitor record found for "${extractedPass}".`, false);
       }
@@ -1658,7 +1666,7 @@
         document.getElementById('deptDonutChart').style.background = `#cbd5e1`;
       }
 
-      const pctPurpEXIM = hasLogsCheck = logs.length > 0 ? Math.round((purposeCounts.EXIM / totalLogs) * 100) : 0;
+      const pctPurpEXIM = logs.length > 0 ? Math.round((purposeCounts.EXIM / totalLogs) * 100) : 0;
       const pctPurpMeeting = logs.length > 0 ? Math.round((purposeCounts.Meeting / totalLogs) * 100) : 0;
       const pctPurpVendor = logs.length > 0 ? Math.round((purposeCounts.Vendor / totalLogs) * 100) : 0;
 
@@ -2266,20 +2274,20 @@
       });
     }
 
-    /* RENDER SEPARATE LONG-TERM (WEEKLY & MONTHLY) PASSES REPORT TABLE */
+    /* RENDER SEPARATE LONG-TERM (WEEKLY & MONTHLY) PASSES REPORT TABLE WITH ISSUED DATE & IN/OUT VISIT COUNTS */
     function renderLongTermLogsTable(logs) {
       const tbody = document.getElementById('longTermLogsBody');
       tbody.innerHTML = '';
 
       if (!logs || logs.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No weekly or monthly pass members found.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No weekly or monthly pass members found.</td></tr>';
         return;
       }
 
       const longTermPasses = logs.filter(l => l.validity === 'Weekly' || l.validity === 'Monthly');
 
       if (longTermPasses.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No active weekly or monthly pass members found.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No active weekly or monthly pass members found.</td></tr>';
         return;
       }
 
@@ -2288,33 +2296,39 @@
         if (!passMap[log.passNo]) {
           passMap[log.passNo] = {
             passNo: log.passNo,
+            issuedDate: log.date,
             name: log.name,
             mobile: log.mobile,
             company: log.company,
             validity: log.validity,
-            startDate: log.date,
-            visitsCount: 1
+            inCount: 0,
+            outCount: 0
           };
-        } else {
-          passMap[log.passNo].visitsCount++;
+        }
+        passMap[log.passNo].inCount++;
+        if (log.timeOut && log.timeOut !== '_______' && log.timeOut !== '--:--') {
+          passMap[log.passNo].outCount++;
         }
       });
 
       Object.values(passMap).forEach(item => {
-        const rangeStr = getValidityDateRange(item.startDate, item.validity);
-        const status = checkPassExpiration(item.startDate, item.validity);
+        const rangeStr = getValidityDateRange(item.issuedDate, item.validity);
+        const status = checkPassExpiration(item.issuedDate, item.validity);
         const statusTag = status.isExpired 
           ? `<span style="color:#dc2626; font-weight:bold;">EXPIRED</span>` 
           : `<span style="color:#16a34a; font-weight:bold;">ACTIVE</span>`;
 
+        const visitsSummary = `Visit(s) - IN - ${item.inCount} / OUT - ${item.outCount}`;
+
         const row = `<tr>
           <td><strong>${item.passNo}</strong></td>
+          <td>${item.issuedDate}</td>
           <td>${item.name}</td>
           <td>${item.mobile}</td>
           <td>${item.company}</td>
           <td>${rangeStr}</td>
           <td style="text-align:center;">${statusTag}</td>
-          <td style="text-align:center;"><strong>${item.visitsCount} Visit(s)</strong></td>
+          <td style="text-align:center;"><strong>${visitsSummary}</strong></td>
         </tr>`;
         tbody.innerHTML += row;
       });
