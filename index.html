@@ -32,13 +32,13 @@
       overflow-x: hidden;
     }
 
-    /* LOGIN SCREEN */
+    /* LOGIN SCREEN WITH UPDATED BACKGROUND IMAGE */
     #loginScreen {
       display: flex;
       min-height: 100vh;
       width: 100%;
       background: linear-gradient(rgba(15, 23, 42, 0.30), rgba(15, 23, 42, 0.45)), 
-                  url('SICAL_CFS_VMS_BG.jpg') center/cover no-repeat fixed !important;
+                  url('SICAL_CFS_VMS_2.0_BG.jpg') center/cover no-repeat fixed !important;
     }
 
     .login-left-panel {
@@ -289,7 +289,7 @@
     .cam-btns { margin-top: 6px; display: flex; gap: 8px; }
     .btn-cam { background: var(--blue); color: white; border: none; padding: 5px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer; }
 
-    /* VERTICAL LANYARD POUCH FOLDING BOOKLET BADGE FORMAT */
+    /* VERTICAL LANYARD FOLDING BOOKLET BADGE FORMAT */
     .pass-booklet-container {
       display: flex;
       flex-direction: column;
@@ -479,7 +479,7 @@
 </head>
 <body>
 
-  <!-- FULL SCREEN SPLIT LOGIN LAYOUT -->
+  <!-- FULL SCREEN SPLIT LOGIN LAYOUT WITH NEW BACKGROUND IMAGE -->
   <div id="loginScreen">
     
     <div class="login-left-panel">
@@ -1048,7 +1048,6 @@
     let loadedVisitorPhoto = null;
     let isPassAlreadySaved = false;
 
-    // Debounce / throttle variables for camera scanning to prevent double triggers
     let lastScannedText = "";
     let lastScanTimestamp = 0;
 
@@ -1351,7 +1350,6 @@
         
         const qrCodeSuccessCallback = (decodedText) => {
           const now = Date.now();
-          // Debounce check: ignore identical scans within 4 seconds
           if (decodedText === lastScannedText && (now - lastScanTimestamp) < 4000) {
             return;
           }
@@ -1390,7 +1388,7 @@
       document.getElementById('manualOutInput').value = '';
     }
 
-    /* ROBUST TOGGLE & MULTI-ENTRY LOGIC FOR SCANNER */
+    /* ROBUST TOGGLE & MULTI-ENTRY LOGIC WITH PROPER SESSION TARGETING */
     async function processOutGateCode(rawVal) {
       if (activeUser && activeUser.canMarkOut === false) {
         displayOutResult("Action Denied: Your account role does not have permission to mark visitors out.", false);
@@ -1406,6 +1404,22 @@
         if (match) extractedPass = match[1].trim();
       }
 
+      // 1. FRESH FETCH TO ENSURE WE HAVE THE LATEST LOGS FROM THE CLOUD
+      if (GOOGLE_SCRIPT_URL) {
+        try {
+          const resp = await fetch(GOOGLE_SCRIPT_URL);
+          const cloudData = await resp.json();
+          if (cloudData && cloudData.status === "success") {
+            globalCloudLogs = (cloudData.logs || []).map(log => ({
+              ...log,
+              date: cleanDateTimeDisplay(log.date, 'date'),
+              timeIn: cleanDateTimeDisplay(log.timeIn, 'time'),
+              timeOut: cleanDateTimeDisplay(log.timeOut, 'time')
+            }));
+          }
+        } catch(e) {}
+      }
+
       const matchingLogs = globalCloudLogs.filter(log => 
         log.passNo.toLowerCase() === extractedPass.toLowerCase() || log.mobile.toLowerCase() === extractedPass.toLowerCase()
       );
@@ -1414,17 +1428,37 @@
         const match = matchingLogs[matchingLogs.length - 1];
         const todayStr = getCurrentDate();
 
-        // 1. CHECK IF THERE IS AN ACTIVE "INSIDE" SESSION (TimeOut is blank or '_______')
+        // 2. CHECK IF THERE IS AN ACTIVE "INSIDE" SESSION (TimeOut is blank or '_______')
         const activeInsideLog = matchingLogs.slice().reverse().find(l => !l.timeOut || l.timeOut === '_______' || l.timeOut === '--:--');
 
         if (activeInsideLog) {
-          // TOGGLE: IF INSIDE, MARK THEM OUT IMMEDIATELY
-          recordTimeOut(activeInsideLog.passNo);
-          displayOutResult(`SUCCESS: Visitor ${match.name} (${match.passNo}) Checked-OUT at ${getCurrentTime()}!`, true);
+          // TOGGLE: IF INSIDE, CLOSE OUT THAT EXACT ROW IN THE BACKEND DATABASE
+          const outTime = getCurrentTime();
+          if (GOOGLE_SCRIPT_URL) {
+            try {
+              await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({
+                  action: "updateTimeOutByRow",
+                  passNo: activeInsideLog.passNo,
+                  timeIn: activeInsideLog.timeIn,
+                  date: activeInsideLog.date,
+                  timeOut: outTime
+                })
+              });
+            } catch (err) {
+              console.log("Error updating Time Out: " + err.message);
+            }
+          }
+
+          displayOutResult(`SUCCESS: Visitor ${match.name} (${match.passNo}) Checked-OUT at ${outTime}!`, true);
+          setTimeout(() => { fetchCloudData(); }, 1000);
           return;
         }
 
-        // 2. IF NOT INSIDE, CHECK PASS VALIDITY BEFORE CHECKING IN AGAIN
+        // 3. IF NOT INSIDE, CHECK PASS VALIDITY BEFORE STARTING A NEW ENTRY
         if (match.validity === 'Daily') {
           const completedToday = matchingLogs.some(l => l.date === todayStr && l.timeOut && l.timeOut !== '_______' && l.timeOut !== '--:--');
           if (completedToday || match.date !== todayStr) {
@@ -1439,11 +1473,19 @@
           }
         }
 
-        // 3. PRESERVE ORIGINAL PHOTO FROM PAST LOGS SO IT NEVER SAYS "NO PHOTO"
-        const originalRecordWithPhoto = matchingLogs.slice().reverse().find(l => l.photoUrl && l.photoUrl !== 'No Photo' && l.photoUrl !== 'NO_PHOTO');
-        const preservedPhoto = originalRecordWithPhoto ? originalRecordWithPhoto.photoUrl : (match.photoUrl || 'NO_PHOTO');
+        // 4. RETRIEVE AND PRESERVE ORIGINAL PHOTO FROM FIRST ENTRY OR PAST LOGS
+        let preservedPhoto = match.photoUrl || match.photo || 'NO_PHOTO';
+        if (preservedPhoto === 'No Photo' || preservedPhoto === 'NO_PHOTO' || !preservedPhoto) {
+          const originalRecordWithPhoto = matchingLogs.slice().reverse().find(l => l.photoUrl && l.photoUrl !== 'No Photo' && l.photoUrl !== 'NO_PHOTO');
+          if (originalRecordWithPhoto) {
+            preservedPhoto = originalRecordWithPhoto.photoUrl;
+          }
+        }
 
-        // 4. TOGGLE: IF NOT CURRENTLY INSIDE, CREATE NEW CHECK-IN SESSION
+        let deptVal = match.department || 'Admin';
+        if (deptVal.toUpperCase() === 'SICAL IT') deptVal = 'IT';
+
+        // 5. CREATE NEW CHECK-IN SESSION (N-TIMES PER DAY FOR WEEKLY / MONTHLY)
         const newEntry = {
           passNo: match.passNo,
           date: todayStr,
@@ -1453,12 +1495,12 @@
           mobile: match.mobile,
           company: match.company,
           personToMeet: match.personToMeet,
-          department: match.department,
+          department: deptVal,
           validity: match.validity,
           purpose: match.purpose,
-          vehicle: match.vehicle,
-          idType: match.idType,
-          idNumber: match.idNumber,
+          vehicle: match.vehicle || 'N/A',
+          idType: match.idType || 'Aadhaar Card',
+          idNumber: match.idNumber || 'N/A',
           photo: preservedPhoto
         };
 
@@ -2280,7 +2322,7 @@
       });
     }
 
-    /* RENDER SEPARATE LONG-TERM (WEEKLY & MONTHLY) PASSES REPORT TABLE WITH ISSUED DATE & IN/OUT VISIT COUNTS */
+    /* RENDER SEPARATE LONG-TERM (WEEKLY & MONTHLY) PASSES REPORT TABLE WITH CORRECT SESSION-BASED COUNTS */
     function renderLongTermLogsTable(logs) {
       const tbody = document.getElementById('longTermLogsBody');
       tbody.innerHTML = '';
@@ -2347,7 +2389,7 @@
       }
 
       let csvContent = "data:text/csv;charset=utf-8,";
-      csvContent += "Pass No,Date (DD-MM-YYYY),TimeIn,TimeOut,VisitorName,MobileNumber,IdType,IdNumber,Company,PersonToMeet,Department,Validity,Purpose,VehicleNo,PhotoUrl\n";
+      csvContent += "Pass No,Date (DD-MM-YYYY),Time In,Time Out,Visitor Name,Mobile Number,ID Type,ID Number,Company/From,Person To Meet,Department,Validity,Purpose,Vehicle No,Photo Link\n";
 
       globalCloudLogs.forEach(log => {
         const row = [
@@ -2365,7 +2407,7 @@
           `"${log.validity}"`,
           `"${log.purpose}"`,
           `"${log.vehicle}"`,
-          `"${log.photoUrl || 'N/A'}"`
+          `"${log.photoUrl || 'N/Y'}"`
         ].join(",");
         csvContent += row + "\n";
       });
