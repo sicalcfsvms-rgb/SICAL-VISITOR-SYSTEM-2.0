@@ -289,7 +289,7 @@
     .cam-btns { margin-top: 6px; display: flex; gap: 8px; }
     .btn-cam { background: var(--blue); color: white; border: none; padding: 5px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer; }
 
-    /* VERTICAL LANYARD FOLDING BOOKLET BADGE FORMAT */
+    /* VERTICAL LANYARD POUCH FOLDING BOOKLET BADGE FORMAT */
     .pass-booklet-container {
       display: flex;
       flex-direction: column;
@@ -1378,7 +1378,7 @@
       document.getElementById('manualOutInput').value = '';
     }
 
-    /* RECURRING & VALIDITY SCANNER LOGIC */
+    /* MULTI-ENTRY (N TIMES) & VALIDITY SCANNER LOGIC */
     async function processOutGateCode(rawVal) {
       if (activeUser && activeUser.canMarkOut === false) {
         displayOutResult("Action Denied: Your account role does not have permission to mark visitors out.", false);
@@ -1400,53 +1400,41 @@
 
       if (matchingLogs.length > 0) {
         const match = matchingLogs[matchingLogs.length - 1];
-        const isCurrentlyInside = (!match.timeOut || match.timeOut === '_______' || match.timeOut === '--:--');
-
         const todayStr = getCurrentDate();
 
-        // SCENARIO 1: VISITOR IS INSIDE -> MARK THEM OUT
-        if (isCurrentlyInside) {
-          recordTimeOut(match.passNo);
+        // 1. CHECK IF THERE IS ANY ACTIVE "INSIDE" SESSION FOR THIS PASS
+        const activeInsideLog = matchingLogs.slice().reverse().find(l => !l.timeOut || l.timeOut === '_______' || l.timeOut === '--:--');
+
+        if (activeInsideLog) {
+          // MARK OUT THE ACTIVE SESSION
+          recordTimeOut(activeInsideLog.passNo);
           displayOutResult(`SUCCESS: Visitor ${match.name} (${match.passNo}) Checked-OUT at ${getCurrentTime()}!`, true);
           return;
         }
 
-        // SCENARIO 2: DAILY PASS VALIDITY CHECK (Once IN and OUT completed, it's invalid)
-        if (match.validity === 'Daily') {
-          const hasCompletedToday = matchingLogs.some(l => 
-            l.date === todayStr && l.timeOut && l.timeOut !== '_______' && l.timeOut !== '--:--'
-          );
-          if (hasCompletedToday || match.date !== todayStr) {
-            displayOutResult(`INVALID PASS: Daily Pass (${match.passNo}) has already completed its single IN/OUT cycle or belongs to another date.`, false);
-            return;
-          }
-        }
-
-        // SCENARIO 3: WEEKLY OR MONTHLY PASS CHECKING IN (Allows N entries/exits per day)
+        // 2. CHECK EXPIRATION FOR WEEKLY / MONTHLY PASSES
         if (match.validity === 'Weekly' || match.validity === 'Monthly') {
           const status = checkPassExpiration(match.date, match.validity);
           if (status.isExpired) {
             displayOutResult(`EXPIRED PASS: ${match.name}'s ${match.validity} Pass has expired! Please issue a new pass.`, false);
             return;
           }
+        } 
+        // 3. DAILY PASS VALIDITY CHECK (Single IN/OUT per day)
+        else if (match.validity === 'Daily') {
+          const completedToday = matchingLogs.some(l => l.date === todayStr && l.timeOut && l.timeOut !== '_______' && l.timeOut !== '--:--');
+          if (completedToday || match.date !== todayStr) {
+            displayOutResult(`INVALID PASS: Daily Pass (${match.passNo}) has already completed its single IN/OUT cycle or belongs to another date.`, false);
+            return;
+          }
         }
 
-        // Check if currently inside for today already
-        const currentlyInsideToday = matchingLogs.some(l => 
-          l.date === todayStr && (!l.timeOut || l.timeOut === '_______' || l.timeOut === '--:--')
-        );
-
-        if (currentlyInsideToday) {
-          displayOutResult(`ALREADY INSIDE: Pass (${match.passNo}) is already checked into the premises!`, false);
-          return;
-        }
-
-        // Pull original photo from past logs if available
+        // 4. PRESERVE ORIGINAL PHOTO FROM PAST LOGS
         const originalRecordWithPhoto = matchingLogs.slice().reverse().find(l => l.photoUrl && l.photoUrl !== 'No Photo' && l.photoUrl !== 'NO_PHOTO');
         const preservedPhoto = originalRecordWithPhoto ? originalRecordWithPhoto.photoUrl : (match.photoUrl || 'NO_PHOTO');
 
-        // Record new IN entry for N-times weekly/monthly access or new daily entry
-        const reEntry = {
+        // 5. START A NEW CHECK-IN (N TIMES ALLOWED FOR WEEKLY & MONTHLY)
+        const newEntry = {
           passNo: match.passNo,
           date: todayStr,
           timeIn: getCurrentTime(),
@@ -1470,7 +1458,7 @@
               method: 'POST',
               mode: 'no-cors',
               headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-              body: JSON.stringify(reEntry)
+              body: JSON.stringify(newEntry)
             });
           } catch (err) {
             console.log("Cloud sync error: " + err.message);
@@ -2284,7 +2272,7 @@
         return;
       }
 
-      const longTermPasses = logs.filter(l => l.validity === 'Weekly' || l.validity === 'Monthly');
+      const longTermPasses = logs.filter(l => l.validity === 'Weekly' || l.validTestidity === 'Monthly' || l.validity === 'Weekly' || l.validity === 'Monthly');
 
       if (longTermPasses.length === 0) {
         tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No active weekly or monthly pass members found.</td></tr>';
