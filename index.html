@@ -256,9 +256,9 @@
       flex-direction: column; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: bold; color: var(--navy);
     }
 
-    .chart-legend { list-style: none; font-size: 0.75rem; }
+    .chart-legend { list-style: none; font-size: 0.75rem; max-height: 110px; overflow-y: auto; }
     .chart-legend li { margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
-    .legend-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
+    .legend-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
     .progress-list { list-style: none; padding-top: 2px; }
     .progress-item { margin-bottom: 8px; }
@@ -617,10 +617,12 @@
                     <th>Visitor Name</th>
                     <th>Department To Meet</th>
                     <th>Time In</th>
+                    <th>Time Out</th>
+                    <th>Total Hrs</th>
                   </tr>
                 </thead>
                 <tbody id="dashLiveLogsBody">
-                  <tr><td colspan="4" style="text-align:center;">Loading recent activity...</td></tr>
+                  <tr><td colspan="6" style="text-align:center;">Loading recent activity...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -636,13 +638,7 @@
                 </div>
               </div>
               <ul class="chart-legend" id="deptLegendList">
-                <li><span class="legend-dot" style="background: #0284c7;"></span> Import: <b id="pctImport">0%</b></li>
-                <li><span class="legend-dot" style="background: #16a34a;"></span> Export: <b id="pctExport">0%</b></li>
-                <li><span class="legend-dot" style="background: #f59e0b;"></span> Customs: <b id="pctCustoms">0%</b></li>
-                <li><span class="legend-dot" style="background: #e11d48;"></span> Bond: <b id="pctBond">0%</b></li>
-                <li><span class="legend-dot" style="background: #0d9488;"></span> Admin: <b id="pctAdmin">0%</b></li>
-                <li><span class="legend-dot" style="background: #7c3aed;"></span> IT: <b id="pctIt">0%</b></li>
-                <li><span class="legend-dot" style="background: #64748b;"></span> Other Depts: <b id="pctOther">0%</b></li>
+                <!-- Dynamically populated to match all departments -->
               </ul>
             </div>
           </div>
@@ -1422,7 +1418,6 @@
             return;
           }
 
-          // CHECK IF ALREADY ENTERED & EXITED (COMPLETED VISIT) TODAY OR CURRENTLY INSIDE
           const alreadyCompletedToday = matchingLogs.some(l => 
             l.date === todayStr && l.timeOut && l.timeOut !== '_______' && l.timeOut !== '--:--'
           );
@@ -1436,11 +1431,9 @@
             return;
           }
 
-          // PULL ORIGINAL PHOTO FROM EARLIER RECORDS OF THIS PASS
           const originalRecordWithPhoto = matchingLogs.slice().reverse().find(l => l.photoUrl && l.photoUrl !== 'No Photo' && l.photoUrl !== 'NO_PHOTO');
           const preservedPhoto = originalRecordWithPhoto ? originalRecordWithPhoto.photoUrl : (match.photoUrl || 'NO_PHOTO');
 
-          // RECORD NEW ENTRY FOR TODAY WITH PRESERVED PHOTO
           const reEntry = {
             passNo: match.passNo,
             date: todayStr,
@@ -1498,7 +1491,6 @@
         box.style.border = '1px solid #fca5a5';
       }
 
-      // AUTO-CLEAR RESULT BANNER AFTER 4 SECONDS
       setTimeout(() => {
         box.style.display = 'none';
       }, 4000);
@@ -1589,7 +1581,7 @@
       let yMonth = yesterday.getMonth();
       let yYear = yesterday.getFullYear();
 
-      let deptCounts = { Import: 0, Export: 0, Customs: 0, Bond: 0, Admin: 0, SicalIT: 0, Other: 0 };
+      let deptCounts = {};
       let purposeCounts = { EXIM: 0, Meeting: 0, Vendor: 0 };
 
       logs.forEach(log => {
@@ -1615,14 +1607,8 @@
           }
         }
 
-        const d = (log.department || '').toLowerCase();
-        if (d.includes('import')) deptCounts.Import++;
-        else if (d.includes('export')) deptCounts.Export++;
-        else if (d.includes('custom')) deptCounts.Customs++;
-        else if (d.includes('bond')) deptCounts.Bond++;
-        else if (d.includes('admin')) deptCounts.Admin++;
-        else if (d.includes('it') || d.includes('it')) deptCounts.IT++;
-        else deptCounts.Other++;
+        const deptName = (log.department || 'Admin').trim();
+        deptCounts[deptName] = (deptCounts[deptName] || 0) + 1;
 
         const p = (log.purpose || '').toLowerCase();
         if (p.includes('exim') || p.includes('clearance')) purposeCounts.EXIM++;
@@ -1643,41 +1629,38 @@
         alertBanner.style.display = 'none';
       }
 
-      const hasLogs = logs.length > 0;
       const totalLogs = logs.length || 1;
+      const legendList = document.getElementById('deptLegendList');
+      legendList.innerHTML = '';
 
-      const pctImp = hasLogs ? Math.round((deptCounts.Import / totalLogs) * 100) : 0;
-      const pctExp = hasLogs ? Math.round((deptCounts.Export / totalLogs) * 100) : 0;
-      const pctCus = hasLogs ? Math.round((deptCounts.Customs / totalLogs) * 100) : 0;
-      const pctBnd = hasLogs ? Math.round((deptCounts.Bond / totalLogs) * 100) : 0;
-      const pctAdm = hasLogs ? Math.round((deptCounts.Admin / totalLogs) * 100) : 0;
-      const pctIt  = hasLogs ? Math.round((deptCounts.SicalIT / totalLogs) * 100) : 0;
-      const pctOth = hasLogs ? Math.max(0, 100 - (pctImp + pctExp + pctCus + pctBnd + pctAdm + pctIt)) : 0;
+      const colorPalette = ['#0284c7', '#16a34a', '#f59e0b', '#e11d48', '#0d9488', '#7c3aed', '#db2777', '#ca8a04', '#4f46e5', '#64748b'];
+      let conicStops = [];
+      let currentPercent = 0;
+      let colorIndex = 0;
 
-      document.getElementById('pctImport').textContent = pctImp + '%';
-      document.getElementById('pctExport').textContent = pctExp + '%';
-      document.getElementById('pctCustoms').textContent = pctCus + '%';
-      document.getElementById('pctBond').textContent = pctBnd + '%';
-      document.getElementById('pctAdmin').textContent = pctAdm + '%';
-      document.getElementById('pctIt').textContent = pctIt + '%';
-      document.getElementById('pctOther').textContent = pctOth + '%';
+      const deptEntries = Object.entries(deptCounts);
+      deptEntries.forEach(([dept, count]) => {
+        const pct = Math.round((count / totalLogs) * 100);
+        const color = colorPalette[colorIndex % colorPalette.length];
+        colorIndex++;
+
+        const nextPercent = currentPercent + pct;
+        conicStops.push(`${color} ${currentPercent}% ${nextPercent}%`);
+        currentPercent = nextPercent;
+
+        legendList.innerHTML += `<li><span class="legend-dot" style="background: ${color};"></span> ${dept}: <b>${pct}%</b> (${count})</li>`;
+      });
+
       document.getElementById('donutTotalCount').textContent = logs.length;
-
-      if (hasLogs) {
-        const c1 = pctImp;
-        const c2 = c1 + pctExp;
-        const c3 = c2 + pctCus;
-        const c4 = c3 + pctBnd;
-        const c5 = c4 + pctAdm;
-        const c6 = c5 + pctIt;
-        document.getElementById('deptDonutChart').style.background = `conic-gradient(#0284c7 0% ${c1}%, #16a34a ${c1}% ${c2}%, #f59e0b ${c2}% ${c3}%, #e11d48 ${c3}% ${c4}%, #0d9488 ${c4}% ${c5}%, #7c3aed ${c5}% ${c6}%, #64748b ${c6}% 100%)`;
+      if (deptEntries.length > 0 && totalLogs > 0) {
+        document.getElementById('deptDonutChart').style.background = `conic-gradient(${conicStops.join(', ')})`;
       } else {
         document.getElementById('deptDonutChart').style.background = `#cbd5e1`;
       }
 
-      const pctPurpEXIM = hasLogs ? Math.round((purposeCounts.EXIM / totalLogs) * 100) : 0;
-      const pctPurpMeeting = hasLogs ? Math.round((purposeCounts.Meeting / totalLogs) * 100) : 0;
-      const pctPurpVendor = hasLogs ? Math.round((purposeCounts.Vendor / totalLogs) * 100) : 0;
+      const pctPurpEXIM = hasLogsCheck = logs.length > 0 ? Math.round((purposeCounts.EXIM / totalLogs) * 100) : 0;
+      const pctPurpMeeting = logs.length > 0 ? Math.round((purposeCounts.Meeting / totalLogs) * 100) : 0;
+      const pctPurpVendor = logs.length > 0 ? Math.round((purposeCounts.Vendor / totalLogs) * 100) : 0;
 
       document.getElementById('lblPurpEXIM').textContent = pctPurpEXIM + '%';
       document.getElementById('lblPurpMeeting').textContent = pctPurpMeeting + '%';
@@ -1692,21 +1675,60 @@
       renderDashLiveLogs(logs.slice(-5).reverse());
     }
 
+    function calculateTotalHours(timeInStr, timeOutStr) {
+      if (!timeInStr || !timeOutStr || timeInStr === '--:--' || timeOutStr === '_______' || timeOutStr === '--') return "Inside";
+      
+      try {
+        const parseTime12 = (tStr) => {
+          const parts = tStr.trim().split(' ');
+          if(parts.length < 2) return null;
+          const timeParts = parts[0].split(':');
+          let hours = parseInt(timeParts[0], 10);
+          const minutes = parseInt(timeParts[1], 10);
+          const modifier = parts[1].toUpperCase();
+          if (modifier === 'PM' && hours < 12) hours += 12;
+          if (modifier === 'AM' && hours === 12) hours = 0;
+          return hours * 60 + minutes;
+        };
+
+        const minIn = parseTime12(timeInStr);
+        const minOut = parseTime12(timeOutStr);
+        if (minIn === null || minOut === null) return "Completed";
+
+        let diff = minOut - minIn;
+        if (diff < 0) diff += 24 * 60;
+
+        const hrs = Math.floor(diff / 60);
+        const mins = diff % 60;
+
+        if (hrs === 0) return `${mins} mins`;
+        if (mins === 0) return `${hrs} hr${hrs > 1 ? 's' : ''}`;
+        return `${hrs} hr ${mins} mins`;
+      } catch(e) {
+        return "Completed";
+      }
+    }
+
     function renderDashLiveLogs(recentLogs) {
       const tbody = document.getElementById('dashLiveLogsBody');
       tbody.innerHTML = '';
 
       if (!recentLogs || recentLogs.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No recent check-ins recorded.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No recent check-ins recorded.</td></tr>';
         return;
       }
 
       recentLogs.forEach(log => {
+        const timeOutDisplay = (log.timeOut && log.timeOut !== '_______' && log.timeOut !== '--:--') ? log.timeOut : '--';
+        const totalHrsDisplay = calculateTotalHours(log.timeIn, log.timeOut);
+
         const row = `<tr>
           <td><strong>${log.passNo}</strong></td>
           <td>${log.name}</td>
           <td>${log.department || 'Admin'}</td>
           <td>${log.timeIn}</td>
+          <td><strong style="color: ${timeOutDisplay !== '--' ? '#0284c7' : '#94a3b8'}">${timeOutDisplay}</strong></td>
+          <td><strong style="color: ${totalHrsDisplay === 'Inside' ? '#dc2626' : '#16a34a'}">${totalHrsDisplay}</strong></td>
         </tr>`;
         tbody.innerHTML += row;
       });
