@@ -937,17 +937,19 @@
                   <th>Visitor Name</th>
                   <th>Mobile</th>
                   <th>ID Proof</th>
+                  <th>ID Number</th>
                   <th>Company</th>
                   <th>Person to Meet</th>
                   <th>Dept</th>
                   <th>Validity</th>
                   <th>Purpose</th>
+                  <th>Vehicle No</th>
                   <th>Photo</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tbody id="logsTableBody">
-                <tr><td colspan="14" style="text-align:center;">Loading logs from Google Sheet...</td></tr>
+                <tr><td colspan="16" style="text-align:center;">Loading logs from Google Sheet...</td></tr>
               </tbody>
             </table>
           </div>
@@ -1036,7 +1038,7 @@
   </div>
 
   <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxt5xkc08UOjl-Ieew8ER52gQTO_iXgAamhGb-FI0Jnqukdh9JiWCY87Yxm4535uMZ3Og/exec";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwKHEvYJQTDleXeQI6WrGyMegZwH5Bk5Xg4UcG-bjDiXhDTb8drgcD9Fse0T2SWvD9KWg/exec";
 
     let globalCloudLogs = [];
     let globalUsersList = [
@@ -1412,6 +1414,7 @@
           if (cloudData && cloudData.status === "success") {
             globalCloudLogs = (cloudData.logs || []).map(log => ({
               ...log,
+              mobile: String(log.mobile || "").trim(),
               date: cleanDateTimeDisplay(log.date, 'date'),
               timeIn: cleanDateTimeDisplay(log.timeIn, 'time'),
               timeOut: cleanDateTimeDisplay(log.timeOut, 'time')
@@ -1421,7 +1424,7 @@
       }
 
       const matchingLogs = globalCloudLogs.filter(log => 
-        log.passNo.toLowerCase() === extractedPass.toLowerCase() || log.mobile.toLowerCase() === extractedPass.toLowerCase()
+        log.passNo.toLowerCase() === extractedPass.toLowerCase() || String(log.mobile).trim() === String(extractedPass).trim()
       );
 
       if (matchingLogs.length > 0) {
@@ -1482,13 +1485,6 @@
         let deptVal = masterRecord.department || 'Admin';
         if (deptVal.toUpperCase() === 'SICAL IT') deptVal = 'IT';
 
-        let parsedIdType = masterRecord.idType || 'Aadhaar Card';
-        let parsedIdNumber = masterRecord.idNumber || 'N/A';
-        if (masterRecord.idProof && masterRecord.idProof.includes('(')) {
-          parsedIdType = masterRecord.idProof.split('(')[0].trim();
-          parsedIdNumber = masterRecord.idProof.split('(')[1].replace(')', '').trim();
-        }
-
         // 5. CREATE NEW CHECK-IN SESSION WITH FULLY POPULATED MASTER DETAILS
         const newEntry = {
           passNo: masterRecord.passNo,
@@ -1496,15 +1492,15 @@
           timeIn: getCurrentTime(),
           timeOut: '_______',
           name: masterRecord.name,
-          mobile: masterRecord.mobile,
+          mobile: String(masterRecord.mobile || ''),
           company: masterRecord.company,
           personToMeet: masterRecord.personToMeet,
           department: deptVal,
           validity: masterRecord.validity,
           purpose: masterRecord.purpose,
           vehicle: masterRecord.vehicle || 'N/A',
-          idType: parsedIdType,
-          idNumber: parsedIdNumber,
+          idType: masterRecord.idType || 'Aadhaar Card',
+          idNumber: masterRecord.idNumber || 'N/A',
           photo: preservedPhoto
         };
 
@@ -1574,6 +1570,7 @@
           if (data && data.status === "success") {
             globalCloudLogs = (data.logs || []).map(log => ({
               ...log,
+              mobile: String(log.mobile || "").trim(),
               date: cleanDateTimeDisplay(log.date, 'date'),
               timeIn: cleanDateTimeDisplay(log.timeIn, 'time'),
               timeOut: cleanDateTimeDisplay(log.timeOut, 'time')
@@ -1732,7 +1729,7 @@
     }
 
     function calculateTotalHours(timeInStr, timeOutStr) {
-      if (!timeInStr || !timeOutStr || timeInStr === '--:--' || timeOutStr === '_______' || timeOutStr === '--') return "Inside";
+      if (!timeInStr || !timeOutStr || timeInStr === '--:--' || timeInStr === '_______' || timeOutStr === '--') return "Inside";
       
       try {
         const parseTime12 = (tStr) => {
@@ -1864,7 +1861,7 @@
       }
 
       const matches = globalCloudLogs.filter(log => 
-        log.passNo.toLowerCase() === query || log.mobile.toLowerCase() === query
+        log.passNo.toLowerCase() === query || String(log.mobile).trim().toLowerCase() === query
       );
 
       if (matches.length > 0) {
@@ -2267,7 +2264,7 @@
       const filtered = globalCloudLogs.filter(log => {
         const matchesQuery = !query || 
           log.passNo.toLowerCase().includes(query) || 
-          log.mobile.toLowerCase().includes(query) ||
+          String(log.mobile).trim().toLowerCase().includes(query) ||
           log.name.toLowerCase().includes(query) ||
           log.idNumber.toLowerCase().includes(query);
 
@@ -2285,7 +2282,7 @@
       tbody.innerHTML = '';
 
       if (!logs || logs.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="14" style="text-align:center;">No visitor entries found.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="16" style="text-align:center;">No visitor entries found.</td></tr>';
         return;
       }
 
@@ -2308,7 +2305,6 @@
           ? `<a href="${directImgUrl}" target="_blank" style="color:#0284c7; font-weight:bold;">Drive Photo</a>` 
           : `No Photo`;
 
-        const idProofText = log.idType !== 'N/A' ? `${log.idType} (${log.idNumber})` : 'N/A';
         let deptDisplay = log.department && log.department.toUpperCase() === 'SICAL IT' ? 'IT' : (log.department || 'Admin');
 
         const row = `<tr>
@@ -2318,12 +2314,14 @@
           <td><strong style="color: ${(log.timeOut !== '_______' && log.timeOut !== '--:--') ? '#0284c7' : '#94a3b8'}">${log.timeOut}</strong></td>
           <td>${log.name}</td>
           <td>${log.mobile}</td>
-          <td>${idProofText}</td>
+          <td>${log.idType || 'Aadhaar Card'}</td>
+          <td>${log.idNumber || 'N/A'}</td>
           <td>${log.company}</td>
           <td>${log.personToMeet}</td>
           <td>${deptDisplay}</td>
           <td>${log.validity}</td>
           <td>${log.purpose}</td>
+          <td>${log.vehicle || 'N/A'}</td>
           <td>${photoCell}</td>
           <td>${actionContent}</td>
         </tr>`;
@@ -2408,15 +2406,15 @@
           `"${log.timeOut}"`,
           `"${log.name}"`,
           `"${log.mobile}"`,
-          `"${log.idType || 'N/A'}"`,
+          `"${log.idType || 'Aadhaar Card'}"`,
           `"${log.idNumber || 'N/A'}"`,
           `"${log.company}"`,
           `"${log.personToMeet}"`,
           `"${log.department}"`,
           `"${log.validity}"`,
           `"${log.purpose}"`,
-          `"${log.vehicle}"`,
-          `"${log.photoUrl || 'N/Y'}"`
+          `"${log.vehicle || 'N/A'}"`,
+          `"${log.photoUrl || 'N/A'}"`
         ].join(",");
         csvContent += row + "\n";
       });
