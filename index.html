@@ -463,7 +463,7 @@
       .top-right-logo .logo-sub { font-size: 0.38rem !important; }
 
       .badge-row { font-size: 0.62rem !important; margin-bottom: 2px !important; }
-      .visitor-photo-frame { width: 70px !important; height: 85px !important; }
+      .visitor-photo-frame { width: 70px !important; height: 85mm !important; }
 
       .signature-container { padding: 30px 0 10px 0 !important; }
 
@@ -1036,7 +1036,7 @@
   </div>
 
   <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6mWdtlMXTSf3IwUkHTQj6M3uVHEyKBxIRKgHRAqUPbJ0EGSdeheHrs4NFzwMcyyfdKg/exec";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyDwhUMOYmMdmVIjl1eSGlUOj91TJGgXgXPvGr0eO4wu_adjSrfjffdOX0X3NZEuUcq5w/exec";
 
     let globalCloudLogs = [];
     let globalUsersList = [
@@ -1404,7 +1404,7 @@
         if (match) extractedPass = match[1].trim();
       }
 
-      // 1. FRESH FETCH TO ENSURE WE HAVE THE LATEST LOGS FROM CLOUD
+      // 1. FRESH FETCH TO ENSURE WE HAVE LATEST LOGS
       if (GOOGLE_SCRIPT_URL) {
         try {
           const resp = await fetch(GOOGLE_SCRIPT_URL);
@@ -1425,17 +1425,35 @@
       );
 
       if (matchingLogs.length > 0) {
-        const masterRecord = matchingLogs[0]; // First registration contains master profile details
-        const latestRecord = matchingLogs[matchingLogs.length - 1];
+        const masterRecord = matchingLogs[0]; // Master record from initial registration
         const todayStr = getCurrentDate();
 
         // 2. CHECK IF THERE IS AN ACTIVE "INSIDE" SESSION (TimeOut is blank or '_______')
         const activeInsideLog = matchingLogs.slice().reverse().find(l => !l.timeOut || l.timeOut === '_______' || l.timeOut === '--:--');
 
         if (activeInsideLog) {
-          // TOGGLE: IF INSIDE, CLOSE OUT THAT EXACT SESSION
-          recordTimeOut(activeInsideLog.passNo);
-          displayOutResult(`SUCCESS: Visitor ${masterRecord.name} (${masterRecord.passNo}) Checked-OUT at ${getCurrentTime()}!`, true);
+          // TOGGLE: IF INSIDE, CLOSE OUT THAT EXACT SESSION ROW VIA BACKEND
+          const outTime = getCurrentTime();
+          if (GOOGLE_SCRIPT_URL) {
+            try {
+              await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({
+                  action: "updateTimeOut",
+                  passNo: activeInsideLog.passNo,
+                  timeIn: activeInsideLog.timeIn,
+                  timeOut: outTime
+                })
+              });
+            } catch (err) {
+              console.log("Error updating Time Out: " + err.message);
+            }
+          }
+
+          displayOutResult(`SUCCESS: Visitor ${masterRecord.name} (${masterRecord.passNo}) Checked-OUT at ${outTime}!`, true);
+          setTimeout(() => { fetchCloudData(); }, 1000);
           return;
         }
 
@@ -1454,7 +1472,7 @@
           }
         }
 
-        // 4. RETRIEVE MASTER PHOTO & DETAILS TO ENSURE NO BLANK DATA
+        // 4. RETRIEVE MASTER PHOTO & ALL DETAILS SO NO DATA IS EVER BLANK
         let preservedPhoto = masterRecord.photoUrl || masterRecord.photo || 'NO_PHOTO';
         if (preservedPhoto === 'No Photo' || preservedPhoto === 'NO_PHOTO' || !preservedPhoto) {
           const photoLog = matchingLogs.slice().reverse().find(l => l.photoUrl && l.photoUrl !== 'No Photo' && l.photoUrl !== 'NO_PHOTO');
@@ -1478,8 +1496,8 @@
           validity: masterRecord.validity,
           purpose: masterRecord.purpose,
           vehicle: masterRecord.vehicle || 'N/A',
-          idType: masterRecord.idType || 'Aadhaar Card',
-          idNumber: masterRecord.idNumber || 'N/A',
+          idType: masterRecord.idProof ? masterRecord.idProof.split('(')[0].trim() : (masterRecord.idType || 'Aadhaar Card'),
+          idNumber: masterRecord.idProof && masterRecord.idProof.includes('(') ? masterRecord.idProof.split('(')[1].replace(')', '').trim() : (masterRecord.idNumber || 'N/A'),
           photo: preservedPhoto
         };
 
