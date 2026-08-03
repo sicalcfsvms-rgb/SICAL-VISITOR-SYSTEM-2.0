@@ -1347,7 +1347,8 @@
         
         const qrCodeSuccessCallback = (decodedText) => {
           const now = Date.now();
-          if (decodedText === lastScannedText && (now - lastScanTimestamp) < 4000) {
+          // Lowered duplicate lock from 4000ms to 1500ms for faster re-scanning
+          if (decodedText === lastScannedText && (now - lastScanTimestamp) < 1500) {
             return;
           }
           lastScannedText = decodedText;
@@ -1385,7 +1386,7 @@
       document.getElementById('manualOutInput').value = '';
     }
 
-    /* ROBUST SCANNER TOGGLE WITH FULL MASTER DATA RETRIEVAL FOR NEW SESSIONS */
+    /* INSTANT OPTIMISTIC SCANNER WITH NON-BLOCKING BACKGROUND SYNC */
     async function processOutGateCode(rawVal) {
       if (activeUser && activeUser.canMarkOut === false) {
         displayOutResult("Action Denied: Your account role does not have permission to mark visitors out.", false);
@@ -1401,61 +1402,42 @@
         if (match) extractedPass = match[1].trim();
       }
 
-      // 1. FRESH FETCH TO ENSURE WE HAVE LATEST LOGS
-      if (GOOGLE_SCRIPT_URL) {
-        try {
-          const resp = await fetch(GOOGLE_SCRIPT_URL);
-          const cloudData = await resp.json();
-          if (cloudData && cloudData.status === "success") {
-            globalCloudLogs = (cloudData.logs || []).map(log => ({
-              ...log,
-              mobile: String(log.mobile || "").trim(),
-              date: cleanDateTimeDisplay(log.date, 'date'),
-              timeIn: cleanDateTimeDisplay(log.timeIn, 'time'),
-              timeOut: cleanDateTimeDisplay(log.timeOut, 'time')
-            }));
-          }
-        } catch(e) {}
-      }
-
+      // Check against local logs immediately for instant UI feedback
       const matchingLogs = globalCloudLogs.filter(log => 
         log.passNo.toLowerCase() === extractedPass.toLowerCase() || String(log.mobile).trim() === String(extractedPass).trim()
       );
 
       if (matchingLogs.length > 0) {
-        const masterRecord = matchingLogs[0]; // Master record from initial registration
+        const masterRecord = matchingLogs[0];
         const todayStr = getCurrentDate();
-
-        // 2. CHECK IF THERE IS AN ACTIVE "INSIDE" SESSION (TimeOut is blank or '_______')
         const activeInsideLog = matchingLogs.slice().reverse().find(l => !l.timeOut || l.timeOut === '_______' || l.timeOut === '--:--');
 
         if (activeInsideLog) {
-          // TOGGLE: IF INSIDE, CLOSE OUT THAT EXACT SESSION ROW VIA BACKEND
+          // VISITOR EXIT (CHECK-OUT)
           const outTime = getCurrentTime();
-          if (GOOGLE_SCRIPT_URL) {
-            try {
-              await fetch(GOOGLE_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({
-                  action: "updateTimeOut",
-                  passNo: activeInsideLog.passNo,
-                  timeIn: activeInsideLog.timeIn,
-                  timeOut: outTime
-                })
-              });
-            } catch (err) {
-              console.log("Error updating Time Out: " + err.message);
-            }
-          }
-
+          activeInsideLog.timeOut = outTime;
+          
           displayOutResult(`SUCCESS: Visitor ${masterRecord.name} (${masterRecord.passNo}) Checked-OUT at ${outTime}!`, true);
-          setTimeout(() => { fetchCloudData(); }, 1000);
+          computeDashboardAnalytics(globalCloudLogs);
+
+          // Non-blocking background sync to Google Apps Script
+          if (GOOGLE_SCRIPT_URL) {
+            fetch(GOOGLE_SCRIPT_URL, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: JSON.stringify({
+                action: "updateTimeOut",
+                passNo: activeInsideLog.passNo,
+                timeIn: activeInsideLog.timeIn,
+                timeOut: outTime
+              })
+            }).catch(err => console.log("Background sync error: " + err.message));
+          }
           return;
         }
 
-        // 3. IF NOT INSIDE, VALIDATE PASS
+        // VISITOR RE-ENTRY (CHECK-IN)
         if (masterRecord.validity === 'Daily') {
           const completedToday = matchingLogs.some(l => l.date === todayStr && l.timeOut && l.timeOut !== '_______' && l.timeOut !== '--:--');
           if (completedToday || masterRecord.date !== todayStr) {
@@ -1470,7 +1452,6 @@
           }
         }
 
-        // 4. RETRIEVE MASTER PHOTO & ALL DETAILS SO NO DATA IS EVER BLANK
         let preservedPhoto = masterRecord.photoUrl || masterRecord.photo || 'NO_PHOTO';
         if (preservedPhoto === 'No Photo' || preservedPhoto === 'NO_PHOTO' || !preservedPhoto) {
           const photoLog = matchingLogs.slice().reverse().find(l => l.photoUrl && l.photoUrl !== 'No Photo' && l.photoUrl !== 'NO_PHOTO');
@@ -1480,11 +1461,11 @@
         let deptVal = masterRecord.department || 'Admin';
         if (deptVal.toUpperCase() === 'SICAL IT') deptVal = 'IT';
 
-        // 5. CREATE NEW CHECK-IN SESSION WITH FULLY POPULATED MASTER DETAILS
+        const newTimeIn = getCurrentTime();
         const newEntry = {
           passNo: masterRecord.passNo,
           date: todayStr,
-          timeIn: getCurrentTime(),
+          timeIn: newTimeIn,
           timeOut: '_______',
           name: masterRecord.name,
           mobile: String(masterRecord.mobile || ''),
@@ -1499,21 +1480,20 @@
           photo: preservedPhoto
         };
 
-        if (GOOGLE_SCRIPT_URL) {
-          try {
-            await fetch(GOOGLE_SCRIPT_URL, {
-              method: 'POST',
-              mode: 'no-cors',
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-              body: JSON.stringify(newEntry)
-            });
-          } catch (err) {
-            console.log("Cloud sync error: " + err.message);
-          }
-        }
+        // Instantly push locally & update interface
+        globalCloudLogs.push(newEntry);
+        displayOutResult(`SUCCESS: Visitor ${masterRecord.name} (${masterRecord.validity} Pass) Checked-IN at ${newTimeIn}!`, true);
+        computeDashboardAnalytics(globalCloudLogs);
 
-        displayOutResult(`SUCCESS: Visitor ${masterRecord.name} (${masterRecord.validity} Pass) Checked-IN at ${getCurrentTime()}!`, true);
-        setTimeout(() => { fetchCloudData(); }, 1000);
+        // Non-blocking background sync to Google Apps Script
+        if (GOOGLE_SCRIPT_URL) {
+          fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(newEntry)
+          }).catch(err => console.log("Background sync error: " + err.message));
+        }
 
       } else {
         displayOutResult(`ERROR: No visitor record found for "${extractedPass}".`, false);
