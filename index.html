@@ -617,12 +617,10 @@
                     <th>Visitor Name</th>
                     <th>Department To Meet</th>
                     <th>Time In</th>
-                    <th>Time Out</th>
-                    <th>Total Hrs</th>
                   </tr>
                 </thead>
                 <tbody id="dashLiveLogsBody">
-                  <tr><td colspan="6" style="text-align:center;">Loading recent activity...</td></tr>
+                  <tr><td colspan="4" style="text-align:center;">Loading recent activity...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -643,7 +641,7 @@
                 <li><span class="legend-dot" style="background: #f59e0b;"></span> Customs: <b id="pctCustoms">0%</b></li>
                 <li><span class="legend-dot" style="background: #e11d48;"></span> Bond: <b id="pctBond">0%</b></li>
                 <li><span class="legend-dot" style="background: #0d9488;"></span> Admin: <b id="pctAdmin">0%</b></li>
-                <li><span class="legend-dot" style="background: #7c3aed;"></span> SICAL IT: <b id="pctIt">0%</b></li>
+                <li><span class="legend-dot" style="background: #7c3aed;"></span> IT: <b id="pctIt">0%</b></li>
                 <li><span class="legend-dot" style="background: #64748b;"></span> Other Depts: <b id="pctOther">0%</b></li>
               </ul>
             </div>
@@ -708,10 +706,10 @@
                   <label>Identity Proof Type *</label>
                   <select id="idType" required>
                     <option value="Aadhaar Card">Aadhaar Card</option>
+                    <option value="Customs Card">Customs Card</option>
                     <option value="Driver's License">Driver's License</option>
                     <option value="PAN Card">PAN Card</option>
                     <option value="Voter ID">Voter ID</option>
-                    <option value="Customs Card">Customs Card</option>
                     <option value="Company ID">Company ID</option>
                     <option value="CHA ID Card">CHA ID Card</option>
                     <option value="Other">Other</option>
@@ -735,11 +733,11 @@
                     <option value="MEP">MEP</option>
                     <option value="Import">Import</option>
                     <option value="Export">Export</option>
+                    <option value="EXIM Operation">EXIM Operation</option>
                     <option value="Bond">Bond</option>
                     <option value="Customs">Customs</option>
-		    <option value="EXIM OPERATION">EXIM OPERATION</option>
                     <option value="Accounts">Accounts</option>
-                    <option value="SICAL IT">SICAL IT</option>
+                    <option value="IT">IT</option>
                     <option value="Electrical">Electrical</option>
                     <option value="Security">Security</option>
                     <option value="EHS">EHS</option>
@@ -858,7 +856,6 @@
 
                   <div class="qrcode-container-large">
                     <div id="passQrCode"></div>
-                    <p style="font-size: 0.65rem; font-weight: bold; color: #0f172a; margin-top: 4px;">L</p>
                   </div>
                 </div>
               </div>
@@ -1624,7 +1621,7 @@
         else if (d.includes('custom')) deptCounts.Customs++;
         else if (d.includes('bond')) deptCounts.Bond++;
         else if (d.includes('admin')) deptCounts.Admin++;
-        else if (d.includes('sical it') || d.includes('it')) deptCounts.SicalIT++;
+        else if (d.includes('it') || d.includes('it')) deptCounts.IT++;
         else deptCounts.Other++;
 
         const p = (log.purpose || '').toLowerCase();
@@ -1695,60 +1692,21 @@
       renderDashLiveLogs(logs.slice(-5).reverse());
     }
 
-    function calculateTotalHours(timeInStr, timeOutStr) {
-      if (!timeInStr || !timeOutStr || timeInStr === '--:--' || timeOutStr === '_______' || timeOutStr === '--') return "Inside";
-      
-      try {
-        const parseTime12 = (tStr) => {
-          const parts = tStr.trim().split(' ');
-          if(parts.length < 2) return null;
-          const timeParts = parts[0].split(':');
-          let hours = parseInt(timeParts[0], 10);
-          const minutes = parseInt(timeParts[1], 10);
-          const modifier = parts[1].toUpperCase();
-          if (modifier === 'PM' && hours < 12) hours += 12;
-          if (modifier === 'AM' && hours === 12) hours = 0;
-          return hours * 60 + minutes;
-        };
-
-        const minIn = parseTime12(timeInStr);
-        const minOut = parseTime12(timeOutStr);
-        if (minIn === null || minOut === null) return "Completed";
-
-        let diff = minOut - minIn;
-        if (diff < 0) diff += 24 * 60; // handle overnight
-
-        const hrs = Math.floor(diff / 60);
-        const mins = diff % 60;
-
-        if (hrs === 0) return `${mins} mins`;
-        if (mins === 0) return `${hrs} hr${hrs > 1 ? 's' : ''}`;
-        return `${hrs} hr ${mins} mins`;
-      } catch(e) {
-        return "Completed";
-      }
-    }
-
     function renderDashLiveLogs(recentLogs) {
       const tbody = document.getElementById('dashLiveLogsBody');
       tbody.innerHTML = '';
 
       if (!recentLogs || recentLogs.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No recent check-ins recorded.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No recent check-ins recorded.</td></tr>';
         return;
       }
 
       recentLogs.forEach(log => {
-        const timeOutDisplay = (log.timeOut && log.timeOut !== '_______' && log.timeOut !== '--:--') ? log.timeOut : '--';
-        const totalHrsDisplay = calculateTotalHours(log.timeIn, log.timeOut);
-
         const row = `<tr>
           <td><strong>${log.passNo}</strong></td>
           <td>${log.name}</td>
           <td>${log.department || 'Admin'}</td>
           <td>${log.timeIn}</td>
-          <td><strong style="color: ${timeOutDisplay !== '--' ? '#0284c7' : '#94a3b8'}">${timeOutDisplay}</strong></td>
-          <td><strong style="color: ${totalHrsDisplay === 'Inside' ? '#dc2626' : '#16a34a'}">${totalHrsDisplay}</strong></td>
         </tr>`;
         tbody.innerHTML += row;
       });
