@@ -1048,6 +1048,10 @@
     let loadedVisitorPhoto = null;
     let isPassAlreadySaved = false;
 
+    // Debounce / throttle variables for camera scanning to prevent double triggers
+    let lastScannedText = "";
+    let lastScanTimestamp = 0;
+
     function parseToCleanDateObj(rawVal) {
       if (!rawVal) return null;
       var str = String(rawVal).trim();
@@ -1346,6 +1350,14 @@
         const config = { fps: 15, qrbox: { width: 250, height: 250 } };
         
         const qrCodeSuccessCallback = (decodedText) => {
+          const now = Date.now();
+          // Debounce check: ignore identical scans within 4 seconds
+          if (decodedText === lastScannedText && (now - lastScanTimestamp) < 4000) {
+            return;
+          }
+          lastScannedText = decodedText;
+          lastScanTimestamp = now;
+
           processOutGateCode(decodedText);
         };
 
@@ -1378,7 +1390,7 @@
       document.getElementById('manualOutInput').value = '';
     }
 
-    /* MULTI-ENTRY (N TIMES) & VALIDITY SCANNER LOGIC */
+    /* ROBUST TOGGLE & MULTI-ENTRY LOGIC FOR SCANNER */
     async function processOutGateCode(rawVal) {
       if (activeUser && activeUser.canMarkOut === false) {
         displayOutResult("Action Denied: Your account role does not have permission to mark visitors out.", false);
@@ -1402,38 +1414,36 @@
         const match = matchingLogs[matchingLogs.length - 1];
         const todayStr = getCurrentDate();
 
-        // 1. CHECK IF THERE IS ANY ACTIVE "INSIDE" SESSION FOR THIS PASS
+        // 1. CHECK IF THERE IS AN ACTIVE "INSIDE" SESSION (TimeOut is blank or '_______')
         const activeInsideLog = matchingLogs.slice().reverse().find(l => !l.timeOut || l.timeOut === '_______' || l.timeOut === '--:--');
 
         if (activeInsideLog) {
-          // MARK OUT THE ACTIVE SESSION
+          // TOGGLE: IF INSIDE, MARK THEM OUT IMMEDIATELY
           recordTimeOut(activeInsideLog.passNo);
           displayOutResult(`SUCCESS: Visitor ${match.name} (${match.passNo}) Checked-OUT at ${getCurrentTime()}!`, true);
           return;
         }
 
-        // 2. CHECK EXPIRATION FOR WEEKLY / MONTHLY PASSES
-        if (match.validity === 'Weekly' || match.validity === 'Monthly') {
-          const status = checkPassExpiration(match.date, match.validity);
-          if (status.isExpired) {
-            displayOutResult(`EXPIRED PASS: ${match.name}'s ${match.validity} Pass has expired! Please issue a new pass.`, false);
-            return;
-          }
-        } 
-        // 3. DAILY PASS VALIDITY CHECK (Single IN/OUT per day)
-        else if (match.validity === 'Daily') {
+        // 2. IF NOT INSIDE, CHECK PASS VALIDITY BEFORE CHECKING IN AGAIN
+        if (match.validity === 'Daily') {
           const completedToday = matchingLogs.some(l => l.date === todayStr && l.timeOut && l.timeOut !== '_______' && l.timeOut !== '--:--');
           if (completedToday || match.date !== todayStr) {
             displayOutResult(`INVALID PASS: Daily Pass (${match.passNo}) has already completed its single IN/OUT cycle or belongs to another date.`, false);
             return;
           }
+        } else if (match.validity === 'Weekly' || match.validity === 'Monthly') {
+          const status = checkPassExpiration(match.date, match.validity);
+          if (status.isExpired) {
+            displayOutResult(`EXPIRED PASS: ${match.name}'s ${match.validity} Pass has expired! Please issue a new pass.`, false);
+            return;
+          }
         }
 
-        // 4. PRESERVE ORIGINAL PHOTO FROM PAST LOGS
+        // 3. PRESERVE ORIGINAL PHOTO FROM PAST LOGS SO IT NEVER SAYS "NO PHOTO"
         const originalRecordWithPhoto = matchingLogs.slice().reverse().find(l => l.photoUrl && l.photoUrl !== 'No Photo' && l.photoUrl !== 'NO_PHOTO');
         const preservedPhoto = originalRecordWithPhoto ? originalRecordWithPhoto.photoUrl : (match.photoUrl || 'NO_PHOTO');
 
-        // 5. START A NEW CHECK-IN (N TIMES ALLOWED FOR WEEKLY & MONTHLY)
+        // 4. TOGGLE: IF NOT CURRENTLY INSIDE, CREATE NEW CHECK-IN SESSION
         const newEntry = {
           passNo: match.passNo,
           date: todayStr,
@@ -1465,7 +1475,7 @@
           }
         }
 
-        displayOutResult(`CHECK-IN RECORDED: ${match.name} (${match.validity} Pass) Checked-IN at ${getCurrentTime()}!`, true);
+        displayOutResult(`SUCCESS: Visitor ${match.name} (${match.validity} Pass) Checked-IN at ${getCurrentTime()}!`, true);
         setTimeout(() => { fetchCloudData(); }, 1000);
 
       } else {
@@ -1603,7 +1613,8 @@
           }
         }
 
-        const deptName = (log.department || 'Admin').trim();
+        let deptName = (log.department || 'Admin').trim();
+        if (deptName.toUpperCase() === 'SICAL IT') deptName = 'IT';
         deptCounts[deptName] = (deptCounts[deptName] || 0) + 1;
 
         const p = (log.purpose || '').toLowerCase();
@@ -1717,11 +1728,12 @@
       recentLogs.forEach(log => {
         const timeOutDisplay = (log.timeOut && log.timeOut !== '_______' && log.timeOut !== '--:--') ? log.timeOut : '--';
         const totalHrsDisplay = calculateTotalHours(log.timeIn, log.timeOut);
+        const deptDisplay = log.department && log.department.toUpperCase() === 'SICAL IT' ? 'IT' : (log.department || 'Admin');
 
         const row = `<tr>
           <td><strong>${log.passNo}</strong></td>
           <td>${log.name}</td>
-          <td>${log.department || 'Admin'}</td>
+          <td>${deptDisplay}</td>
           <td>${log.timeIn}</td>
           <td><strong style="color: ${timeOutDisplay !== '--' ? '#0284c7' : '#94a3b8'}">${timeOutDisplay}</strong></td>
           <td><strong style="color: ${totalHrsDisplay === 'Inside' ? '#dc2626' : '#16a34a'}">${totalHrsDisplay}</strong></td>
@@ -1814,7 +1826,9 @@
         document.getElementById('mobileNumber').value = match.mobile;
         document.getElementById('companyFrom').value = match.company;
         document.getElementById('personToMeet').value = match.personToMeet;
-        document.getElementById('department').value = match.department || 'Admin';
+        let deptVal = match.department || 'Admin';
+        if (deptVal.toUpperCase() === 'SICAL IT') deptVal = 'IT';
+        document.getElementById('department').value = deptVal;
         document.getElementById('purposeSelect').value = match.purpose || 'Meeting';
         document.getElementById('vehicleNo').value = match.vehicle !== 'N/A' ? match.vehicle : '';
         document.getElementById('idType').value = match.idType !== 'N/A' ? match.idType : 'Aadhaar Card';
@@ -1895,7 +1909,8 @@
       const idTypeVal = document.getElementById('idType').value || 'Aadhaar Card';
       const idNumVal = document.getElementById('idNumber').value || '-';
       const hostVal = document.getElementById('personToMeet').value || '-';
-      const deptVal = document.getElementById('department').value || 'Admin';
+      let deptVal = document.getElementById('department').value || 'Admin';
+      if (deptVal.toUpperCase() === 'SICAL IT') deptVal = 'IT';
       const purposeVal = document.getElementById('purposeSelect').value || 'Meeting';
       const validityTypeVal = document.querySelector('input[name="validity"]:checked')?.value || 'Daily';
 
@@ -1939,6 +1954,8 @@
 
       const passNo = getFormattedPassNo();
       const validityVal = document.querySelector('input[name="validity"]:checked').value;
+      let deptVal = document.getElementById('department').value;
+      if (deptVal.toUpperCase() === 'SICAL IT') deptVal = 'IT';
 
       const newEntry = {
         passNo: passNo,
@@ -1949,7 +1966,7 @@
         mobile: document.getElementById('mobileNumber').value,
         company: document.getElementById('companyFrom').value,
         personToMeet: document.getElementById('personToMeet').value,
-        department: document.getElementById('department').value,
+        department: deptVal,
         validity: validityVal,
         purpose: document.getElementById('purposeSelect').value,
         vehicle: document.getElementById('vehicleNo').value || 'N/A',
@@ -2241,6 +2258,7 @@
           : `No Photo`;
 
         const idProofText = log.idType !== 'N/A' ? `${log.idType} (${log.idNumber})` : 'N/A';
+        let deptDisplay = log.department && log.department.toUpperCase() === 'SICAL IT' ? 'IT' : (log.department || 'Admin');
 
         const row = `<tr>
           <td><strong>${log.passNo}</strong></td>
@@ -2252,7 +2270,7 @@
           <td>${idProofText}</td>
           <td>${log.company}</td>
           <td>${log.personToMeet}</td>
-          <td>${log.department}</td>
+          <td>${deptDisplay}</td>
           <td>${log.validity}</td>
           <td>${log.purpose}</td>
           <td>${photoCell}</td>
@@ -2272,7 +2290,7 @@
         return;
       }
 
-      const longTermPasses = logs.filter(l => l.validity === 'Weekly' || l.validTestidity === 'Monthly' || l.validity === 'Weekly' || l.validity === 'Monthly');
+      const longTermPasses = logs.filter(l => l.validity === 'Weekly' || l.validity === 'Monthly');
 
       if (longTermPasses.length === 0) {
         tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No active weekly or monthly pass members found.</td></tr>';
@@ -2329,7 +2347,7 @@
       }
 
       let csvContent = "data:text/csv;charset=utf-8,";
-      csvContent += "Pass No,Date (DD-MM-YYYY),Time In,Time Out,Visitor Name,Mobile Number,ID Type,ID Number,Company/From,Person To Meet,Department,Validity,Purpose,Vehicle No,Photo Link\n";
+      csvContent += "Pass No,Date (DD-MM-YYYY),TimeIn,TimeOut,VisitorName,MobileNumber,IdType,IdNumber,Company,PersonToMeet,Department,Validity,Purpose,VehicleNo,PhotoUrl\n";
 
       globalCloudLogs.forEach(log => {
         const row = [
