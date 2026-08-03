@@ -32,7 +32,7 @@
       overflow-x: hidden;
     }
 
-    /* FULL VIEWPORT LOGIN SCREEN AT 100% */
+    /* LOGIN SCREEN */
     #loginScreen {
       display: flex;
       min-height: 100vh;
@@ -146,7 +146,7 @@
       .login-left-panel { padding: 30px 20px; }
     }
 
-    /* COMPACTED AFTER-LOGIN DASHBOARD LAYOUT */
+    /* AFTER-LOGIN SCREEN COMPACTION */
     #appScreen {
       display: none;
       min-height: 100vh;
@@ -266,7 +266,7 @@
     .progress-bar-bg { background: #e2e8f0; height: 7px; border-radius: 4px; overflow: hidden; }
     .progress-bar-fill { height: 100%; border-radius: 4px; width: 0%; transition: width 0.8s ease; }
 
-    .grid-2 { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 18px; align-items: start; width: 100%; }
+    .grid-2 { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 18px; align-items: start; width: 100%; }
     
     .quick-search-box {
       background: var(--light-blue); border: 1px solid #93c5fd; padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; width: 100%;
@@ -289,56 +289,63 @@
     .cam-btns { margin-top: 6px; display: flex; gap: 8px; }
     .btn-cam { background: var(--blue); color: white; border: none; padding: 5px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer; }
 
-    /* GATE PASS BADGE STYLING */
-    .pass-badge { 
-      background: #ffffff; 
-      border: 1.5px solid #0f172a; 
-      border-radius: 8px; 
-      padding: 0; 
-      font-size: 0.78rem; 
-      position: relative; 
-      color: #0f172a; 
-      overflow: hidden; 
-      width: 100%; 
-      max-width: 390px; 
-      margin: 0 auto; 
-      box-shadow: 0 3px 10px rgba(0,0,0,0.06); 
+    /* VERTICAL LANYARD FOLDING BOOKLET BADGE FORMAT */
+    .pass-booklet-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 380px;
+      margin: 0 auto;
+      border: 1.5px solid #0f172a;
+      border-radius: 8px;
+      background: #ffffff;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
 
-    .badge-header { background: #ffffff; color: #0f172a; padding: 6px 10px; position: relative; border-bottom: 2px solid #0f172a; }
-    .badge-header h2 { font-size: 0.75rem; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.2px; line-height: 1.2; width: 68%; }
-    .badge-header p.address-text { font-size: 0.58rem; color: #475569; margin-top: 2px; }
+    .booklet-side {
+      padding: 12px;
+      position: relative;
+    }
 
-    .top-right-logo { position: absolute; top: 5px; right: 8px; text-align: right; }
+    .booklet-side-left {
+      border-bottom: 1.5px dashed #0f172a;
+    }
+
+    .badge-header { background: #ffffff; color: #0f172a; padding: 4px 0 6px 0; position: relative; border-bottom: 2px solid #0f172a; }
+    .badge-header h2 { font-size: 0.72rem; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.2px; line-height: 1.2; width: 68%; }
+    .badge-header p.address-text { font-size: 0.55rem; color: #475569; margin-top: 2px; }
+
+    .top-right-logo { position: absolute; top: 2px; right: 0; text-align: right; }
     .top-right-logo .logo-main { font-size: 1.1rem; font-weight: 900; color: #dc2626; font-family: Arial, sans-serif; letter-spacing: 0.5px; line-height: 1; display: block; }
-    .top-right-logo .logo-sub { font-size: 0.42rem; font-weight: bold; color: #312e81; font-family: Arial, sans-serif; display: block; margin-top: 1px; }
+    .top-right-logo .logo-sub { font-size: 0.40rem; font-weight: bold; color: #312e81; font-family: Arial, sans-serif; display: block; margin-top: 1px; }
 
-    .badge-title-strip { background: #ffffff; color: #0f172a; font-size: 0.85rem; font-weight: 800; text-align: center; padding: 3px; border-bottom: 1px solid #cbd5e1; letter-spacing: 0.5px; }
+    .badge-title-strip { background: #ffffff; color: #0f172a; font-size: 0.82rem; font-weight: 800; text-align: center; padding: 3px; border-bottom: 1px solid #cbd5e1; letter-spacing: 0.5px; }
 
-    .badge-meta { display: flex; justify-content: space-between; align-items: center; padding: 4px 10px; font-weight: bold; font-size: 0.72rem; border-bottom: 1px solid #cbd5e1; background: #fff; }
+    .badge-meta { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-weight: bold; font-size: 0.70rem; border-bottom: 1px solid #cbd5e1; background: #fff; }
 
-    .badge-body-container { display: flex; gap: 8px; align-items: flex-start; padding: 8px 10px; background: #ffffff; }
+    .badge-body-container { display: flex; gap: 8px; align-items: flex-start; padding: 8px 0; background: #ffffff; }
     .badge-details { flex: 1; }
-    .visitor-photo-frame { width: 90px; height: 110px; border: 1.5px solid #64748b; border-radius: 4px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; overflow: hidden; text-align: center; font-size: 0.62rem; color: #64748b; font-weight: bold; flex-shrink: 0; }
+    .visitor-photo-frame { width: 85px; height: 105px; border: 1.5px solid #64748b; border-radius: 4px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; overflow: hidden; text-align: center; font-size: 0.60rem; color: #64748b; font-weight: bold; flex-shrink: 0; }
     .visitor-photo-frame img { width: 100%; height: 100%; object-fit: cover; }
 
-    .badge-row { display: flex; margin-bottom: 3px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 2px; font-size: 0.72rem; }
+    .badge-row { display: flex; margin-bottom: 3px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 2px; font-size: 0.70rem; }
     .badge-label { width: 34%; font-weight: 800; color: #0f172a; }
     .badge-val { width: 66%; font-weight: 600; color: #1e293b; }
 
-    .status-banner { text-align: center; font-weight: bold; font-size: 0.7rem; padding: 2px; display: none; margin: 0 10px 5px 10px; border-radius: 4px; }
+    .status-banner { text-align: center; font-weight: bold; font-size: 0.68rem; padding: 2px; display: none; margin: 4px 0; border-radius: 4px; }
     .status-banner.expired { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; display: block; }
     .status-banner.valid { background: #f0fdf4; color: #16a34a; border: 1px solid #86efac; display: block; }
 
-    .signature-container { display: flex; justify-content: space-between; padding: 14px 10px 4px 10px; text-align: center; }
-    .sig-box { width: 32%; border-top: 1.5px solid #0f172a; padding-top: 2px; font-size: 0.52rem; font-weight: 800; color: #0f172a; }
+    .signature-container { display: flex; justify-content: space-between; padding: 25px 0 10px 0; text-align: center; }
+    .sig-box { width: 32%; border-top: 1.5px solid #0f172a; padding-top: 3px; font-size: 0.50rem; font-weight: 800; color: #0f172a; }
 
-    .rules-and-qr-footer { display: flex; justify-content: space-between; align-items: flex-end; padding: 6px 10px 8px 10px; background: #ffffff; border-top: 1px solid #cbd5e1; gap: 6px; }
-    .rules-box { flex: 1; font-size: 0.52rem; color: #334155; line-height: 1.2; }
-    .rules-box h5 { margin-bottom: 2px; color: #0f172a; font-size: 0.55rem; font-weight: 800; }
+    .rules-side-container { display: flex; flex-direction: column; justify-content: space-between; height: 100%; }
+    .rules-box { font-size: 0.68rem; color: #334155; line-height: 1.4; border-left: 3px solid var(--blue); padding-left: 8px; }
+    .rules-box h5 { margin-bottom: 6px; color: #0f172a; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; }
 
-    .qrcode-container { flex-shrink: 0; background: #fff; padding: 2px; border: 1.5px solid #0f172a; border-radius: 4px; }
-    .qrcode-container img, .qrcode-container canvas { display: block; width: 70px !important; height: 70px !important; }
+    .qrcode-container-large { text-align: center; padding-top: 10px; }
+    .qrcode-container-large img, .qrcode-container-large canvas { display: block; width: 150px !important; height: 150px !important; margin: 0 auto; border: 1.5px solid #0f172a; border-radius: 6px; padding: 3px; background: #fff; }
 
     /* RESPONSIVE TABLE WRAPPER */
     .table-responsive-wrapper { width: 100%; overflow-x: auto; border-radius: 5px; border: 1px solid var(--border-color); }
@@ -346,17 +353,6 @@
     th, td { border: 1px solid var(--border-color); padding: 6px 8px; text-align: left; vertical-align: middle; line-height: 1.2; }
     th { background: var(--light-blue); color: var(--navy); font-weight: 700; text-align: center; white-space: nowrap; }
     tr:nth-child(even) { background: #f8fafc; }
-
-    #logsTable th:nth-child(1), #logsTable td:nth-child(1),
-    #logsTable th:nth-child(2), #logsTable td:nth-child(2),
-    #logsTable th:nth-child(3), #logsTable td:nth-child(3),
-    #logsTable th:nth-child(4), #logsTable td:nth-child(4),
-    #logsTable th:nth-child(6), #logsTable td:nth-child(6),
-    #logsTable th:nth-child(11), #logsTable td:nth-child(11),
-    #logsTable th:nth-child(13), #logsTable td:nth-child(13),
-    #logsTable th:nth-child(14), #logsTable td:nth-child(14) {
-      text-align: center; white-space: nowrap;
-    }
 
     .filter-bar { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 12px; flex-wrap: wrap; width: 100%; }
     .search-box { flex: 1; min-width: 180px; }
@@ -383,29 +379,100 @@
       .content-container { margin-left: 0 !important; width: 100% !important; padding: 12px; }
     }
 
-    /* MOBILE PUBLIC PASS VIEW STYLING */
-    body.public-pass-view header,
-    body.public-pass-view .sidebar,
-    body.public-pass-view .card,
-    body.public-pass-view #loginScreen { display: none !important; }
-    
-    body.public-pass-view #appScreen { display: block !important; background: var(--gray-bg); padding: 10px; zoom: 1 !important; }
-    body.public-pass-view .content-container { margin-left: 0 !important; padding: 0 !important; max-width: 450px !important; width: 100% !important; }
-    body.public-pass-view .grid-2 { display: block !important; }
-
-    #mobilePdfBtnContainer { display: none; text-align: center; margin-bottom: 12px; }
-    body.public-pass-view #mobilePdfBtnContainer { display: block !important; }
-
+    /* VERTICAL LANYARD POUCH PRINT FIX (A4 PORTRAIT, FLIPPED BACK-FACE FOR FOLDING) */
     @media print {
-      @page { size: portrait; margin: 0; }
-      html, body { background: #fff !important; margin: 0 !important; padding: 0 !important; height: 100% !important; overflow: hidden !important; }
-      #loginScreen, header, .sidebar, .card, h3, .stats-grid, .quick-actions-bar, .dashboard-grid-2, .dashboard-grid-3, .alert-banner, .filter-bar, table, #addUserForm, #userTableBody { display: none !important; }
-      body * { visibility: hidden !important; }
-      #printablePass, #printablePass * { visibility: visible !important; }
+      @page { 
+        size: A4 portrait; 
+        margin: 5mm; 
+      }
+      
+      html, body { 
+        background: #ffffff !important; 
+        margin: 0 !important; 
+        padding: 0 !important; 
+        width: 100% !important;
+        height: 100% !important; 
+        overflow: visible !important; 
+      }
+      
+      #loginScreen, header, .sidebar, .card, h3, .stats-grid, .quick-actions-bar, 
+      .dashboard-grid-2, .dashboard-grid-3, .alert-banner, .filter-bar, table, 
+      #addUserForm, #userTableBody, #mobilePdfBtnContainer, .quick-search-box { 
+        display: none !important; 
+      }
+
+      body * { 
+        visibility: hidden !important; 
+      }
+
+      #passPreviewCard, #printablePass, #printablePass * { 
+        visibility: visible !important; 
+      }
+
+      #passPreviewCard {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: flex-start !important;
+        padding-top: 5mm !important;
+      }
+
       #printablePass { 
-        position: absolute !important; left: 0 !important; right: 0 !important; top: 5mm !important; 
-        margin: 0 auto !important; width: 95mm !important; max-width: 95mm !important; border: 1.5px solid #000 !important; 
-        box-shadow: none !important; transform: scale(0.90); transform-origin: top center;
+        position: relative !important; 
+        display: flex !important;
+        flex-direction: column !important;
+        left: 0 !important; 
+        top: 0 !important; 
+        margin: 0 auto !important; 
+        width: 85mm !important; 
+        max-width: 85mm !important; 
+        height: 215mm !important;
+        max-height: 215mm !important;
+        border: 2px solid #0f172a !important; 
+        border-radius: 4px !important;
+        box-shadow: none !important; 
+        background: #ffffff !important;
+        page-break-inside: avoid !important;
+        page-break-after: avoid !important;
+      }
+
+      .booklet-side {
+        padding: 10px !important;
+        height: 107mm !important;
+        max-height: 107mm !important;
+        box-sizing: border-box !important;
+      }
+
+      .booklet-side-left {
+        border-bottom: 2px solid #0f172a !important;
+        border-right: none !important;
+      }
+
+      /* FLIP BACK SIDE 180 DEGREES SO WHEN FOLDED TOP-TO-BOTTOM IT READS UPRIGHT */
+      .pass-booklet-container > .booklet-side:not(.booklet-side-left) {
+        transform: rotate(180deg) !important;
+        transform-origin: center center !important;
+      }
+
+      .badge-header h2 { font-size: 0.65rem !important; }
+      .badge-header p.address-text { font-size: 0.50rem !important; }
+      .top-right-logo .logo-main { font-size: 0.95rem !important; }
+      .top-right-logo .logo-sub { font-size: 0.38rem !important; }
+
+      .badge-row { font-size: 0.62rem !important; margin-bottom: 2px !important; }
+      .visitor-photo-frame { width: 70px !important; height: 85px !important; }
+
+      .signature-container { padding: 30px 0 10px 0 !important; }
+
+      .rules-box { font-size: 0.58rem !important; line-height: 1.2 !important; }
+      .rules-box h5 { font-size: 0.62rem !important; margin-bottom: 3px !important; }
+
+      .qrcode-container-large img, .qrcode-container-large canvas {
+        width: 140px !important;
+        height: 140px !important;
       }
     }
   </style>
@@ -526,7 +593,6 @@
             <i class="fa-solid fa-bolt" style="color: #f59e0b; font-size: 1rem;"></i> Security Gate Quick Actions:
           </div>
           <div class="action-btn-group">
-            <button class="btn-action" style="background: #7c3aed;" onclick="switchTab('outGateTab')"><i class="fa-solid fa-qrcode"></i> Open Out-Gate Scanner</button>
             <button class="btn-action" style="background: #0f172a;" onclick="exportToCSV()"><i class="fa-solid fa-file-excel"></i> Export Today Logs</button>
           </div>
         </div>
@@ -551,10 +617,12 @@
                     <th>Visitor Name</th>
                     <th>Department To Meet</th>
                     <th>Time In</th>
+                    <th>Time Out</th>
+                    <th>Total Hrs</th>
                   </tr>
                 </thead>
                 <tbody id="dashLiveLogsBody">
-                  <tr><td colspan="4" style="text-align:center;">Loading recent activity...</td></tr>
+                  <tr><td colspan="6" style="text-align:center;">Loading recent activity...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -643,7 +711,7 @@
                     <option value="Driver's License">Driver's License</option>
                     <option value="PAN Card">PAN Card</option>
                     <option value="Voter ID">Voter ID</option>
-                    <option value="Passport">Passport</option>
+                    <option value="Customs Card">Customs Card</option>
                     <option value="Company ID">Company ID</option>
                     <option value="CHA ID Card">CHA ID Card</option>
                     <option value="Other">Other</option>
@@ -669,6 +737,7 @@
                     <option value="Export">Export</option>
                     <option value="Bond">Bond</option>
                     <option value="Customs">Customs</option>
+		    <option value="EXIM OPERATION">EXIM OPERATION</option>
                     <option value="Accounts">Accounts</option>
                     <option value="SICAL IT">SICAL IT</option>
                     <option value="Electrical">Electrical</option>
@@ -730,94 +799,111 @@
               <button class="btn-action btn-success" style="padding: 10px 16px; font-size: 0.9rem; width: 100%;" onclick="window.print()"><i class="fa-solid fa-file-pdf"></i> Download Pass as PDF / Print</button>
             </div>
 
-            <div id="printablePass" class="pass-badge">
-              <div class="badge-header">
-                <h2>SICAL MULTIMODAL AND RAIL TRANSPORT LIMITED</h2>
-                <p class="address-text">Vallur, Chennai - 600120</p>
-                <div class="top-right-logo">
-                  <span class="logo-main">SICAL</span>
-                  <span class="logo-sub">Pristine Group Company</span>
+            <!-- VERTICAL LANYARD POUCH FOLDING BADGE FORMAT -->
+            <div id="printablePass" class="pass-booklet-container">
+              
+              <!-- TOP FRONT FACE: PASS DETAILS -->
+              <div class="booklet-side booklet-side-left">
+                <div class="badge-header">
+                  <h2>SICAL MULTIMODAL AND RAIL TRANSPORT LIMITED</h2>
+                  <p class="address-text">Vallur, Chennai - 600120</p>
+                  <div class="top-right-logo">
+                    <span class="logo-main">SICAL</span>
+                    <span class="logo-sub">Pristine Group Company</span>
+                  </div>
+                </div>
+
+                <div class="badge-title-strip">VISITOR GATE PASS</div>
+
+                <div class="badge-meta">
+                  <span>PASS: <span id="prevPassNo">VP-2026-1001</span></span>
+                  <span>DATE: <span id="prevDate">--/--/----</span></span>
+                </div>
+
+                <div class="badge-body-container">
+                  <div class="badge-details">
+                    <div class="badge-row"><div class="badge-label">Name:</div><div class="badge-val" id="prevName">-</div></div>
+                    <div class="badge-row"><div class="badge-label">Mobile:</div><div class="badge-val" id="prevMobile">-</div></div>
+                    <div class="badge-row"><div class="badge-label">ID Proof:</div><div class="badge-val"><span id="prevIdType">Aadhaar Card</span> (<span id="prevIdNumber">-</span>)</div></div>
+                    <div class="badge-row"><div class="badge-label">Company:</div><div class="badge-val" id="prevCompany">-</div></div>
+                    <div class="badge-row"><div class="badge-label">To Meet:</div><div class="badge-val" id="prevHost">-</div></div>
+                    <div class="badge-row"><div class="badge-label">Dept:</div><div class="badge-val" id="prevDept">Admin</div></div>
+                    <div class="badge-row"><div class="badge-label">Purpose:</div><div class="badge-val" id="prevPurpose">Meeting</div></div>
+                    <div class="badge-row"><div class="badge-label">Validity:</div><div class="badge-val" id="prevValidity">Daily</div></div>
+                    <div class="badge-row"><div class="badge-label">Time In/Out:</div><div class="badge-val">IN: <span id="prevTimeIn">--:--</span> &nbsp;|&nbsp; OUT: <span id="prevTimeOut">_______</span></div></div>
+                  </div>
+
+                  <div class="visitor-photo-frame" id="prevPhotoFrame">NO PHOTO</div>
+                </div>
+
+                <div id="validityBanner" class="status-banner"></div>
+
+                <div class="signature-container">
+                  <div class="sig-box">VISITOR SIGNATURE</div>
+                  <div class="sig-box">PERSON TO MEET SIGN</div>
+                  <div class="sig-box">SECURITY SIGN</div>
                 </div>
               </div>
 
-              <div class="badge-title-strip">VISITOR GATE PASS</div>
+              <!-- BOTTOM BACK FACE: RULES & QR CODE -->
+              <div class="booklet-side">
+                <div class="rules-side-container">
+                  <div class="rules-box">
+                    <h5>SECURITY & SAFETY RULES FOR VISITORS</h5>
+                    • <strong>Display Pass:</strong> Must be carried at all times inside CFS terminal premises.<br>
+                    • <strong>Authorized Zones:</strong> Access strictly restricted to designated floors/offices.<br>
+                    • <strong>Person To Meet Sign:</strong> Mandatory host department verification.<br>
+                    • <strong>Checkout:</strong> Scan QR code at Out-Gate camera upon departure.
+                  </div>
 
-              <div class="badge-meta">
-                <span>PASS: <span id="prevPassNo">VP-2026-1001</span></span>
-                <span>DATE: <span id="prevDate">--/--/----</span></span>
-              </div>
-
-              <div class="badge-body-container">
-                <div class="badge-details">
-                  <div class="badge-row"><div class="badge-label">Name:</div><div class="badge-val" id="prevName">-</div></div>
-                  <div class="badge-row"><div class="badge-label">Mobile:</div><div class="badge-val" id="prevMobile">-</div></div>
-                  <div class="badge-row"><div class="badge-label">ID Proof:</div><div class="badge-val"><span id="prevIdType">Aadhaar Card</span> (<span id="prevIdNumber">-</span>)</div></div>
-                  <div class="badge-row"><div class="badge-label">Company:</div><div class="badge-val" id="prevCompany">-</div></div>
-                  <div class="badge-row"><div class="badge-label">To Meet:</div><div class="badge-val" id="prevHost">-</div></div>
-                  <div class="badge-row"><div class="badge-label">Dept:</div><div class="badge-val" id="prevDept">Admin</div></div>
-                  <div class="badge-row"><div class="badge-label">Purpose:</div><div class="badge-val" id="prevPurpose">Meeting</div></div>
-                  <div class="badge-row"><div class="badge-label">Validity:</div><div class="badge-val" id="prevValidity">Daily</div></div>
-                  <div class="badge-row"><div class="badge-label">Time In/Out:</div><div class="badge-val">IN: <span id="prevTimeIn">--:--</span> &nbsp;|&nbsp; OUT: <span id="prevTimeOut">_______</span></div></div>
-                </div>
-
-                <div class="visitor-photo-frame" id="prevPhotoFrame">NO PHOTO</div>
-              </div>
-
-              <div id="validityBanner" class="status-banner"></div>
-
-              <div class="signature-container">
-                <div class="sig-box">VISITOR SIGNATURE</div>
-                <div class="sig-box">PERSON TO MEET SIGN</div>
-                <div class="sig-box">SECURITY SIGN</div>
-              </div>
-
-              <div class="rules-and-qr-footer">
-                <div class="rules-box">
-                  <h5>SECURITY & SAFETY RULES FOR VISITORS</h5>
-                  • <strong>Display Pass:</strong> Must be carried at all times.<br>
-                  • <strong>Authorized Zones:</strong> Strictly designated floors.<br>
-                  • <strong>Person To Meet Sign:</strong> Mandatory person to meet verification.<br>
-                  • <strong>Checkout:</strong> Return pass or scan QR code at Security Gate.
-                </div>
-                <div class="qrcode-container">
-                  <div id="passQrCode"></div>
+                  <div class="qrcode-container-large">
+                    <div id="passQrCode"></div>
+                    <p style="font-size: 0.65rem; font-weight: bold; color: #0f172a; margin-top: 4px;">L</p>
+                  </div>
                 </div>
               </div>
+
             </div>
           </div>
         </div>
       </div>
 
-      <!-- DEDICATED VISITOR OUT-GATE SCANNER TAB -->
+      <!-- DEDICATED VISITOR OUT-GATE SCANNER TAB WITH ALWAYS-ON CAMERA SELECTOR -->
       <div id="outGateTab" class="tab-content">
         <div class="card" style="max-width: 800px; margin: 0 auto;">
           <h3 style="font-size: 1rem; margin-bottom: 12px; color: var(--navy);"><i class="fa-solid fa-right-from-bracket"></i> Visitor Out-Gate Camera & QR Checkout Terminal</h3>
           
           <div style="background: #f1f5f9; border: 2px dashed #0284c7; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
             <p style="font-size: 0.85rem; font-weight: 700; color: #0f172a; margin-bottom: 12px;">
-              <i class="fa-solid fa-camera"></i> Place Visitor Pass QR Code in front of the camera to automatically mark OUT
+              <i class="fa-solid fa-camera"></i> Select Camera Device & Place Pass QR Code in front of camera
             </p>
 
-            <div id="dedicatedReader" style="width: 100%; max-width: 360px; margin: 0 auto; background: #fff; border-radius: 6px; overflow: hidden;"></div>
+            <!-- CAMERA SELECTOR DROPDOWN (ALWAYS VISIBLE) -->
+            <div id="cameraSelectionContainer" style="margin-bottom: 15px;">
+              <label for="cameraSelect" style="font-size: 0.82rem; font-weight: bold; color: var(--navy); margin-right: 8px;"><i class="fa-solid fa-video"></i> Select Camera Device:</label>
+              <select id="cameraSelect" style="padding: 7px 12px; border-radius: 6px; border: 1px solid var(--border-color); font-size: 0.88rem; max-width: 320px; background: white; font-weight: 600;" onchange="switchCameraDevice()">
+                <option value="">Loading available cameras...</option>
+              </select>
+            </div>
+
+            <div id="dedicatedReader" style="width: 100%; max-width: 360px; margin: 0 auto; background: #fff; border-radius: 6px; overflow: hidden; min-height: 150px;"></div>
 
             <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: center;">
-              <button class="btn-action" style="background: #16a34a;" onclick="startDedicatedOutScanner()"><i class="fa-solid fa-video"></i> Start Camera Scanner</button>
+              <button class="btn-action" style="background: #16a34a;" onclick="initCameraSelector()"><i class="fa-solid fa-video"></i> Start Camera Scanner</button>
               <button class="btn-action" style="background: #dc2626;" onclick="stopDedicatedOutScanner()"><i class="fa-solid fa-power-off"></i> Stop Camera</button>
             </div>
           </div>
 
-          <!-- MANUAL CHECKOUT INPUT & CONFIRMATION BOX -->
           <div style="background: var(--light-blue); border: 1px solid #93c5fd; padding: 15px; border-radius: 8px;">
             <label style="font-size: 0.85rem; font-weight: bold; color: var(--navy); display: block; margin-bottom: 6px;">
-              <i class="fa-solid fa-keyboard"></i> Manual Pass Check-Out (Type Pass No or Mobile)
+              <i class="fa-solid fa-keyboard"></i> Manual Pass Processing (Type Pass No or Mobile)
             </label>
             <div style="display: flex; gap: 10px;">
               <input type="text" id="manualOutInput" placeholder="e.g. VP-2026-1001 or Mobile No..." style="flex: 1; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.9rem;" onkeydown="if(event.key==='Enter'){ handleManualOutScan(); event.preventDefault(); }">
-              <button class="btn-action btn-out" style="padding: 8px 16px; font-size: 0.85rem;" onclick="handleManualOutScan()"><i class="fa-solid fa-right-from-bracket"></i> Check-Out Visitor</button>
+              <button class="btn-action btn-out" style="padding: 8px 16px; font-size: 0.85rem;" onclick="handleManualOutScan()"><i class="fa-solid fa-right-from-bracket"></i> Process Scan</button>
             </div>
           </div>
 
-          <!-- RECENT OUT SCAN RESULT DISPLAY BANNER -->
           <div id="outScanResultBox" style="display:none; margin-top: 15px; padding: 12px; border-radius: 6px; font-size: 0.88rem; font-weight: bold; text-align: center;"></div>
         </div>
       </div>
@@ -869,6 +955,27 @@
               </thead>
               <tbody id="logsTableBody">
                 <tr><td colspan="14" style="text-align:center;">Loading logs from Google Sheet...</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- RECURRING WEEKLY / MONTHLY PASSES REPORT SECTION -->
+          <h4 style="margin-top: 30px; margin-bottom: 10px; font-size: 0.9rem; color: var(--navy);"><i class="fa-solid fa-calendar-week"></i> Active Weekly & Monthly Pass Members Report</h4>
+          <div class="table-responsive-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Pass No</th>
+                  <th>Visitor Name</th>
+                  <th>Mobile</th>
+                  <th>Company</th>
+                  <th>Validity Range</th>
+                  <th>Pass Status</th>
+                  <th>Total Visits Recorded</th>
+                </tr>
+              </thead>
+              <tbody id="longTermLogsBody">
+                <tr><td colspan="7" style="text-align:center;">Loading long-term pass reports...</td></tr>
               </tbody>
             </table>
           </div>
@@ -943,6 +1050,7 @@
     ];
 
     let dedicatedScanner = null;
+    let selectedCameraId = null;
     let loadedVisitorPhoto = null;
     let isPassAlreadySaved = false;
 
@@ -977,6 +1085,24 @@
         }
       }
       return String(val).trim();
+    }
+
+    function getValidityDateRange(entryDateStr, validityType) {
+      var start = parseToCleanDateObj(entryDateStr) || new Date();
+      var end = new Date(start);
+
+      if (validityType === 'Weekly') {
+        end.setDate(start.getDate() + 6);
+      } else if (validityType === 'Monthly') {
+        end.setMonth(start.getMonth() + 1);
+        end.setDate(end.getDate() - 1);
+      }
+
+      var startFmt = cleanDateTimeDisplay(start, 'date');
+      var endFmt = cleanDateTimeDisplay(end, 'date');
+
+      if (validityType === 'Daily') return 'Daily';
+      return `${validityType} (${startFmt} to ${endFmt})`;
     }
 
     function getDirectDriveImageUrl(url) {
@@ -1121,7 +1247,7 @@
         startCamera();
       } else if(tabId === 'outGateTab') {
         stopCamera();
-        startDedicatedOutScanner();
+        initCameraSelector();
       } else if(tabId === 'dashboardTab' || tabId === 'adminTab') {
         stopCamera();
         stopDedicatedOutScanner();
@@ -1187,20 +1313,64 @@
       }
     }
 
-    /* DEDICATED OUT-GATE PAGE SCANNER FUNCTIONS */
+    /* MULTI-CAMERA SELECTOR & SCANNER INIT */
+    async function initCameraSelector() {
+      try {
+        const devices = await Html5Qrcode.getCameras();
+        const selectElem = document.getElementById('cameraSelect');
+        selectElem.innerHTML = '';
+
+        if (devices && devices.length > 0) {
+          devices.forEach(device => {
+            const option = document.createElement('option');
+            option.value = device.id;
+            option.text = device.label || `Camera ${selectElem.length + 1}`;
+            selectElem.appendChild(option);
+          });
+
+          selectedCameraId = devices[0].id;
+          startDedicatedOutScanner();
+        } else {
+          selectElem.innerHTML = '<option value="">No cameras detected</option>';
+        }
+      } catch (err) {
+        console.log("Error getting cameras: " + err);
+        startDedicatedOutScanner();
+      }
+    }
+
+    function switchCameraDevice() {
+      const selectElem = document.getElementById('cameraSelect');
+      selectedCameraId = selectElem.value;
+      stopDedicatedOutScanner();
+      startDedicatedOutScanner();
+    }
+
     function startDedicatedOutScanner() {
       if (!dedicatedScanner) {
-        dedicatedScanner = new Html5QrcodeScanner("dedicatedReader", { fps: 10, qrbox: 250 }, false);
-        dedicatedScanner.render((decodedText) => {
+        dedicatedScanner = new Html5Qrcode("dedicatedReader");
+        const config = { fps: 15, qrbox: { width: 250, height: 250 } };
+        
+        const qrCodeSuccessCallback = (decodedText) => {
           processOutGateCode(decodedText);
-        }, (errorMessage) => {});
+        };
+
+        if (selectedCameraId) {
+          dedicatedScanner.start(selectedCameraId, config, qrCodeSuccessCallback, (errorMessage) => {});
+        } else {
+          dedicatedScanner.start({ facingMode: "environment" }, config, qrCodeSuccessCallback, (errorMessage) => {});
+        }
       }
     }
 
     function stopDedicatedOutScanner() {
       if (dedicatedScanner) {
-        dedicatedScanner.clear();
-        dedicatedScanner = null;
+        dedicatedScanner.stop().then(() => {
+          dedicatedScanner.clear();
+          dedicatedScanner = null;
+        }).catch(err => {
+          dedicatedScanner = null;
+        });
       }
     }
 
@@ -1214,7 +1384,8 @@
       document.getElementById('manualOutInput').value = '';
     }
 
-    function processOutGateCode(rawVal) {
+    /* RECURRING IN/OUT SCANNER LOGIC FOR WEEKLY / MONTHLY PASSES */
+    async function processOutGateCode(rawVal) {
       if (activeUser && activeUser.canMarkOut === false) {
         displayOutResult("Action Denied: Your account role does not have permission to mark visitors out.", false);
         return;
@@ -1229,16 +1400,87 @@
         if (match) extractedPass = match[1].trim();
       }
 
-      const match = [...globalCloudLogs].reverse().find(log => 
+      const matchingLogs = globalCloudLogs.filter(log => 
         log.passNo.toLowerCase() === extractedPass.toLowerCase() || log.mobile.toLowerCase() === extractedPass.toLowerCase()
       );
 
-      if (match) {
-        if (match.timeOut === '_______' || match.timeOut === '--:--' || !match.timeOut) {
+      if (matchingLogs.length > 0) {
+        const match = matchingLogs[matchingLogs.length - 1];
+        const isCurrentlyInside = (!match.timeOut || match.timeOut === '_______' || match.timeOut === '--:--');
+
+        const todayStr = getCurrentDate();
+
+        // SCENARIO 1: VISITOR IS INSIDE -> MARK THEM OUT
+        if (isCurrentlyInside) {
           recordTimeOut(match.passNo);
-          displayOutResult(`SUCCESS: Visitor ${match.name} (${match.passNo}) Checked-Out Successfully!`, true);
-        } else {
-          displayOutResult(`ALREADY OUT: Pass ${match.passNo} (${match.name}) was already checked out at ${match.timeOut}.`, false);
+          displayOutResult(`SUCCESS: Visitor ${match.name} (${match.passNo}) Checked-OUT at ${getCurrentTime()}!`, true);
+          return;
+        }
+
+        // SCENARIO 2: WEEKLY OR MONTHLY PASS CHECKING IN
+        if (match.validity === 'Weekly' || match.validity === 'Monthly') {
+          const status = checkPassExpiration(match.date, match.validity);
+          if (status.isExpired) {
+            displayOutResult(`EXPIRED PASS: ${match.name}'s ${match.validity} Pass has expired! Please issue a new pass.`, false);
+            return;
+          }
+
+          // CHECK IF ALREADY ENTERED & EXITED (COMPLETED VISIT) TODAY OR CURRENTLY INSIDE
+          const alreadyCompletedToday = matchingLogs.some(l => 
+            l.date === todayStr && l.timeOut && l.timeOut !== '_______' && l.timeOut !== '--:--'
+          );
+
+          const currentlyInsideToday = matchingLogs.some(l => 
+            l.date === todayStr && (!l.timeOut || l.timeOut === '_______' || l.timeOut === '--:--')
+          );
+
+          if (alreadyCompletedToday || currentlyInsideToday) {
+            displayOutResult(`PASS ALREADY USED TODAY: Weekly/Monthly pass (${match.passNo}) has already completed its visit for today (${todayStr}).`, false);
+            return;
+          }
+
+          // PULL ORIGINAL PHOTO FROM EARLIER RECORDS OF THIS PASS
+          const originalRecordWithPhoto = matchingLogs.slice().reverse().find(l => l.photoUrl && l.photoUrl !== 'No Photo' && l.photoUrl !== 'NO_PHOTO');
+          const preservedPhoto = originalRecordWithPhoto ? originalRecordWithPhoto.photoUrl : (match.photoUrl || 'NO_PHOTO');
+
+          // RECORD NEW ENTRY FOR TODAY WITH PRESERVED PHOTO
+          const reEntry = {
+            passNo: match.passNo,
+            date: todayStr,
+            timeIn: getCurrentTime(),
+            timeOut: '_______',
+            name: match.name,
+            mobile: match.mobile,
+            company: match.company,
+            personToMeet: match.personToMeet,
+            department: match.department,
+            validity: match.validity,
+            purpose: match.purpose,
+            vehicle: match.vehicle,
+            idType: match.idType,
+            idNumber: match.idNumber,
+            photo: preservedPhoto
+          };
+
+          if (GOOGLE_SCRIPT_URL) {
+            try {
+              await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(reEntry)
+              });
+            } catch (err) {
+              console.log("Cloud sync error: " + err.message);
+            }
+          }
+
+          displayOutResult(`RE-ENTRY RECORDED: ${match.name} (${match.validity} Pass) Checked-IN Today at ${getCurrentTime()}!`, true);
+          setTimeout(() => { fetchCloudData(); }, 1000);
+        } 
+        // SCENARIO 3: DAILY PASS ALREADY OUT
+        else {
+          displayOutResult(`ALREADY OUT: Daily Pass ${match.passNo} (${match.name}) was already checked out at ${match.timeOut}.`, false);
         }
       } else {
         displayOutResult(`ERROR: No visitor record found for "${extractedPass}".`, false);
@@ -1258,6 +1500,11 @@
         box.style.color = '#dc2626';
         box.style.border = '1px solid #fca5a5';
       }
+
+      // AUTO-CLEAR RESULT BANNER AFTER 4 SECONDS
+      setTimeout(() => {
+        box.style.display = 'none';
+      }, 4000);
     }
 
     let currentPassNumber = 1001;
@@ -1308,6 +1555,7 @@
 
             computeDashboardAnalytics(globalCloudLogs);
             renderLogsTable(globalCloudLogs);
+            renderLongTermLogsTable(globalCloudLogs);
             renderUsersTable();
             updatePreview();
             return;
@@ -1319,6 +1567,7 @@
 
       computeDashboardAnalytics(globalCloudLogs);
       renderLogsTable(globalCloudLogs);
+      renderLongTermLogsTable(globalCloudLogs);
       renderUsersTable();
       updatePreview();
     }
@@ -1446,21 +1695,60 @@
       renderDashLiveLogs(logs.slice(-5).reverse());
     }
 
+    function calculateTotalHours(timeInStr, timeOutStr) {
+      if (!timeInStr || !timeOutStr || timeInStr === '--:--' || timeOutStr === '_______' || timeOutStr === '--') return "Inside";
+      
+      try {
+        const parseTime12 = (tStr) => {
+          const parts = tStr.trim().split(' ');
+          if(parts.length < 2) return null;
+          const timeParts = parts[0].split(':');
+          let hours = parseInt(timeParts[0], 10);
+          const minutes = parseInt(timeParts[1], 10);
+          const modifier = parts[1].toUpperCase();
+          if (modifier === 'PM' && hours < 12) hours += 12;
+          if (modifier === 'AM' && hours === 12) hours = 0;
+          return hours * 60 + minutes;
+        };
+
+        const minIn = parseTime12(timeInStr);
+        const minOut = parseTime12(timeOutStr);
+        if (minIn === null || minOut === null) return "Completed";
+
+        let diff = minOut - minIn;
+        if (diff < 0) diff += 24 * 60; // handle overnight
+
+        const hrs = Math.floor(diff / 60);
+        const mins = diff % 60;
+
+        if (hrs === 0) return `${mins} mins`;
+        if (mins === 0) return `${hrs} hr${hrs > 1 ? 's' : ''}`;
+        return `${hrs} hr ${mins} mins`;
+      } catch(e) {
+        return "Completed";
+      }
+    }
+
     function renderDashLiveLogs(recentLogs) {
       const tbody = document.getElementById('dashLiveLogsBody');
       tbody.innerHTML = '';
 
       if (!recentLogs || recentLogs.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No recent check-ins recorded.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No recent check-ins recorded.</td></tr>';
         return;
       }
 
       recentLogs.forEach(log => {
+        const timeOutDisplay = (log.timeOut && log.timeOut !== '_______' && log.timeOut !== '--:--') ? log.timeOut : '--';
+        const totalHrsDisplay = calculateTotalHours(log.timeIn, log.timeOut);
+
         const row = `<tr>
           <td><strong>${log.passNo}</strong></td>
           <td>${log.name}</td>
           <td>${log.department || 'Admin'}</td>
           <td>${log.timeIn}</td>
+          <td><strong style="color: ${timeOutDisplay !== '--' ? '#0284c7' : '#94a3b8'}">${timeOutDisplay}</strong></td>
+          <td><strong style="color: ${totalHrsDisplay === 'Inside' ? '#dc2626' : '#16a34a'}">${totalHrsDisplay}</strong></td>
         </tr>`;
         tbody.innerHTML += row;
       });
@@ -1493,11 +1781,11 @@
     }
 
     function getQrWebUrl(passNo) {
-      const currUrl = window.location.href.split('?')[0];
-      if (currUrl.startsWith('http')) {
-        return `${currUrl}?pass=${encodeURIComponent(passNo)}`;
+      let baseUrl = window.location.href.split('?')[0];
+      if (baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1') || baseUrl.startsWith('file:///')) {
+        baseUrl = "https://giridharanseshadri.github.io/sical-vms/"; 
       }
-      return passNo;
+      return `${baseUrl}?pass=${encodeURIComponent(passNo)}`;
     }
 
     function checkPassExpiration(entryDateStr, validityType) {
@@ -1537,11 +1825,15 @@
         if (matchPass) query = matchPass[1].toLowerCase();
       }
 
-      const match = [...globalCloudLogs].reverse().find(log => 
+      const matches = globalCloudLogs.filter(log => 
         log.passNo.toLowerCase() === query || log.mobile.toLowerCase() === query
       );
 
-      if (match) {
+      if (matches.length > 0) {
+        let match = matches[matches.length - 1];
+        const withPhoto = matches.slice().reverse().find(l => l.photoUrl && l.photoUrl !== 'No Photo' && l.photoUrl !== 'NO_PHOTO');
+        if (withPhoto) match = withPhoto;
+
         document.getElementById('visitorName').value = match.name;
         document.getElementById('mobileNumber').value = match.mobile;
         document.getElementById('companyFrom').value = match.company;
@@ -1572,8 +1864,9 @@
           document.getElementById('prevTimeIn').textContent = cleanDateTimeDisplay(match.timeIn, 'time');
           document.getElementById('prevTimeOut').textContent = (match.timeOut && match.timeOut !== '_______') ? cleanDateTimeDisplay(match.timeOut, 'time') : '_______';
           document.getElementById('prevPurpose').textContent = match.purpose || 'Meeting';
+          document.getElementById('prevValidity').textContent = getValidityDateRange(match.date, match.validity);
           
-          generateQrCode("passQrCode", getQrWebUrl(match.passNo), 100);
+          generateQrCode("passQrCode", getQrWebUrl(match.passNo), 150);
         } else {
           alert(`Visitor details loaded for ${match.name}! Ready to issue a NEW Pass.`);
         }
@@ -1597,7 +1890,7 @@
       el.addEventListener('change', updatePreview);
     });
 
-    function generateQrCode(containerId, textData, size = 100) {
+    function generateQrCode(containerId, textData, size = 150) {
       const container = document.getElementById(containerId);
       if (!container) return;
       container.innerHTML = '';
@@ -1628,7 +1921,7 @@
       const hostVal = document.getElementById('personToMeet').value || '-';
       const deptVal = document.getElementById('department').value || 'Admin';
       const purposeVal = document.getElementById('purposeSelect').value || 'Meeting';
-      const validityVal = document.querySelector('input[name="validity"]:checked')?.value || 'Daily';
+      const validityTypeVal = document.querySelector('input[name="validity"]:checked')?.value || 'Daily';
 
       document.getElementById('prevPassNo').textContent = currentPass;
       document.getElementById('prevDate').textContent = dateVal;
@@ -1644,11 +1937,11 @@
       document.getElementById('prevHost').textContent = hostVal;
       document.getElementById('prevDept').textContent = deptVal;
       document.getElementById('prevPurpose').textContent = purposeVal;
-      document.getElementById('prevValidity').textContent = validityVal;
+      document.getElementById('prevValidity').textContent = getValidityDateRange(dateVal, validityTypeVal);
 
       updatePhotoFrame(loadedVisitorPhoto || capturedPhotoData);
 
-      generateQrCode("passQrCode", getQrWebUrl(currentPass), 100);
+      generateQrCode("passQrCode", getQrWebUrl(currentPass), 150);
     }
 
     async function saveEntryOnly() {
@@ -1669,6 +1962,8 @@
       saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
 
       const passNo = getFormattedPassNo();
+      const validityVal = document.querySelector('input[name="validity"]:checked').value;
+
       const newEntry = {
         passNo: passNo,
         date: getCurrentDate(),
@@ -1679,7 +1974,7 @@
         company: document.getElementById('companyFrom').value,
         personToMeet: document.getElementById('personToMeet').value,
         department: document.getElementById('department').value,
-        validity: document.querySelector('input[name="validity"][value="Daily"]').checked ? 'Daily' : document.querySelector('input[name="validity"][value="Daily"]').value,
+        validity: validityVal,
         purpose: document.getElementById('purposeSelect').value,
         vehicle: document.getElementById('vehicleNo').value || 'N/A',
         idType: document.getElementById('idType').value,
@@ -1986,6 +2281,60 @@
           <td>${log.purpose}</td>
           <td>${photoCell}</td>
           <td>${actionContent}</td>
+        </tr>`;
+        tbody.innerHTML += row;
+      });
+    }
+
+    /* RENDER SEPARATE LONG-TERM (WEEKLY & MONTHLY) PASSES REPORT TABLE */
+    function renderLongTermLogsTable(logs) {
+      const tbody = document.getElementById('longTermLogsBody');
+      tbody.innerHTML = '';
+
+      if (!logs || logs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No weekly or monthly pass members found.</td></tr>';
+        return;
+      }
+
+      const longTermPasses = logs.filter(l => l.validity === 'Weekly' || l.validity === 'Monthly');
+
+      if (longTermPasses.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No active weekly or monthly pass members found.</td></tr>';
+        return;
+      }
+
+      const passMap = {};
+      longTermPasses.forEach(log => {
+        if (!passMap[log.passNo]) {
+          passMap[log.passNo] = {
+            passNo: log.passNo,
+            name: log.name,
+            mobile: log.mobile,
+            company: log.company,
+            validity: log.validity,
+            startDate: log.date,
+            visitsCount: 1
+          };
+        } else {
+          passMap[log.passNo].visitsCount++;
+        }
+      });
+
+      Object.values(passMap).forEach(item => {
+        const rangeStr = getValidityDateRange(item.startDate, item.validity);
+        const status = checkPassExpiration(item.startDate, item.validity);
+        const statusTag = status.isExpired 
+          ? `<span style="color:#dc2626; font-weight:bold;">EXPIRED</span>` 
+          : `<span style="color:#16a34a; font-weight:bold;">ACTIVE</span>`;
+
+        const row = `<tr>
+          <td><strong>${item.passNo}</strong></td>
+          <td>${item.name}</td>
+          <td>${item.mobile}</td>
+          <td>${item.company}</td>
+          <td>${rangeStr}</td>
+          <td style="text-align:center;">${statusTag}</td>
+          <td style="text-align:center;"><strong>${item.visitsCount} Visit(s)</strong></td>
         </tr>`;
         tbody.innerHTML += row;
       });
