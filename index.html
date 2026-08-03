@@ -289,7 +289,7 @@
     .cam-btns { margin-top: 6px; display: flex; gap: 8px; }
     .btn-cam { background: var(--blue); color: white; border: none; padding: 5px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer; }
 
-    /* VERTICAL LANYARD FOLDING BOOKLET BADGE FORMAT */
+    /* VERTICAL LANYARD POUCH FOLDING BOOKLET BADGE FORMAT */
     .pass-booklet-container {
       display: flex;
       flex-direction: column;
@@ -1388,7 +1388,7 @@
       document.getElementById('manualOutInput').value = '';
     }
 
-    /* ROBUST TOGGLE & MULTI-ENTRY LOGIC WITH PROPER SESSION TARGETING */
+    /* ROBUST SCANNER TOGGLE WITH FULL MASTER DATA RETRIEVAL FOR NEW SESSIONS */
     async function processOutGateCode(rawVal) {
       if (activeUser && activeUser.canMarkOut === false) {
         displayOutResult("Action Denied: Your account role does not have permission to mark visitors out.", false);
@@ -1404,7 +1404,7 @@
         if (match) extractedPass = match[1].trim();
       }
 
-      // 1. FRESH FETCH TO ENSURE WE HAVE THE LATEST LOGS FROM THE CLOUD
+      // 1. FRESH FETCH TO ENSURE WE HAVE THE LATEST LOGS FROM CLOUD
       if (GOOGLE_SCRIPT_URL) {
         try {
           const resp = await fetch(GOOGLE_SCRIPT_URL);
@@ -1425,82 +1425,61 @@
       );
 
       if (matchingLogs.length > 0) {
-        const match = matchingLogs[matchingLogs.length - 1];
+        const masterRecord = matchingLogs[0]; // First registration contains master profile details
+        const latestRecord = matchingLogs[matchingLogs.length - 1];
         const todayStr = getCurrentDate();
 
         // 2. CHECK IF THERE IS AN ACTIVE "INSIDE" SESSION (TimeOut is blank or '_______')
         const activeInsideLog = matchingLogs.slice().reverse().find(l => !l.timeOut || l.timeOut === '_______' || l.timeOut === '--:--');
 
         if (activeInsideLog) {
-          // TOGGLE: IF INSIDE, CLOSE OUT THAT EXACT ROW IN THE BACKEND DATABASE
-          const outTime = getCurrentTime();
-          if (GOOGLE_SCRIPT_URL) {
-            try {
-              await fetch(GOOGLE_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({
-                  action: "updateTimeOutByRow",
-                  passNo: activeInsideLog.passNo,
-                  timeIn: activeInsideLog.timeIn,
-                  date: activeInsideLog.date,
-                  timeOut: outTime
-                })
-              });
-            } catch (err) {
-              console.log("Error updating Time Out: " + err.message);
-            }
-          }
-
-          displayOutResult(`SUCCESS: Visitor ${match.name} (${match.passNo}) Checked-OUT at ${outTime}!`, true);
-          setTimeout(() => { fetchCloudData(); }, 1000);
+          // TOGGLE: IF INSIDE, CLOSE OUT THAT EXACT SESSION
+          recordTimeOut(activeInsideLog.passNo);
+          displayOutResult(`SUCCESS: Visitor ${masterRecord.name} (${masterRecord.passNo}) Checked-OUT at ${getCurrentTime()}!`, true);
           return;
         }
 
-        // 3. IF NOT INSIDE, CHECK PASS VALIDITY BEFORE STARTING A NEW ENTRY
-        if (match.validity === 'Daily') {
+        // 3. IF NOT INSIDE, VALIDATE PASS
+        if (masterRecord.validity === 'Daily') {
           const completedToday = matchingLogs.some(l => l.date === todayStr && l.timeOut && l.timeOut !== '_______' && l.timeOut !== '--:--');
-          if (completedToday || match.date !== todayStr) {
-            displayOutResult(`INVALID PASS: Daily Pass (${match.passNo}) has already completed its single IN/OUT cycle or belongs to another date.`, false);
+          if (completedToday || masterRecord.date !== todayStr) {
+            displayOutResult(`INVALID PASS: Daily Pass (${masterRecord.passNo}) has already completed its single IN/OUT cycle or belongs to another date.`, false);
             return;
           }
-        } else if (match.validity === 'Weekly' || match.validity === 'Monthly') {
-          const status = checkPassExpiration(match.date, match.validity);
+        } else if (masterRecord.validity === 'Weekly' || masterRecord.validity === 'Monthly') {
+          const status = checkPassExpiration(masterRecord.date, masterRecord.validity);
           if (status.isExpired) {
-            displayOutResult(`EXPIRED PASS: ${match.name}'s ${match.validity} Pass has expired! Please issue a new pass.`, false);
+            displayOutResult(`EXPIRED PASS: ${masterRecord.name}'s ${masterRecord.validity} Pass has expired! Please issue a new pass.`, false);
             return;
           }
         }
 
-        // 4. RETRIEVE AND PRESERVE ORIGINAL PHOTO FROM FIRST ENTRY OR PAST LOGS
-        let preservedPhoto = match.photoUrl || match.photo || 'NO_PHOTO';
+        // 4. RETRIEVE MASTER PHOTO & DETAILS TO ENSURE NO BLANK DATA
+        let preservedPhoto = masterRecord.photoUrl || masterRecord.photo || 'NO_PHOTO';
         if (preservedPhoto === 'No Photo' || preservedPhoto === 'NO_PHOTO' || !preservedPhoto) {
-          const originalRecordWithPhoto = matchingLogs.slice().reverse().find(l => l.photoUrl && l.photoUrl !== 'No Photo' && l.photoUrl !== 'NO_PHOTO');
-          if (originalRecordWithPhoto) {
-            preservedPhoto = originalRecordWithPhoto.photoUrl;
-          }
+          const photoLog = matchingLogs.slice().reverse().find(l => l.photoUrl && l.photoUrl !== 'No Photo' && l.photoUrl !== 'NO_PHOTO');
+          if (photoLog) preservedPhoto = photoLog.photoUrl;
         }
 
-        let deptVal = match.department || 'Admin';
+        let deptVal = masterRecord.department || 'Admin';
         if (deptVal.toUpperCase() === 'SICAL IT') deptVal = 'IT';
 
-        // 5. CREATE NEW CHECK-IN SESSION (N-TIMES PER DAY FOR WEEKLY / MONTHLY)
+        // 5. CREATE NEW CHECK-IN SESSION WITH FULLY POPULATED MASTER DETAILS
         const newEntry = {
-          passNo: match.passNo,
+          passNo: masterRecord.passNo,
           date: todayStr,
           timeIn: getCurrentTime(),
           timeOut: '_______',
-          name: match.name,
-          mobile: match.mobile,
-          company: match.company,
-          personToMeet: match.personToMeet,
+          name: masterRecord.name,
+          mobile: masterRecord.mobile,
+          company: masterRecord.company,
+          personToMeet: masterRecord.personToMeet,
           department: deptVal,
-          validity: match.validity,
-          purpose: match.purpose,
-          vehicle: match.vehicle || 'N/A',
-          idType: match.idType || 'Aadhaar Card',
-          idNumber: match.idNumber || 'N/A',
+          validity: masterRecord.validity,
+          purpose: masterRecord.purpose,
+          vehicle: masterRecord.vehicle || 'N/A',
+          idType: masterRecord.idType || 'Aadhaar Card',
+          idNumber: masterRecord.idNumber || 'N/A',
           photo: preservedPhoto
         };
 
@@ -1517,7 +1496,7 @@
           }
         }
 
-        displayOutResult(`SUCCESS: Visitor ${match.name} (${match.validity} Pass) Checked-IN at ${getCurrentTime()}!`, true);
+        displayOutResult(`SUCCESS: Visitor ${masterRecord.name} (${masterRecord.validity} Pass) Checked-IN at ${getCurrentTime()}!`, true);
         setTimeout(() => { fetchCloudData(); }, 1000);
 
       } else {
@@ -2222,7 +2201,7 @@
       });
     }
 
-    async function recordTimeOut(passNo) {
+    async function recordTimeOut(passNo, targetTimeIn = null) {
       if (activeUser && activeUser.canMarkOut === false) {
         alert("Action Denied: Your account role does not have permission to mark visitors out.");
         return;
@@ -2239,6 +2218,7 @@
             body: JSON.stringify({
               action: "updateTimeOut",
               passNo: passNo,
+              timeIn: targetTimeIn,
               timeOut: outTime
             })
           });
@@ -2286,7 +2266,7 @@
         let actionContent = '';
         if (log.timeOut === '_______' || log.timeOut === '--:--' || !log.timeOut) {
           if (userCanMarkOut) {
-            actionContent = `<button class="btn-out" onclick="recordTimeOut('${log.passNo}')">Mark Out</button>`;
+            actionContent = `<button class="btn-out" onclick="recordTimeOut('${log.passNo}', '${log.timeIn}')">Mark Out</button>`;
           } else {
             actionContent = `<span style="color:#64748b; font-weight:600; font-size:0.8rem;">INSIDE</span>`;
           }
