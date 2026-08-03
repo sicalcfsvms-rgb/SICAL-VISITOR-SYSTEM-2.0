@@ -32,7 +32,7 @@
       overflow-x: hidden;
     }
 
-    /* LOGIN SCREEN WITH UPDATED BACKGROUND IMAGE */
+    /* LOGIN SCREEN WITH BACKGROUND IMAGE */
     #loginScreen {
       display: flex;
       min-height: 100vh;
@@ -479,7 +479,7 @@
 </head>
 <body>
 
-  <!-- FULL SCREEN SPLIT LOGIN LAYOUT WITH NEW BACKGROUND IMAGE -->
+  <!-- FULL SCREEN SPLIT LOGIN LAYOUT WITH BACKGROUND IMAGE -->
   <div id="loginScreen">
     
     <div class="login-left-panel">
@@ -1722,7 +1722,7 @@
     }
 
     function calculateTotalHours(timeInStr, timeOutStr) {
-      if (!timeInStr || !timeOutStr || timeInStr === '--:--' || timeOutStr === '_______' || timeOutStr === '--') return "Inside";
+      if (!timeInStr || !timeOutStr || timeInStr === '--:--' || timeInStr === '_______' || timeOutStr === '--') return "Inside";
       
       try {
         const parseTime12 = (tStr) => {
@@ -1818,20 +1818,22 @@
     function checkPassExpiration(entryDateStr, validityType) {
       if (!entryDateStr) return { isExpired: false, label: "VALID PASS" };
 
-      const parts = entryDateStr.split('-');
-      if (parts.length !== 3) return { isExpired: false, label: "VALID PASS" };
+      var passDate = parseToCleanDateObj(entryDateStr);
+      if (!passDate) return { isExpired: false, label: "VALID PASS" };
 
-      const passDate = new Date(parts[2], parts[1] - 1, parts[0]);
-      const now = new Date();
+      var now = new Date();
+      // Normalize both to midnight for accurate day comparison
+      passDate.setHours(0, 0, 0, 0);
+      now.setHours(0, 0, 0, 0);
 
-      let allowedDays = 1;
+      var allowedDays = 1;
       if (validityType === 'Weekly') allowedDays = 7;
       if (validityType === 'Monthly') allowedDays = 30;
 
-      const diffTime = Math.abs(now - passDate);
-      const diffDays = diffTime / (1000 * 60 * 60 * 24);
+      var diffTime = now - passDate;
+      var diffDays = diffTime / (1000 * 60 * 60 * 24);
 
-      if (diffDays > allowedDays) {
+      if (diffDays < 0 || diffDays >= allowedDays) {
         return { isExpired: true, label: `EXPIRED PASS (${validityType} limit ${allowedDays} day/s exceeded)` };
       }
       return { isExpired: false, label: `VALID PASS (${validityType})` };
