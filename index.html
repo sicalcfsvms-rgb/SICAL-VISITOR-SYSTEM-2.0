@@ -289,7 +289,7 @@
     .cam-btns { margin-top: 6px; display: flex; gap: 8px; }
     .btn-cam { background: var(--blue); color: white; border: none; padding: 5px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer; }
 
-    /* VERTICAL LANYARD POUCH FOLDING BOOKLET BADGE FORMAT */
+    /* VERTICAL LANYARD POUCH BADGE FORMAT */
     .pass-booklet-container {
       display: flex;
       flex-direction: column;
@@ -337,7 +337,7 @@
     .status-banner.expired { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; display: block; }
     .status-banner.valid { background: #f0fdf4; color: #16a34a; border: 1px solid #86efac; display: block; }
 
-    .signature-container { display: flex; justify-content: space-between; padding: 25px 0 10px 0; text-align: center; }
+    .signature-container { display: flex; justify-content: space-between; padding: 20px 0 5px 0; text-align: center; }
     .sig-box { width: 32%; border-top: 1.5px solid #0f172a; padding-top: 3px; font-size: 0.50rem; font-weight: 800; color: #0f172a; }
 
     .rules-side-container { display: flex; flex-direction: column; justify-content: space-between; height: 100%; }
@@ -345,7 +345,7 @@
     .rules-box h5 { margin-bottom: 6px; color: #0f172a; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; }
 
     .qrcode-container-large { text-align: center; padding-top: 10px; }
-    .qrcode-container-large img, .qrcode-container-large canvas { display: block; width: 150px !important; height: 150px !important; margin: 0 auto; border: 1.5px solid #0f172a; border-radius: 6px; padding: 3px; background: #fff; }
+    .qrcode-container-large img, .qrcode-container-large canvas { display: block; width: 130px !important; height: 130px !important; margin: 0 auto; border: 1.5px solid #0f172a; border-radius: 6px; padding: 3px; background: #fff; }
 
     /* RESPONSIVE TABLE WRAPPER */
     .table-responsive-wrapper { width: 100%; overflow-x: auto; border-radius: 5px; border: 1px solid var(--border-color); }
@@ -379,7 +379,7 @@
       .content-container { margin-left: 0 !important; width: 100% !important; padding: 12px; }
     }
 
-    /* VERTICAL LANYARD POUCH PRINT FIX (FLIPPED BACK-FACE FOR TOP-TO-BOTTOM FOLDING) */
+    /* PERFECT PRINT STYLING FOR VISITOR CARD HOLDER / LANYARD POUCH */
     @media print {
       @page { 
         size: A4 portrait; 
@@ -429,9 +429,8 @@
         margin: 0 auto !important; 
         width: 85mm !important; 
         max-width: 85mm !important; 
-        height: 215mm !important;
-        max-height: 215mm !important;
-        border: 2px solid #0f172a !important; 
+        height: auto !important;
+        border: 1.5px solid #0f172a !important; 
         border-radius: 4px !important;
         box-shadow: none !important; 
         background: #ffffff !important;
@@ -440,21 +439,17 @@
       }
 
       .booklet-side {
-        padding: 10px !important;
-        height: 107mm !important;
-        max-height: 107mm !important;
+        padding: 8px !important;
         box-sizing: border-box !important;
       }
 
       .booklet-side-left {
-        border-bottom: 2px solid #0f172a !important;
-        border-right: none !important;
+        border-bottom: 1.5px dashed #0f172a !important;
       }
 
-      /* FLIP BACK SIDE 180 DEGREES SO WHEN FOLDED TOP-TO-BOTTOM IT READS UPRIGHT */
+      /* UPRIGHT LAYOUT FIX - NO ROTATION SO BOTH FACES PRINT CLEANLY TOP-TO-BOTTOM */
       .pass-booklet-container > .booklet-side:not(.booklet-side-left) {
-        transform: rotate(180deg) !important;
-        transform-origin: center center !important;
+        transform: none !important;
       }
 
       .badge-header h2 { font-size: 0.65rem !important; }
@@ -463,16 +458,16 @@
       .top-right-logo .logo-sub { font-size: 0.38rem !important; }
 
       .badge-row { font-size: 0.62rem !important; margin-bottom: 2px !important; }
-      .visitor-photo-frame { width: 70px !important; height: 85mm !important; }
+      .visitor-photo-frame { width: 70px !important; height: 85px !important; }
 
-      .signature-container { padding: 30px 0 10px 0 !important; }
+      .signature-container { padding: 18px 0 4px 0 !important; }
 
       .rules-box { font-size: 0.58rem !important; line-height: 1.2 !important; }
       .rules-box h5 { font-size: 0.62rem !important; margin-bottom: 3px !important; }
 
       .qrcode-container-large img, .qrcode-container-large canvas {
-        width: 140px !important;
-        height: 140px !important;
+        width: 120px !important;
+        height: 120px !important;
       }
     }
   </style>
@@ -793,7 +788,7 @@
               <button class="btn-action btn-success" style="padding: 10px 16px; font-size: 0.9rem; width: 100%;" onclick="window.print()"><i class="fa-solid fa-file-pdf"></i> Download Pass as PDF / Print</button>
             </div>
 
-            <!-- VERTICAL LANYARD POUCH FOLDING BADGE FORMAT -->
+            <!-- VERTICAL LANYARD POUCH BADGE FORMAT -->
             <div id="printablePass" class="pass-booklet-container">
               
               <!-- TOP FRONT FACE: PASS DETAILS -->
@@ -1903,7 +1898,7 @@
           document.getElementById('prevPurpose').textContent = match.purpose || 'Meeting';
           document.getElementById('prevValidity').textContent = getValidityDateRange(match.date, match.validity);
           
-          generateQrCode("passQrCode", getQrWebUrl(match.passNo), 150);
+          generateQrCode("passQrCode", getQrWebUrl(match.passNo), 130);
         } else {
           alert(`Visitor details loaded for ${match.name}! Ready to issue a NEW Pass.`);
         }
@@ -1927,7 +1922,7 @@
       el.addEventListener('change', updatePreview);
     });
 
-    function generateQrCode(containerId, textData, size = 150) {
+    function generateQrCode(containerId, textData, size = 130) {
       const container = document.getElementById(containerId);
       if (!container) return;
       container.innerHTML = '';
@@ -1979,7 +1974,7 @@
 
       updatePhotoFrame(loadedVisitorPhoto || capturedPhotoData);
 
-      generateQrCode("passQrCode", getQrWebUrl(currentPass), 150);
+      generateQrCode("passQrCode", getQrWebUrl(currentPass), 130);
     }
 
     async function saveEntryOnly() {
