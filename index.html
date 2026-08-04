@@ -1292,11 +1292,14 @@
         menus = activeUser.menus.toLowerCase().replace(/[^a-z,]/g, "").split(',');
       }
 
-      const hasAdmin = menus.some(m => m.includes('admin'));
-      const hasDashboard = menus.some(m => m.includes('dashboard')) || menus.length === 0;
-      const hasEntry = menus.some(m => m.includes('entry'));
-      const hasOutGate = menus.some(m => m.includes('outgate'));
-      const hasReport = menus.some(m => m.includes('report') || m.includes('logs'));
+      const role = String(activeUser.role || "").toLowerCase();
+      const isMasterAdmin = (role === 'admin' || activeUser.username.toUpperCase() === 'SICAL ADMIN' || activeUser.username.toUpperCase() === 'KUMARESAN_M');
+
+      const hasAdmin = isMasterAdmin || menus.some(m => m.includes('admin'));
+      const hasDashboard = isMasterAdmin || menus.some(m => m.includes('dashboard')) || menus.length === 0;
+      const hasEntry = isMasterAdmin || menus.some(m => m.includes('entry'));
+      const hasOutGate = isMasterAdmin || menus.some(m => m.includes('outgate') || m.includes('gate'));
+      const hasReport = isMasterAdmin || menus.some(m => m.includes('report') || m.includes('logs'));
 
       document.getElementById('navDashboard').style.display = hasDashboard ? 'inline-block' : 'none';
       document.getElementById('navEntry').style.display = hasEntry ? 'inline-block' : 'none';
@@ -1308,7 +1311,6 @@
         adminNav.style.display = 'inline-block';
       } else {
         adminNav.style.display = 'none';
-        // Only redirect if current active tab is strictly forbidden
         const activeTab = document.querySelector('.tab-content.active');
         if (activeTab && activeTab.id === 'adminTab') {
           if (hasDashboard) switchTab('dashboardTab');
@@ -1331,6 +1333,30 @@
     }
 
     function switchTab(tabId) {
+      // Security enforcement before switching tabs
+      if (activeUser) {
+        let menus = [];
+        if (Array.isArray(activeUser.menus)) {
+          menus = activeUser.menus.map(m => String(m).toLowerCase().replace(/[^a-z]/g, "").trim());
+        } else if (typeof activeUser.menus === 'string') {
+          menus = activeUser.menus.toLowerCase().replace(/[^a-z,]/g, "").split(',');
+        }
+        const role = String(activeUser.role || "").toLowerCase();
+        const isMasterAdmin = (role === 'admin' || activeUser.username.toUpperCase() === 'SICAL ADMIN' || activeUser.username.toUpperCase() === 'KUMARESAN_M');
+
+        const hasAdmin = isMasterAdmin || menus.some(m => m.includes('admin'));
+        const hasDashboard = isMasterAdmin || menus.some(m => m.includes('dashboard')) || menus.length === 0;
+        const hasEntry = isMasterAdmin || menus.some(m => m.includes('entry'));
+        const hasOutGate = isMasterAdmin || menus.some(m => m.includes('outgate') || m.includes('gate'));
+        const hasReport = isMasterAdmin || menus.some(m => m.includes('report') || m.includes('logs'));
+
+        if (tabId === 'adminTab' && !hasAdmin) return;
+        if (tabId === 'dashboardTab' && !hasDashboard) return;
+        if (tabId === 'entryTab' && !hasEntry) return;
+        if (tabId === 'outGateTab' && !hasOutGate) return;
+        if (tabId === 'reportTab' && !hasReport) return;
+      }
+
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.top-menu button').forEach(el => el.classList.remove('active'));
       
@@ -1681,11 +1707,15 @@
                   cleanedMenus = u.menus.toLowerCase().replace(/[^a-z,]/g, "").split(',');
                 }
 
+                const uName = String(u.username || "").trim();
+                const uRole = String(u.role || "").trim().toLowerCase();
+                const isMaster = (uRole === 'admin' || uName.toUpperCase() === 'SICAL ADMIN' || uName.toUpperCase() === 'KUMARESAN_M');
+
                 return {
-                  username: String(u.username || "").trim(),
+                  username: uName,
                   pass: String(u.pass || "").trim(),
-                  role: String(u.role || "").trim().toLowerCase(),
-                  canMarkOut: (u.canMarkOut === true || String(u.canMarkOut).toUpperCase() === 'TRUE' || String(u.role).toLowerCase() === 'admin' || String(u.role).toLowerCase() === 'security'),
+                  role: uRole,
+                  canMarkOut: (u.canMarkOut === true || String(u.canMarkOut).toUpperCase() === 'TRUE' || isMaster || uRole === 'security'),
                   menus: cleanedMenus
                 };
               });
