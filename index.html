@@ -1287,16 +1287,16 @@
 
       let menus = [];
       if (Array.isArray(activeUser.menus)) {
-        menus = activeUser.menus.map(m => String(m).toLowerCase().replace(/[\[\]"'\s]/g, "").trim());
+        menus = activeUser.menus.map(m => String(m).toLowerCase().replace(/[^a-z]/g, "").trim());
       } else if (typeof activeUser.menus === 'string') {
-        menus = activeUser.menus.toLowerCase().replace(/[\[\]"'\s]/g, "").split(',');
+        menus = activeUser.menus.toLowerCase().replace(/[^a-z,]/g, "").split(',');
       }
 
-      const hasAdmin = menus.includes('admin');
-      const hasDashboard = menus.includes('dashboard') || menus.length === 0;
-      const hasEntry = menus.includes('entry');
-      const hasOutGate = menus.includes('outgate');
-      const hasReport = menus.includes('report');
+      const hasAdmin = menus.some(m => m.includes('admin'));
+      const hasDashboard = menus.some(m => m.includes('dashboard')) || menus.length === 0;
+      const hasEntry = menus.some(m => m.includes('entry'));
+      const hasOutGate = menus.some(m => m.includes('outgate'));
+      const hasReport = menus.some(m => m.includes('report') || m.includes('logs'));
 
       document.getElementById('navDashboard').style.display = hasDashboard ? 'inline-block' : 'none';
       document.getElementById('navEntry').style.display = hasEntry ? 'inline-block' : 'none';
@@ -1313,6 +1313,8 @@
         if (activeTab && activeTab.id === 'adminTab') {
           if (hasDashboard) switchTab('dashboardTab');
           else if (hasReport) switchTab('reportTab');
+          else if (hasEntry) switchTab('entryTab');
+          else if (hasOutGate) switchTab('outGateTab');
         }
       }
     }
@@ -1674,9 +1676,9 @@
               globalUsersList = data.users.map(u => {
                 let cleanedMenus = [];
                 if (Array.isArray(u.menus)) {
-                  cleanedMenus = u.menus.map(m => String(m).toLowerCase().replace(/[\[\]"'\s]/g, "").trim());
+                  cleanedMenus = u.menus.map(m => String(m).toLowerCase().replace(/[^a-z]/g, "").trim());
                 } else if (typeof u.menus === 'string') {
-                  cleanedMenus = u.menus.toLowerCase().replace(/[\[\]"'\s]/g, "").split(',');
+                  cleanedMenus = u.menus.toLowerCase().replace(/[^a-z,]/g, "").split(',');
                 }
 
                 return {
