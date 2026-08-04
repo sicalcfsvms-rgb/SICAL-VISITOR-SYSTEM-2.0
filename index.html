@@ -151,7 +151,7 @@
       min-height: 100vh;
       width: 100%;
       position: relative;
-      zoom: 0.88;
+      /* REMOVED ZOOM PROPERTY TO ENSURE 100% RESPONSIVE FIT AT DEFAULT ZOOM */
     }
     
     header {
@@ -1296,7 +1296,7 @@
       }
     });
 
-    // STRICT SANITIZED PERMISSIONS CONTROL WITH ADMIN HIKING FIX
+    // STRICT PERMISSION DISPLAY CONTROL & FIX FOR 100% ZOOM SCREEN DISPLAY
     function applyPermissions() {
       if (!activeUser) return;
 
@@ -2749,6 +2749,8 @@
 
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement("a");
+      link.setAttribute("href567890" +
+        "")
       link.setAttribute("href", encodedUri);
       link.setAttribute("download", `SICAL_Visitor_Report_${getCurrentDate()}.csv`);
       document.body.appendChild(link);
