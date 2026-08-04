@@ -32,7 +32,6 @@
       overflow-x: hidden;
     }
 
-    /* LOGIN SCREEN STYLING */
     #loginScreen {
       display: flex;
       min-height: 100vh;
@@ -173,7 +172,6 @@
     .brand-title { font-size: 1.05rem; font-weight: 900; letter-spacing: 0.6px; color: #ffffff; }
     .brand-subtitle { font-size: 0.70rem; color: #a5f3fc; font-weight: 700; letter-spacing: 0.5px; }
 
-    /* TOP NAVIGATION MENU BAR (FORCED VISIBILITY FIX) */
     .top-navbar {
       background: #1e293b !important;
       border-bottom: 1px solid var(--border-color);
@@ -261,14 +259,22 @@
       100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
     }
 
+    .dash-filter-bar {
+      background: white; border: 1px solid var(--border-color); padding: 10px 16px; border-radius: 8px;
+      margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+    }
+    .dash-filter-inputs { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .dash-filter-inputs label { font-size: 0.78rem; font-weight: 800; color: var(--navy); }
+    .dash-filter-inputs input[type="date"] { padding: 5px 10px; border: 1px solid var(--border-color); border-radius: 5px; font-size: 0.8rem; font-weight: 600; }
+
     .quick-actions-bar {
       background: white; padding: 10px 16px; border-radius: 8px; border: 1px solid var(--border-color);
       margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.02); width: 100%; font-size: 0.82rem;
     }
 
-    .dashboard-grid-2 { display: grid; grid-template-columns: 1.3fr 1fr; gap: 15px; margin-bottom: 15px; }
-    .dashboard-grid-3 { display: grid; grid-template-columns: 1fr; gap: 15px; }
+    .dashboard-grid-2 { display: grid; grid-template-columns: 1.2fr 1fr; gap: 15px; margin-bottom: 15px; }
+    .dashboard-grid-3 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 15px; }
 
     .alert-banner {
       background: #fef2f2; border: 1px solid #fca5a5; border-left: 4px solid #dc2626;
@@ -388,8 +394,13 @@
     .btn-reset { background: #f59e0b; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.72rem; font-weight: bold; margin-right: 4px; }
     .btn-out { background: #e11d48; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.72rem; font-weight: bold; display: inline-block; }
 
+    .overstay-box-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-top: 10px; }
+    .overstay-card { background: #fff; border: 1px solid #fca5a5; border-left: 4px solid #dc2626; border-radius: 6px; padding: 10px 12px; font-size: 0.78rem; }
+    .overstay-card strong { color: #0f172a; }
+
     @media (max-width: 1100px) {
       .dashboard-grid-2 { grid-template-columns: 1fr; }
+      .dashboard-grid-3 { grid-template-columns: 1fr; }
       .grid-2 { grid-template-columns: 1fr; }
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
     }
@@ -402,7 +413,7 @@
     @media print {
       @page { size: A4 portrait; margin: 5mm; }
       html, body { background: #ffffff !important; margin: 0 !important; padding: 0 !important; width: 100% !important; height: 100% !important; overflow: visible !important; }
-      #loginScreen, header, .top-navbar, .card, h3, .stats-grid, .quick-actions-bar, .dashboard-grid-2, .dashboard-grid-3, .alert-banner, .filter-bar, table, #addUserForm, #userTableBody, #mobilePdfBtnContainer, .quick-search-box { display: none !important; }
+      #loginScreen, header, .top-navbar, .card, h3, .stats-grid, .dash-filter-bar, .quick-actions-bar, .dashboard-grid-2, .dashboard-grid-3, .alert-banner, .filter-bar, table, #addUserForm, #userTableBody, #mobilePdfBtnContainer, .quick-search-box { display: none !important; }
       body * { visibility: hidden !important; }
       #passPreviewCard, #printablePass, #printablePass * { visibility: visible !important; }
       #passPreviewCard { position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; display: flex !important; justify-content: center !important; align-items: flex-start !important; padding-top: 5mm !important; }
@@ -513,13 +524,28 @@
       <div id="dashboardTab" class="tab-content active">
         <h3 style="margin-bottom: 14px; color: var(--navy); font-size: 1.1rem;"><i class="fa-solid fa-chart-line"></i> CFS Visitor Security & Operations Center</h3>
         
+        <!-- DASHBOARD DATE FILTER BAR (Requirement 3.1) -->
+        <div class="dash-filter-bar">
+          <div class="dash-filter-inputs">
+            <i class="fa-solid fa-filter" style="color: var(--vms-secondary);"></i>
+            <label>Filter Date Range:</label>
+            <label style="font-weight: normal; margin-left: 6px;">From:</label>
+            <input type="date" id="dashFromDate" onchange="applyDashboardDateFilter()">
+            <label style="font-weight: normal; margin-left: 6px;">To:</label>
+            <input type="date" id="dashToDate" onchange="applyDashboardDateFilter()">
+            <button class="btn-action" style="padding: 5px 10px; font-size: 0.75rem;" onclick="applyDashboardDateFilter()">Apply Filter</button>
+            <button class="btn-action" style="padding: 5px 10px; font-size: 0.75rem; background: #64748b;" onclick="resetDashboardDateFilter()">Reset (Today)</button>
+          </div>
+          <div style="font-size: 0.78rem; font-weight: 800; color: var(--navy);" id="dashFilterActiveLabel">Showing: Today's Data</div>
+        </div>
+
         <div class="stats-grid">
           <div class="stat-card" style="border-left-color: #0284c7;">
             <h4>Total (Current Month)</h4>
             <div class="stat-val" id="statMonth">...</div>
           </div>
           <div class="stat-card" style="border-left-color: #16a34a;">
-            <h4>Today's Visitors</h4>
+            <h4>Selected Period Visitors</h4>
             <div class="stat-val" id="statToday">...</div>
           </div>
           <div class="stat-card" style="border-left-color: #f59e0b;">
@@ -544,9 +570,136 @@
         <div id="overstayAlertBanner" class="alert-banner" style="display:none;">
           <div class="alert-banner-text">
             <i class="fa-solid fa-triangle-exclamation" style="font-size: 1.1rem;"></i>
-            <span><strong id="overstayCount">0</strong> Visitor(s) Have Exceeded Validity / 12 Hours Duration Inside CFS Premises!</span>
+            <span><strong id="overstayCount">0</strong> Visitor(s) Have Exceeded Duration (>8 Hours) Inside CFS Premises!</span>
           </div>
           <button class="btn-action" style="background:#dc2626; padding: 3px 8px; font-size:0.75rem;" onclick="switchTab('reportTab')">Investigate Logs</button>
+        </div>
+
+        <!-- REMIT 3.2 & 3.3: Total IN / OUT / NOT OUT & NOT OUT VISITOR LIST -->
+        <div class="dashboard-grid-2">
+          <div class="card">
+            <h3 style="font-size: 0.95rem; margin-bottom: 12px;"><i class="fa-solid fa-right-to-bracket"></i> Overall IN / OUT / NOT OUT Summary</h3>
+            <div class="table-responsive-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Total IN</th>
+                    <th>Checked OUT</th>
+                    <th>Currently NOT OUT</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="text-align: center; font-size: 1.1rem; font-weight: 900;">
+                    <td id="tblTotalIn" style="color: #0284c7;">0</td>
+                    <td id="tblTotalOut" style="color: #16a34a;">0</td>
+                    <td id="tblTotalNotOut" style="color: #dc2626;">0</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 style="font-size: 0.95rem; margin-bottom: 12px;"><i class="fa-solid fa-user-clock"></i> Currently Not Out Visitor List</h3>
+            <div class="table-responsive-wrapper" style="max-height: 180px; overflow-y: auto;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Visitor Name</th>
+                    <th>Category</th>
+                    <th>Pass No</th>
+                    <th>Time In</th>
+                  </tr>
+                </thead>
+                <tbody id="notOutListTableBody">
+                  <tr><td colspan="4" style="text-align:center;">No active visitors inside.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- REMIT 3.4 & 3.5: CATEGORY-WISE TABLE & MOST PERSON TO MEET -->
+        <div class="dashboard-grid-2">
+          <div class="card">
+            <h3 style="font-size: 0.95rem; margin-bottom: 12px;"><i class="fa-solid fa-layer-group"></i> Visitor Category Breakdown</h3>
+            <div class="table-responsive-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Category</th>
+                    <th>Total IN</th>
+                    <th>OUT</th>
+                    <th>NOT OUT</th>
+                  </tr>
+                </thead>
+                <tbody id="categoryTableBody">
+                  <tr><td colspan="4" style="text-align:center;">Loading category counts...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 style="font-size: 0.95rem; margin-bottom: 12px;"><i class="fa-solid fa-user-tie"></i> Most Person To Meet (Top Hosts)</h3>
+            <div class="table-responsive-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Official / Host Name</th>
+                    <th>Total Visitors</th>
+                  </tr>
+                </thead>
+                <tbody id="topHostTableBody">
+                  <tr><td colspan="2" style="text-align:center;">Loading top hosts...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- REMIT 3.6 & 3.7: MOST VISITED VISITORS & TIME CAPTURE OVERSTAY -->
+        <div class="dashboard-grid-2">
+          <div class="card">
+            <h3 style="font-size: 0.95rem; margin-bottom: 12px;"><i class="fa-solid fa-address-book"></i> Most Frequent Visitors</h3>
+            <div class="table-responsive-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Visitor Name</th>
+                    <th>Mobile</th>
+                    <th>Category</th>
+                    <th>Pass Type</th>
+                    <th>Visits Count</th>
+                  </tr>
+                </thead>
+                <tbody id="topVisitorTableBody">
+                  <tr><td colspan="5" style="text-align:center;">Loading frequent visitors...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 style="font-size: 0.95rem; margin-bottom: 12px;"><i class="fa-solid fa-chart-pie"></i> Traffic By Department</h3>
+            <div class="chart-box">
+              <div class="donut-chart" id="deptDonutChart">
+                <div class="donut-chart-center">
+                  <span id="donutTotalCount">0</span>
+                  <span style="font-size: 0.5rem; color:#64748b; font-weight: normal;">Visitors</span>
+                </div>
+              </div>
+              <ul class="chart-legend" id="deptLegendList"></ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Requirement 3.7: Extended Duration Box Pattern -->
+        <div class="card" style="margin-bottom: 15px;">
+          <h3 style="font-size: 0.95rem; color: #dc2626;"><i class="fa-solid fa-hourglass-alert"></i> Time Capture — Extended Stay Visitors (> 8 Hours Inside CFS Site)</h3>
+          <div id="overstayBoxContainer" class="overstay-box-grid">
+            <div style="font-size:0.8rem; color:#64748b;">No visitors exceeding standard stay duration.</div>
+          </div>
         </div>
 
         <div class="dashboard-grid-2">
@@ -572,21 +725,6 @@
           </div>
 
           <div class="card">
-            <h3 style="font-size: 0.95rem; margin-bottom: 12px;"><i class="fa-solid fa-chart-pie"></i> Traffic By Department</h3>
-            <div class="chart-box">
-              <div class="donut-chart" id="deptDonutChart">
-                <div class="donut-chart-center">
-                  <span id="donutTotalCount">0</span>
-                  <span style="font-size: 0.5rem; color:#64748b; font-weight: normal;">Visitors</span>
-                </div>
-              </div>
-              <ul class="chart-legend" id="deptLegendList"></ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="dashboard-grid-3">
-          <div class="card">
             <h3 style="font-size: 0.95rem; margin-bottom: 12px;"><i class="fa-solid fa-bars-staggered"></i> Visitor Distribution by Entry Purpose</h3>
             <div class="progress-list" id="purposeProgressList">
               <div class="progress-item">
@@ -604,6 +742,7 @@
             </div>
           </div>
         </div>
+
       </div>
 
       <!-- VISITOR ENTRY TAB -->
@@ -628,6 +767,20 @@
                   <label>Visitor Name *</label>
                   <input type="text" id="visitorName" required>
                 </div>
+
+                <!-- Requirement 1: Visitor Category Dropdown -->
+                <div class="input-group full-width">
+                  <label>Visitor Category *</label>
+                  <select id="visitorCategory" required>
+                    <option value="Customer">Customer</option>
+                    <option value="Contractor / Vendor">Contractor / Vendor</option>
+                    <option value="Company Staff">Company Staff</option>
+                    <option value="Customs Staff">Customs Staff</option>
+                    <option value="Labours">Labours</option>
+                    <option value="Others" selected>Others</option>
+                  </select>
+                </div>
+
                 <div class="input-group">
                   <label>Mobile Number *</label>
                   <input type="tel" id="mobileNumber" required>
@@ -681,12 +834,18 @@
                   </select>
                 </div>
 
+                <!-- Requirement 2: Custom Date Pass Option -->
                 <div class="input-group full-width">
                   <label>Pass Validity *</label>
                   <div class="checkbox-group">
-                    <label><input type="radio" name="validity" value="Daily" checked> Daily (24 Hours)</label>
-                    <label><input type="radio" name="validity" value="Weekly"> Weekly (7 Days)</label>
-                    <label><input type="radio" name="validity" value="Monthly"> Monthly (30 Days)</label>
+                    <label><input type="radio" name="validity" value="Daily" checked onclick="toggleCustomDaysInput(false)"> Daily (24 Hours)</label>
+                    <label><input type="radio" name="validity" value="Weekly" onclick="toggleCustomDaysInput(false)"> Weekly (7 Days)</label>
+                    <label><input type="radio" name="validity" value="Monthly" onclick="toggleCustomDaysInput(false)"> Monthly (30 Days)</label>
+                    <label><input type="radio" name="validity" value="Custom" id="radValidityCustom" onclick="toggleCustomDaysInput(true)"> Custom Range</label>
+                  </div>
+                  <div id="customDaysContainer" style="display:none; margin-top: 8px;">
+                    <label style="font-size:0.78rem; font-weight:bold;">Enter Number of Days (1-365):</label>
+                    <input type="number" id="customPassDays" min="1" max="365" value="2" style="width: 120px; padding: 5px; border-radius:4px; border:1px solid var(--border-color);" oninput="updatePreview()">
                   </div>
                 </div>
 
@@ -753,6 +912,7 @@
                 <div class="badge-body-container">
                   <div class="badge-details">
                     <div class="badge-row"><div class="badge-label">Name:</div><div class="badge-val" id="prevName">-</div></div>
+                    <div class="badge-row"><div class="badge-label">Category:</div><div class="badge-val" id="prevCategory">Others</div></div>
                     <div class="badge-row"><div class="badge-label">Mobile:</div><div class="badge-val" id="prevMobile">-</div></div>
                     <div class="badge-row"><div class="badge-label">ID Proof:</div><div class="badge-val"><span id="prevIdType">Aadhaar Card</span> (<span id="prevIdNumber">-</span>)</div></div>
                     <div class="badge-row"><div class="badge-label">Company:</div><div class="badge-val" id="prevCompany">-</div></div>
@@ -841,7 +1001,7 @@
           
           <div class="filter-bar">
             <div class="input-group search-box">
-              <label>Search Pass No / Mobile / Name / ID No</label>
+              <label>Search Pass No / Mobile / Name / ID No / Category</label>
               <input type="text" id="searchInput" placeholder="Search..." oninput="filterLogs()">
             </div>
             <div class="input-group">
@@ -868,6 +1028,7 @@
                   <th>Time In</th>
                   <th>Time Out</th>
                   <th>Visitor Name</th>
+                  <th>Category</th>
                   <th>Mobile</th>
                   <th>ID Proof</th>
                   <th>ID Number</th>
@@ -882,12 +1043,12 @@
                 </tr>
               </thead>
               <tbody id="logsTableBody">
-                <tr><td colspan="16" style="text-align:center;">Loading logs from Google Sheet...</td></tr>
+                <tr><td colspan="17" style="text-align:center;">Loading logs from Google Sheet...</td></tr>
               </tbody>
             </table>
           </div>
 
-          <h4 style="margin-top: 30px; margin-bottom: 10px; font-size: 0.9rem; color: var(--navy);"><i class="fa-solid fa-calendar-week"></i> Active Weekly & Monthly Pass Members Report</h4>
+          <h4 style="margin-top: 30px; margin-bottom: 10px; font-size: 0.9rem; color: var(--navy);"><i class="fa-solid fa-calendar-week"></i> Active Weekly, Monthly & Custom Pass Members Report</h4>
           <div class="table-responsive-wrapper">
             <table>
               <thead>
@@ -895,6 +1056,7 @@
                   <th>Pass No</th>
                   <th>Issued Date</th>
                   <th>Visitor Name</th>
+                  <th>Category</th>
                   <th>Mobile</th>
                   <th>Company</th>
                   <th>Validity Range</th>
@@ -903,7 +1065,7 @@
                 </tr>
               </thead>
               <tbody id="longTermLogsBody">
-                <tr><td colspan="8" style="text-align:center;">Loading long-term pass reports...</td></tr>
+                <tr><td colspan="9" style="text-align:center;">Loading long-term pass reports...</td></tr>
               </tbody>
             </table>
           </div>
@@ -1016,6 +1178,15 @@
       return String(val).trim();
     }
 
+    // Requirement 2: Custom Date Range Pass Handler
+    function toggleCustomDaysInput(show) {
+      const container = document.getElementById('customDaysContainer');
+      if (container) {
+        container.style.display = show ? 'block' : 'none';
+      }
+      updatePreview();
+    }
+
     function getValidityDateRange(entryDateStr, validityType) {
       var start = parseToCleanDateObj(entryDateStr) || new Date();
       var end = new Date(start);
@@ -1025,6 +1196,10 @@
       } else if (validityType === 'Monthly') {
         end.setMonth(start.getMonth() + 1);
         end.setDate(end.getDate() - 1);
+      } else if (validityType.startsWith('Custom')) {
+        const match = validityType.match(/\d+/);
+        const days = match ? parseInt(match[0], 10) : 2;
+        end.setDate(start.getDate() + (days - 1));
       }
 
       var startFmt = cleanDateTimeDisplay(start, 'date');
@@ -1125,7 +1300,6 @@
       }
     });
 
-    // DISPLAY CONTROL FOR TOP MENU BAR
     function applyPermissions() {
       const menus = (activeUser && activeUser.menus) ? activeUser.menus : ['dashboard', 'entry', 'outGate', 'report', 'admin'];
       
@@ -1386,7 +1560,7 @@
             displayOutResult(`INVALID PASS: Daily Pass (${masterRecord.passNo}) has already completed its single IN/OUT cycle or belongs to another date.`, false);
             return;
           }
-        } else if (masterRecord.validity === 'Weekly' || masterRecord.validity === 'Monthly') {
+        } else if (masterRecord.validity === 'Weekly' || masterRecord.validity === 'Monthly' || masterRecord.validity.startsWith('Custom')) {
           const status = checkPassExpiration(masterRecord.date, masterRecord.validity);
           if (status.isExpired) {
             displayOutResult(`EXPIRED PASS: ${masterRecord.name}'s ${masterRecord.validity} Pass has expired! Please issue a new pass.`, false);
@@ -1419,7 +1593,8 @@
           vehicle: masterRecord.vehicle || 'N/A',
           idType: masterRecord.idType || 'Aadhaar Card',
           idNumber: masterRecord.idNumber || 'N/A',
-          photo: preservedPhoto
+          photo: preservedPhoto,
+          category: masterRecord.category || 'Others'
         };
 
         globalCloudLogs.push(newEntry);
@@ -1488,7 +1663,8 @@
               mobile: String(log.mobile || "").trim(),
               date: cleanDateTimeDisplay(log.date, 'date'),
               timeIn: cleanDateTimeDisplay(log.timeIn, 'time'),
-              timeOut: cleanDateTimeDisplay(log.timeOut, 'time')
+              timeOut: cleanDateTimeDisplay(log.timeOut, 'time'),
+              category: log.category || 'Others'
             }));
             
             if (data.users && data.users.length > 0) {
@@ -1501,7 +1677,6 @@
               }));
             }
 
-            // MAX PASS NUMBER CALCULATION FIX: Scans entire database for highest sequence number
             if (globalCloudLogs.length > 0) {
               let maxSeq = 1000;
               globalCloudLogs.forEach(log => {
@@ -1537,12 +1712,48 @@
       updatePreview();
     }
 
+    // Requirement 3.1: Interactive Date Filtering on Dashboard
+    function applyDashboardDateFilter() {
+      const fromVal = document.getElementById('dashFromDate').value;
+      const toVal = document.getElementById('dashToDate').value;
+
+      if(!fromVal && !toVal) {
+        computeDashboardAnalytics(globalCloudLogs);
+        document.getElementById('dashFilterActiveLabel').textContent = "Showing: All Data";
+        return;
+      }
+
+      const fromDate = fromVal ? new Date(fromVal) : null;
+      const toDate = toVal ? new Date(toVal) : null;
+      if (fromDate) fromDate.setHours(0,0,0,0);
+      if (toDate) toDate.setHours(23,59,59,999);
+
+      const filtered = globalCloudLogs.filter(log => {
+        const d = parseToCleanDateObj(log.date);
+        if(!d) return false;
+        if(fromDate && d < fromDate) return false;
+        if(toDate && d > toDate) return false;
+        return true;
+      });
+
+      document.getElementById('dashFilterActiveLabel').textContent = `Showing Filtered: ${fromVal || 'Start'} to ${toVal || 'End'}`;
+      computeDashboardAnalytics(filtered);
+    }
+
+    function resetDashboardDateFilter() {
+      document.getElementById('dashFromDate').value = '';
+      document.getElementById('dashToDate').value = '';
+      document.getElementById('dashFilterActiveLabel').textContent = "Showing: Today's Data";
+      computeDashboardAnalytics(globalCloudLogs);
+    }
+
+    // REQUIREMENT 3: Comprehensive Dashboard Analytics Computation
     function computeDashboardAnalytics(logs) {
       if (!logs) logs = [];
 
       let insideCount = 0;
       let overstayCount = 0;
-      let countToday = 0;
+      let countSelectedPeriod = 0;
       let countYesterday = 0;
       let countMonth = 0;
 
@@ -1557,15 +1768,31 @@
       let yMonth = yesterday.getMonth();
       let yYear = yesterday.getFullYear();
 
+      let categoryCounts = {
+        'Customer': { in: 0, out: 0, notOut: 0 },
+        'Contractor / Vendor': { in: 0, out: 0, notOut: 0 },
+        'Company Staff': { in: 0, out: 0, notOut: 0 },
+        'Customs Staff': { in: 0, out: 0, notOut: 0 },
+        'Labours': { in: 0, out: 0, notOut: 0 },
+        'Others': { in: 0, out: 0, notOut: 0 }
+      };
+
+      let hostCounts = {};
+      let visitorCounts = {};
       let deptCounts = {};
       let purposeCounts = { EXIM: 0, Meeting: 0, Vendor: 0 };
+
+      let notOutList = [];
+      let overstayList = [];
+
+      let totalCheckedOut = 0;
 
       logs.forEach(log => {
         var dObj = parseToCleanDateObj(log.date);
 
         if (dObj) {
           if (dObj.getDate() === nowDay && dObj.getMonth() === nowMonth && dObj.getFullYear() === nowYear) {
-            countToday++;
+            countSelectedPeriod++;
           }
           if (dObj.getDate() === yDay && dObj.getMonth() === yMonth && dObj.getFullYear() === yYear) {
             countYesterday++;
@@ -1576,12 +1803,36 @@
         }
 
         const isCheckedOut = (log.timeOut && log.timeOut !== '_______' && log.timeOut !== '--:--');
+        
+        let cat = log.category || 'Others';
+        if (!categoryCounts[cat]) categoryCounts[cat] = { in: 0, out: 0, notOut: 0 };
+        categoryCounts[cat].in++;
+
         if (!isCheckedOut) {
           insideCount++;
-          if (dObj && (dObj.getDate() !== nowDay || dObj.getMonth() !== nowMonth || dObj.getFullYear() !== nowYear)) {
+          categoryCounts[cat].notOut++;
+          notOutList.push(log);
+
+          const hrsCalc = calculateTotalHoursObj(log.date, log.timeIn, log.timeOut);
+          if (hrsCalc.rawHours >= 8) {
             overstayCount++;
+            overstayList.push({ ...log, elapsedHoursStr: hrsCalc.displayStr });
           }
+        } else {
+          totalCheckedOut++;
+          categoryCounts[cat].out++;
         }
+
+        // Host analytics
+        let host = (log.personToMeet || 'N/A').trim();
+        if(host && host !== '-') hostCounts[host] = (hostCounts[host] || 0) + 1;
+
+        // Visitor frequency analytics
+        let vKey = `${log.name}_${log.mobile}`;
+        if (!visitorCounts[vKey]) {
+          visitorCounts[vKey] = { name: log.name, mobile: log.mobile, category: cat, validity: log.validity, count: 0 };
+        }
+        visitorCounts[vKey].count++;
 
         let deptName = (log.department || 'Admin').trim();
         if (deptName.toUpperCase() === 'SICAL IT') deptName = 'IT';
@@ -1593,10 +1844,31 @@
         else purposeCounts.Vendor++;
       });
 
+      // Update stat cards
       document.getElementById('statMonth').textContent = countMonth;
-      document.getElementById('statToday').textContent = countToday;
+      document.getElementById('statToday').textContent = countSelectedPeriod;
       document.getElementById('statYesterday').textContent = countYesterday;
       document.getElementById('statInside').textContent = insideCount;
+
+      // Requirement 3.2: Total IN | Out | Not Out Summary Table
+      document.getElementById('tblTotalIn').textContent = logs.length;
+      document.getElementById('tblTotalOut').textContent = totalCheckedOut;
+      document.getElementById('tblTotalNotOut').textContent = insideCount;
+
+      // Requirement 3.3: Render Not Out Visitor List
+      renderNotOutVisitorList(notOutList);
+
+      // Requirement 3.4: Category Wise Table
+      renderCategoryWiseTable(categoryCounts);
+
+      // Requirement 3.5: Most Person To Meet Table
+      renderTopHostsTable(hostCounts);
+
+      // Requirement 3.6: Most Visited Visitors Table
+      renderTopVisitorsTable(visitorCounts);
+
+      // Requirement 3.7: Overstay Extended Duration Box Pattern
+      renderOverstayBoxPattern(overstayList);
 
       const alertBanner = document.getElementById('overstayAlertBanner');
       if (overstayCount > 0) {
@@ -1606,6 +1878,7 @@
         alertBanner.style.display = 'none';
       }
 
+      // Dept Donut Chart rendering
       const totalLogs = logs.length || 1;
       const legendList = document.getElementById('deptLegendList');
       legendList.innerHTML = '';
@@ -1652,8 +1925,95 @@
       renderDashLiveLogs(logs.slice(-5).reverse());
     }
 
-    function calculateTotalHours(timeInStr, timeOutStr) {
-      if (!timeInStr || !timeOutStr || timeInStr === '--:--' || timeInStr === '_______' || timeOutStr === '--') return "Inside";
+    function renderNotOutVisitorList(list) {
+      const tbody = document.getElementById('notOutListTableBody');
+      tbody.innerHTML = '';
+      if(!list || list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No active visitors inside.</td></tr>';
+        return;
+      }
+      list.forEach(v => {
+        tbody.innerHTML += `<tr>
+          <td><strong>${v.name}</strong></td>
+          <td><span style="background:#e0f2fe; color:#0369a1; padding:2px 6px; border-radius:4px; font-weight:bold; font-size:0.7rem;">${v.category || 'Others'}</span></td>
+          <td>${v.passNo}</td>
+          <td>${v.timeIn}</td>
+        </tr>`;
+      });
+    }
+
+    function renderCategoryWiseTable(catObj) {
+      const tbody = document.getElementById('categoryTableBody');
+      tbody.innerHTML = '';
+      Object.entries(catObj).forEach(([cat, val]) => {
+        tbody.innerHTML += `<tr>
+          <td><strong>${cat}</strong></td>
+          <td style="text-align:center;">${val.in}</td>
+          <td style="text-align:center; color:#16a34a; font-weight:bold;">${val.out}</td>
+          <td style="text-align:center; color:#dc2626; font-weight:bold;">${val.notOut}</td>
+        </tr>`;
+      });
+    }
+
+    function renderTopHostsTable(hostObj) {
+      const tbody = document.getElementById('topHostTableBody');
+      tbody.innerHTML = '';
+      const sorted = Object.entries(hostObj).sort((a,b) => b[1] - a[1]).slice(0, 5);
+      if(sorted.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;">No data available.</td></tr>';
+        return;
+      }
+      sorted.forEach(([host, count]) => {
+        tbody.innerHTML += `<tr>
+          <td><strong>${host}</strong></td>
+          <td style="text-align:center; font-weight:bold; color:var(--vms-secondary);">${count} Visitor(s)</td>
+        </tr>`;
+      });
+    }
+
+    function renderTopVisitorsTable(vObj) {
+      const tbody = document.getElementById('topVisitorTableBody');
+      tbody.innerHTML = '';
+      const sorted = Object.values(vObj).sort((a,b) => b.count - a.count).slice(0, 5);
+      if(sorted.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No frequent visitors logged.</td></tr>';
+        return;
+      }
+      sorted.forEach(v => {
+        tbody.innerHTML += `<tr>
+          <td><strong>${v.name}</strong></td>
+          <td>${v.mobile}</td>
+          <td>${v.category}</td>
+          <td>${v.validity}</td>
+          <td style="text-align:center; font-weight:bold; color:#16a34a;">${v.count} Visit(s)</td>
+        </tr>`;
+      });
+    }
+
+    function renderOverstayBoxPattern(list) {
+      const container = document.getElementById('overstayBoxContainer');
+      container.innerHTML = '';
+      if(!list || list.length === 0) {
+        container.innerHTML = '<div style="font-size:0.8rem; color:#64748b; padding:10px;">No visitors currently exceeding standard stay duration (>8 Hours).</div>';
+        return;
+      }
+      list.forEach(v => {
+        container.innerHTML += `
+          <div class="overstay-card">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <strong>${v.name}</strong>
+              <span style="color:#dc2626; font-weight:900;">${v.elapsedHoursStr}</span>
+            </div>
+            <div><strong>Pass:</strong> ${v.passNo} &nbsp;|&nbsp; <strong>Cat:</strong> ${v.category || 'Others'}</div>
+            <div><strong>Time In:</strong> ${v.timeIn} (${v.date})</div>
+          </div>
+        `;
+      });
+    }
+
+    // REQUIREMENT 4 FIX: Total Hrs Logic (Now displays INSIDE duration if not out)
+    function calculateTotalHoursObj(dateStr, timeInStr, timeOutStr) {
+      if (!timeInStr || timeInStr === '--:--') return { displayStr: "INSIDE", rawHours: 0 };
       
       try {
         const parseTime12 = (tStr) => {
@@ -1669,20 +2029,35 @@
         };
 
         const minIn = parseTime12(timeInStr);
-        const minOut = parseTime12(timeOutStr);
-        if (minIn === null || minOut === null) return "Completed";
+        if (minIn === null) return { displayStr: "INSIDE", rawHours: 0 };
+
+        let minOut;
+        if (!timeOutStr || timeOutStr === '_______' || timeOutStr === '--:--') {
+          const now = new Date();
+          minOut = now.getHours() * 60 + now.getMinutes();
+        } else {
+          minOut = parseTime12(timeOutStr);
+        }
 
         let diff = minOut - minIn;
         if (diff < 0) diff += 24 * 60;
 
+        const rawHours = diff / 60;
         const hrs = Math.floor(diff / 60);
         const mins = diff % 60;
 
-        if (hrs === 0) return `${mins} mins`;
-        if (mins === 0) return `${hrs} hr${hrs > 1 ? 's' : ''}`;
-        return `${hrs} hr ${mins} mins`;
+        let displayStr = "";
+        if (hrs === 0) displayStr = `${mins} mins`;
+        else if (mins === 0) displayStr = `${hrs} hr${hrs > 1 ? 's' : ''}`;
+        else displayStr = `${hrs} hr ${mins} mins`;
+
+        if (!timeOutStr || timeOutStr === '_______' || timeOutStr === '--:--') {
+          displayStr = `INSIDE (${displayStr})`;
+        }
+
+        return { displayStr: displayStr, rawHours: rawHours };
       } catch(e) {
-        return "Completed";
+        return { displayStr: "INSIDE", rawHours: 0 };
       }
     }
 
@@ -1697,7 +2072,7 @@
 
       recentLogs.forEach(log => {
         const timeOutDisplay = (log.timeOut && log.timeOut !== '_______' && log.timeOut !== '--:--') ? log.timeOut : '--';
-        const totalHrsDisplay = calculateTotalHours(log.timeIn, log.timeOut);
+        const hrsObj = calculateTotalHoursObj(log.date, log.timeIn, log.timeOut);
         const deptDisplay = log.department && log.department.toUpperCase() === 'SICAL IT' ? 'IT' : (log.department || 'Admin');
 
         const row = `<tr>
@@ -1706,7 +2081,7 @@
           <td>${deptDisplay}</td>
           <td>${log.timeIn}</td>
           <td><strong style="color: ${timeOutDisplay !== '--' ? '#0284c7' : '#94a3b8'}">${timeOutDisplay}</strong></td>
-          <td><strong style="color: ${totalHrsDisplay === 'Inside' ? '#dc2626' : '#16a34a'}">${totalHrsDisplay}</strong></td>
+          <td><strong style="color: ${hrsObj.displayStr.startsWith('INSIDE') ? '#dc2626' : '#16a34a'}">${hrsObj.displayStr}</strong></td>
         </tr>`;
         tbody.innerHTML += row;
       });
@@ -1759,6 +2134,10 @@
       var allowedDays = 1;
       if (validityType === 'Weekly') allowedDays = 7;
       if (validityType === 'Monthly') allowedDays = 30;
+      if (validityType.startsWith('Custom')) {
+        const m = validityType.match(/\d+/);
+        if(m) allowedDays = parseInt(m[0], 10);
+      }
 
       var diffTime = now - passDate;
       var diffDays = diffTime / (1000 * 60 * 60 * 24);
@@ -1794,6 +2173,7 @@
         if (withPhoto) match = withPhoto;
 
         document.getElementById('visitorName').value = match.name;
+        document.getElementById('visitorCategory').value = match.category || 'Others';
         document.getElementById('mobileNumber').value = match.mobile;
         document.getElementById('companyFrom').value = match.company;
         document.getElementById('personToMeet').value = match.personToMeet;
@@ -1805,8 +2185,16 @@
         document.getElementById('idType').value = match.idType !== 'N/A' ? match.idType : 'Aadhaar Card';
         document.getElementById('idNumber').value = match.idNumber !== 'N/A' ? match.idNumber : '';
 
-        const validityRadio = document.querySelector(`input[name="validity"][value="${match.validity}"]`);
-        if (validityRadio) validityRadio.checked = true;
+        if (match.validity.startsWith('Custom')) {
+          document.getElementById('radValidityCustom').checked = true;
+          toggleCustomDaysInput(true);
+          const m = match.validity.match(/\d+/);
+          if(m) document.getElementById('customPassDays').value = m[0];
+        } else {
+          const validityRadio = document.querySelector(`input[name="validity"][value="${match.validity}"]`);
+          if (validityRadio) validityRadio.checked = true;
+          toggleCustomDaysInput(false);
+        }
 
         loadedVisitorPhoto = (match.photoUrl && match.photoUrl !== 'No Photo' && match.photoUrl !== 'NO_PHOTO') ? match.photoUrl : null;
         capturedPhotoData = loadedVisitorPhoto;
@@ -1841,7 +2229,7 @@
       resetForm();
     }
 
-    const formInputs = ['visitorName', 'mobileNumber', 'companyFrom', 'personToMeet', 'department', 'purposeSelect', 'vehicleNo', 'idType', 'idNumber'];
+    const formInputs = ['visitorName', 'visitorCategory', 'mobileNumber', 'companyFrom', 'personToMeet', 'department', 'purposeSelect', 'vehicleNo', 'idType', 'idNumber'];
     formInputs.forEach(id => {
       document.getElementById(id).addEventListener('input', updatePreview);
       document.getElementById(id).addEventListener('change', updatePreview);
@@ -1875,6 +2263,7 @@
       const dateVal = getCurrentDate();
       const timeVal = getCurrentTime();
       const nameVal = document.getElementById('visitorName').value || '-';
+      const catVal = document.getElementById('visitorCategory').value || 'Others';
       const mobileVal = document.getElementById('mobileNumber').value || '-';
       const companyVal = document.getElementById('companyFrom').value || '-';
       const idTypeVal = document.getElementById('idType').value || 'Aadhaar Card';
@@ -1883,7 +2272,12 @@
       let deptVal = document.getElementById('department').value || 'Admin';
       if (deptVal.toUpperCase() === 'SICAL IT') deptVal = 'IT';
       const purposeVal = document.getElementById('purposeSelect').value || 'Meeting';
-      const validityTypeVal = document.querySelector('input[name="validity"]:checked')?.value || 'Daily';
+      
+      let validityTypeVal = document.querySelector('input[name="validity"]:checked')?.value || 'Daily';
+      if (validityTypeVal === 'Custom') {
+        const days = document.getElementById('customPassDays').value || '2';
+        validityTypeVal = `Custom (${days} Days)`;
+      }
 
       document.getElementById('prevPassNo').textContent = currentPass;
       document.getElementById('prevDate').textContent = dateVal;
@@ -1891,6 +2285,7 @@
       document.getElementById('prevTimeOut').textContent = '_______';
 
       document.getElementById('prevName').textContent = nameVal;
+      document.getElementById('prevCategory').textContent = catVal;
       document.getElementById('prevMobile').textContent = mobileVal;
       document.getElementById('prevCompany').textContent = companyVal;
       document.getElementById('prevIdType').textContent = idTypeVal;
@@ -1924,7 +2319,12 @@
       saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
 
       const passNo = getFormattedPassNo();
-      const validityVal = document.querySelector('input[name="validity"]:checked').value;
+      let validityVal = document.querySelector('input[name="validity"]:checked').value;
+      if (validityVal === 'Custom') {
+        const days = document.getElementById('customPassDays').value || '2';
+        validityVal = `Custom (${days} Days)`;
+      }
+
       let deptVal = document.getElementById('department').value;
       if (deptVal.toUpperCase() === 'SICAL IT') deptVal = 'IT';
 
@@ -1934,6 +2334,7 @@
         timeIn: getCurrentTime(),
         timeOut: '_______',
         name: document.getElementById('visitorName').value,
+        category: document.getElementById('visitorCategory').value,
         mobile: document.getElementById('mobileNumber').value,
         company: document.getElementById('companyFrom').value,
         personToMeet: document.getElementById('personToMeet').value,
@@ -1986,6 +2387,7 @@
       const banner = document.getElementById('validityBanner');
       banner.style.display = 'none';
 
+      toggleCustomDaysInput(false);
       updatePhotoFrame(null);
       updatePreview();
     }
@@ -2190,6 +2592,7 @@
           log.passNo.toLowerCase().includes(query) || 
           String(log.mobile).trim().toLowerCase().includes(query) ||
           log.name.toLowerCase().includes(query) ||
+          (log.category || '').toLowerCase().includes(query) ||
           log.idNumber.toLowerCase().includes(query);
 
         if (from && log.date < from) return false;
@@ -2206,7 +2609,7 @@
       tbody.innerHTML = '';
 
       if (!logs || logs.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="16" style="text-align:center;">No visitor entries found.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="17" style="text-align:center;">No visitor entries found.</td></tr>';
         return;
       }
 
@@ -2237,6 +2640,7 @@
           <td>${log.timeIn}</td>
           <td><strong style="color: ${(log.timeOut !== '_______' && log.timeOut !== '--:--') ? '#0284c7' : '#94a3b8'}">${log.timeOut}</strong></td>
           <td>${log.name}</td>
+          <td><span style="background:#e0f2fe; color:#0369a1; padding:2px 6px; border-radius:4px; font-weight:bold; font-size:0.7rem;">${log.category || 'Others'}</span></td>
           <td>${log.mobile}</td>
           <td>${log.idType || 'Aadhaar Card'}</td>
           <td>${log.idNumber || 'N/A'}</td>
@@ -2258,14 +2662,14 @@
       tbody.innerHTML = '';
 
       if (!logs || logs.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No weekly or monthly pass members found.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">No long-term pass members found.</td></tr>';
         return;
       }
 
-      const longTermPasses = logs.filter(l => l.validity === 'Weekly' || l.validity === 'Monthly');
+      const longTermPasses = logs.filter(l => l.validity === 'Weekly' || l.validity === 'Monthly' || l.validity.startsWith('Custom'));
 
       if (longTermPasses.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No active weekly or monthly pass members found.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">No active weekly, monthly or custom pass members found.</td></tr>';
         return;
       }
 
@@ -2276,6 +2680,7 @@
             passNo: log.passNo,
             issuedDate: log.date,
             name: log.name,
+            category: log.category || 'Others',
             mobile: log.mobile,
             company: log.company,
             validity: log.validity,
@@ -2302,6 +2707,7 @@
           <td><strong>${item.passNo}</strong></td>
           <td>${item.issuedDate}</td>
           <td>${item.name}</td>
+          <td>${item.category}</td>
           <td>${item.mobile}</td>
           <td>${item.company}</td>
           <td>${rangeStr}</td>
@@ -2319,7 +2725,7 @@
       }
 
       let csvContent = "data:text/csv;charset=utf-8,";
-      csvContent += "Pass No,Date (DD-MM-YYYY),Time In,Time Out,Visitor Name,Mobile Number,ID Type,ID Number,Company/From,Person To Meet,Department,Validity,Purpose,Vehicle No,Photo Link\n";
+      csvContent += "Pass No,Date (DD-MM-YYYY),Time In,Time Out,Visitor Name,Category,Mobile Number,ID Type,ID Number,Company/From,Person To Meet,Department,Validity,Purpose,Vehicle No,Photo Link\n";
 
       globalCloudLogs.forEach(log => {
         const row = [
@@ -2328,6 +2734,7 @@
           `"${log.timeIn}"`,
           `"${log.timeOut}"`,
           `"${log.name}"`,
+          `"${log.category || 'Others'}"`,
           `"${log.mobile}"`,
           `"${log.idType || 'Aadhaar Card'}"`,
           `"${log.idNumber || 'N/A'}"`,
