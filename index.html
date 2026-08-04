@@ -1296,7 +1296,7 @@
       }
     });
 
-    // STRICT SANITIZED PERMISSIONS CONTROL
+    // STRICT SANITIZED PERMISSIONS CONTROL WITH ADMIN HIKING FIX
     function applyPermissions() {
       if (!activeUser) return;
 
@@ -2726,6 +2726,7 @@
 
       globalCloudLogs.forEach(log => {
         const row = [
+          `"${log.passNo}"`,
           `"${log.passNo}"`,
           `"${log.date}"`,
           `"${log.timeIn}"`,
