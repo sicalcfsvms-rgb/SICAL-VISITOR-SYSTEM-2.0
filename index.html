@@ -192,9 +192,7 @@
       margin: 0;
     }
 
-    .top-menu li {
-      display: block !important;
-    }
+    .top-menu li { display: block !important; }
 
     .top-menu li button {
       padding: 10px 16px;
@@ -212,35 +210,29 @@
       white-space: nowrap;
     }
 
-    .top-menu li button:hover {
-      color: #38bdf8;
-      background: rgba(255,255,255,0.03);
-    }
+    .top-menu li button:hover { color: #38bdf8; background: rgba(255,255,255,0.03); }
+    .top-menu li button.active { color: #ffffff; background: #0f172a; border-bottom: 3px solid #38bdf8; }
 
-    .top-menu li button.active {
-      color: #ffffff;
-      background: #0f172a;
-      border-bottom: 3px solid #38bdf8;
-    }
-
+    /* OPTIMIZED FOR 100% FIT */
     .content-container {
-      padding: 16px 20px; 
+      padding: 12px 16px; 
       width: 100%;
-      max-width: 1350px; 
+      max-width: 100%;
       margin: 0 auto;
-      min-height: calc(100vh - 100px);
+      min-height: calc(100vh - 90px);
     }
 
     .tab-content { display: none; opacity: 0; transform: translateY(6px); transition: opacity 0.25s ease, transform 0.25s ease; }
     .tab-content.active { display: block; opacity: 1; transform: translateY(0); }
 
-    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 14px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 10px; }
     
     .stat-card, .card {
-      background: white; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border-color);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.03); border-left: 4px solid var(--vms-secondary);
+      background: white; padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border-color);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02); border-left: 4px solid var(--vms-secondary);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       width: 100%;
+      overflow: hidden;
     }
     .stat-card:hover, .card:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06); }
 
@@ -260,24 +252,24 @@
     }
 
     .dash-filter-bar {
-      background: white; border: 1px solid var(--border-color); padding: 8px 14px; border-radius: 8px;
-      margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+      background: white; border: 1px solid var(--border-color); padding: 8px 14px; border-radius: 6px;
+      margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
     }
     .dash-filter-inputs { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
     .dash-filter-inputs label { font-size: 0.72rem; font-weight: 800; color: var(--navy); }
     .dash-filter-inputs input[type="date"] { padding: 4px 6px; border: 1px solid var(--border-color); border-radius: 5px; font-size: 0.75rem; font-weight: 600; }
 
     .quick-actions-bar {
-      background: white; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border-color);
-      margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+      background: white; padding: 8px 14px; border-radius: 6px; border: 1px solid var(--border-color);
+      margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.02); width: 100%; font-size: 0.75rem;
     }
 
-    .dashboard-grid-2 { display: grid; grid-template-columns: 1.2fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .dashboard-grid-2 { display: grid; grid-template-columns: 1.2fr 1fr; gap: 10px; margin-bottom: 10px; }
 
     .alert-banner {
       background: #fef2f2; border: 1px solid #fca5a5; border-left: 4px solid #dc2626;
-      padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; color: #991b1b;
+      padding: 8px 12px; border-radius: 6px; margin-bottom: 10px; color: #991b1b;
       display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
       width: 100%; font-size: 0.75rem;
     }
@@ -302,7 +294,7 @@
     .progress-bar-bg { background: #e2e8f0; height: 5px; border-radius: 4px; overflow: hidden; }
     .progress-bar-fill { height: 100%; border-radius: 4px; width: 0%; transition: width 0.8s ease; }
 
-    .grid-2 { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 16px; align-items: start; width: 100%; }
+    .grid-2 { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 12px; align-items: start; width: 100%; }
     
     .quick-search-box {
       background: var(--vms-light); border: 1px solid #93c5fd; padding: 8px 12px; border-radius: 6px; margin-bottom: 10px; width: 100%;
@@ -326,16 +318,8 @@
     .btn-cam { background: var(--vms-secondary); color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; cursor: pointer; }
 
     .pass-booklet-container {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      max-width: 350px;
-      margin: 0 auto;
-      border: 1.5px solid #0f172a;
-      border-radius: 8px;
-      background: #ffffff;
-      overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+      display: flex; flex-direction: column; width: 100%; max-width: 350px; margin: 0 auto;
+      border: 1.5px solid #0f172a; border-radius: 8px; background: #ffffff; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.06);
     }
 
     .booklet-side { padding: 10px; position: relative; }
@@ -1297,35 +1281,38 @@
       }
     });
 
-    // STRICT PERMISSION DISPLAY CONTROL
+    // STRICT PERMISSION DISPLAY CONTROL & DATA SYNC
     function applyPermissions() {
       if (!activeUser) return;
 
       let menus = [];
       if (Array.isArray(activeUser.menus)) {
-        menus = activeUser.menus.map(m => String(m).replace(/[\[\]"'\s]/g, "").trim());
+        menus = activeUser.menus.map(m => String(m).toLowerCase().replace(/[\[\]"'\s]/g, "").trim());
       } else if (typeof activeUser.menus === 'string') {
-        menus = activeUser.menus.replace(/[\[\]"'\s]/g, "").split(',');
+        menus = activeUser.menus.toLowerCase().replace(/[\[\]"'\s]/g, "").split(',');
       }
 
       const hasAdmin = menus.includes('admin');
+      const hasDashboard = menus.includes('dashboard') || menus.length === 0;
+      const hasEntry = menus.includes('entry');
+      const hasOutGate = menus.includes('outgate');
+      const hasReport = menus.includes('report');
+
+      document.getElementById('navDashboard').style.display = hasDashboard ? 'inline-block' : 'none';
+      document.getElementById('navEntry').style.display = hasEntry ? 'inline-block' : 'none';
+      document.getElementById('navOutGate').style.display = hasOutGate ? 'inline-block' : 'none';
+      document.getElementById('navReport').style.display = hasReport ? 'inline-block' : 'none';
       
-      document.getElementById('navDashboard').style.display = menus.includes('dashboard') ? 'inline-block' : 'none';
-      document.getElementById('navEntry').style.display = menus.includes('entry') ? 'inline-block' : 'none';
-      document.getElementById('navOutGate').style.display = menus.includes('outGate') ? 'inline-block' : 'none';
-      document.getElementById('navReport').style.display = menus.includes('report') ? 'inline-block' : 'none';
-      
-      // STRICT HIDING FOR ADMIN TAB
       const adminNav = document.getElementById('navAdmin');
       if (hasAdmin) {
         adminNav.style.display = 'inline-block';
       } else {
         adminNav.style.display = 'none';
-        if (document.getElementById('adminTab').classList.contains('active')) {
-          if (menus.includes('dashboard')) switchTab('dashboardTab');
-          else if (menus.includes('entry')) switchTab('entryTab');
-          else if (menus.includes('outGate')) switchTab('outGateTab');
-          else if (menus.includes('report')) switchTab('reportTab');
+        // Only redirect if current active tab is strictly forbidden
+        const activeTab = document.querySelector('.tab-content.active');
+        if (activeTab && activeTab.id === 'adminTab') {
+          if (hasDashboard) switchTab('dashboardTab');
+          else if (hasReport) switchTab('reportTab');
         }
       }
     }
@@ -1687,15 +1674,15 @@
               globalUsersList = data.users.map(u => {
                 let cleanedMenus = [];
                 if (Array.isArray(u.menus)) {
-                  cleanedMenus = u.menus.map(m => String(m).replace(/[\[\]"'\s]/g, "").trim());
+                  cleanedMenus = u.menus.map(m => String(m).toLowerCase().replace(/[\[\]"'\s]/g, "").trim());
                 } else if (typeof u.menus === 'string') {
-                  cleanedMenus = u.menus.replace(/[\[\]"'\s]/g, "").split(',');
+                  cleanedMenus = u.menus.toLowerCase().replace(/[\[\]"'\s]/g, "").split(',');
                 }
 
                 return {
-                  username: u.username,
-                  pass: u.pass,
-                  role: u.role,
+                  username: String(u.username || "").trim(),
+                  pass: String(u.pass || "").trim(),
+                  role: String(u.role || "").trim().toLowerCase(),
                   canMarkOut: (u.canMarkOut === true || String(u.canMarkOut).toUpperCase() === 'TRUE' || String(u.role).toLowerCase() === 'admin' || String(u.role).toLowerCase() === 'security'),
                   menus: cleanedMenus
                 };
@@ -2747,7 +2734,6 @@
 
       globalCloudLogs.forEach(log => {
         const row = [
-          `"${log.passNo}"`,
           `"${log.passNo}"`,
           `"${log.date}"`,
           `"${log.timeIn}"`,
