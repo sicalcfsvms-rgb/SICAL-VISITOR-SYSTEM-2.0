@@ -12,8 +12,8 @@
   <style>
     :root {
       --navy: #0f172a;
-      --vms-primary: #1e3a8a; /* Industrial Deep Blue */
-      --vms-secondary: #0284c7; /* Bright Accent Blue */
+      --vms-primary: #1e3a8a;
+      --vms-secondary: #0284c7;
       --vms-light: #f0f9ff;
       --gray-bg: #f8fafc;
       --text-dark: #1e293b;
@@ -32,7 +32,6 @@
       overflow-x: hidden;
     }
 
-    /* UNTOUCHED LOGIN SCREEN WITH BACKGROUND IMAGE */
     #loginScreen {
       display: flex;
       min-height: 100vh;
@@ -146,7 +145,6 @@
       .login-left-panel { padding: 30px 20px; }
     }
 
-    /* REVISED APP SCREEN WITH TOP MENU BAR */
     #appScreen {
       display: none;
       min-height: 100vh;
@@ -174,7 +172,7 @@
     .brand-title { font-size: 1.05rem; font-weight: 900; letter-spacing: 0.6px; color: #ffffff; }
     .brand-subtitle { font-size: 0.70rem; color: #a5f3fc; font-weight: 700; letter-spacing: 0.5px; }
 
-    /* TOP NAVIGATION MENU BAR STYLING */
+    /* TOP NAVIGATION MENU BAR */
     .top-navbar {
       background: #1e293b;
       border-bottom: 1px solid var(--border-color);
@@ -182,6 +180,7 @@
       position: sticky;
       top: 52px;
       z-index: 999;
+      display: block !important;
     }
 
     .top-menu {
@@ -191,6 +190,11 @@
       padding: 0 20px;
       gap: 5px;
       overflow-x: auto;
+      margin: 0;
+    }
+
+    .top-menu li {
+      display: block;
     }
 
     .top-menu li button {
@@ -315,7 +319,6 @@
     .cam-btns { margin-top: 6px; display: flex; gap: 8px; }
     .btn-cam { background: var(--vms-secondary); color: white; border: none; padding: 5px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer; }
 
-    /* VERTICAL LANYARD POUCH BADGE FORMAT */
     .pass-booklet-container {
       display: flex;
       flex-direction: column;
@@ -329,14 +332,8 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
 
-    .booklet-side {
-      padding: 12px;
-      position: relative;
-    }
-
-    .booklet-side-left {
-      border-bottom: 1.5px dashed #0f172a;
-    }
+    .booklet-side { padding: 12px; position: relative; }
+    .booklet-side-left { border-bottom: 1.5px dashed #0f172a; }
 
     .badge-header { background: #ffffff; color: #0f172a; padding: 4px 0 6px 0; position: relative; border-bottom: 2px solid #0f172a; }
     .badge-header h2 { font-size: 0.72rem; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.2px; line-height: 1.2; width: 68%; }
@@ -347,7 +344,6 @@
     .top-right-logo .logo-sub { font-size: 0.40rem; font-weight: bold; color: #312e81; font-family: Arial, sans-serif; display: block; margin-top: 1px; }
 
     .badge-title-strip { background: #ffffff; color: #0f172a; font-size: 0.82rem; font-weight: 800; text-align: center; padding: 3px; border-bottom: 1px solid #cbd5e1; letter-spacing: 0.5px; }
-
     .badge-meta { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-weight: bold; font-size: 0.70rem; border-bottom: 1px solid #cbd5e1; background: #fff; }
 
     .badge-body-container { display: flex; gap: 8px; align-items: flex-start; padding: 8px 0; background: #ffffff; }
@@ -373,7 +369,6 @@
     .qrcode-container-large { text-align: center; padding-top: 10px; }
     .qrcode-container-large img, .qrcode-container-large canvas { display: block; width: 130px !important; height: 130px !important; margin: 0 auto; border: 1.5px solid #0f172a; border-radius: 6px; padding: 3px; background: #fff; }
 
-    /* RESPONSIVE TABLE WRAPPER */
     .table-responsive-wrapper { width: 100%; overflow-x: auto; border-radius: 5px; border: 1px solid var(--border-color); }
     table { width: 100%; min-width: 900px; border-collapse: collapse; font-size: 0.78rem; background: #ffffff; }
     th, td { border: 1px solid var(--border-color); padding: 8px 10px; text-align: left; vertical-align: middle; line-height: 1.2; }
@@ -403,103 +398,34 @@
       .content-container { padding: 12px; }
     }
 
-    /* PERFECT PRINT STYLING FOR VISITOR CARD HOLDER / LANYARD POUCH */
     @media print {
-      @page { 
-        size: A4 portrait; 
-        margin: 5mm; 
-      }
-      
-      html, body { 
-        background: #ffffff !important; 
-        margin: 0 !important; 
-        padding: 0 !important; 
-        width: 100% !important;
-        height: 100% !important; 
-        overflow: visible !important; 
-      }
-      
-      #loginScreen, header, .top-navbar, .card, h3, .stats-grid, .quick-actions-bar, 
-      .dashboard-grid-2, .dashboard-grid-3, .alert-banner, .filter-bar, table, 
-      #addUserForm, #userTableBody, #mobilePdfBtnContainer, .quick-search-box { 
-        display: none !important; 
-      }
-
-      body * { 
-        visibility: hidden !important; 
-      }
-
-      #passPreviewCard, #printablePass, #printablePass * { 
-        visibility: visible !important; 
-      }
-
-      #passPreviewCard {
-        position: absolute !important;
-        left: 0 !important;
-        top: 0 !important;
-        width: 100% !important;
-        display: flex !important;
-        justify-content: center !important;
-        align-items: flex-start !important;
-        padding-top: 5mm !important;
-      }
-
-      #printablePass { 
-        position: relative !important; 
-        display: flex !important;
-        flex-direction: column !important;
-        left: 0 !important; 
-        top: 0 !important; 
-        margin: 0 auto !important; 
-        width: 85mm !important; 
-        max-width: 85mm !important; 
-        height: auto !important;
-        border: 1.5px solid #0f172a !important; 
-        border-radius: 4px !important;
-        box-shadow: none !important; 
-        background: #ffffff !important;
-        page-break-inside: avoid !important;
-        page-break-after: avoid !important;
-      }
-
-      .booklet-side {
-        padding: 8px !important;
-        box-sizing: border-box !important;
-      }
-
-      .booklet-side-left {
-        border-bottom: 1.5px dashed #0f172a !important;
-      }
-
-      .pass-booklet-container > .booklet-side:not(.booklet-side-left) {
-        transform: none !important;
-      }
-
+      @page { size: A4 portrait; margin: 5mm; }
+      html, body { background: #ffffff !important; margin: 0 !important; padding: 0 !important; width: 100% !important; height: 100% !important; overflow: visible !important; }
+      #loginScreen, header, .top-navbar, .card, h3, .stats-grid, .quick-actions-bar, .dashboard-grid-2, .dashboard-grid-3, .alert-banner, .filter-bar, table, #addUserForm, #userTableBody, #mobilePdfBtnContainer, .quick-search-box { display: none !important; }
+      body * { visibility: hidden !important; }
+      #passPreviewCard, #printablePass, #printablePass * { visibility: visible !important; }
+      #passPreviewCard { position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; display: flex !important; justify-content: center !important; align-items: flex-start !important; padding-top: 5mm !important; }
+      #printablePass { position: relative !important; display: flex !important; flex-direction: column !important; left: 0 !important; top: 0 !important; margin: 0 auto !important; width: 85mm !important; max-width: 85mm !important; height: auto !important; border: 1.5px solid #0f172a !important; border-radius: 4px !important; box-shadow: none !important; background: #ffffff !important; page-break-inside: avoid !important; page-break-after: avoid !important; }
+      .booklet-side { padding: 8px !important; box-sizing: border-box !important; }
+      .booklet-side-left { border-bottom: 1.5px dashed #0f172a !important; }
+      .pass-booklet-container > .booklet-side:not(.booklet-side-left) { transform: none !important; }
       .badge-header h2 { font-size: 0.65rem !important; }
       .badge-header p.address-text { font-size: 0.50rem !important; }
       .top-right-logo .logo-main { font-size: 0.95rem !important; }
       .top-right-logo .logo-sub { font-size: 0.38rem !important; }
-
       .badge-row { font-size: 0.62rem !important; margin-bottom: 2px !important; }
       .visitor-photo-frame { width: 70px !important; height: 85px !important; }
-
       .signature-container { padding: 18px 0 4px 0 !important; }
-
       .rules-box { font-size: 0.58rem !important; line-height: 1.2 !important; }
       .rules-box h5 { font-size: 0.62rem !important; margin-bottom: 3px !important; }
-
-      .qrcode-container-large img, .qrcode-container-large canvas {
-        width: 120px !important;
-        height: 120px !important;
-      }
+      .qrcode-container-large img, .qrcode-container-large canvas { width: 120px !important; height: 120px !important; }
     }
   </style>
 </head>
 <body>
 
-  <!-- UNTOUCHED LOGIN LAYOUT WITH BACKGROUND IMAGE -->
+  <!-- LOGIN SCREEN -->
   <div id="loginScreen">
-    
     <div class="login-left-panel">
       <div class="brand-header">
         <div class="brand-logo-text">
@@ -550,7 +476,6 @@
         <p>Streamlining security verification, visitor access control, and operational entry logging with full logistics infrastructure integration.</p>
       </div>
     </div>
-
   </div>
 
   <!-- MAIN APP SCREEN -->
@@ -570,7 +495,7 @@
       </div>
     </header>
 
-    <!-- NEW TOP NAVIGATION MENU BAR -->
+    <!-- TOP NAVIGATION MENU BAR -->
     <nav class="top-navbar">
       <ul class="top-menu">
         <li id="navDashboard"><button class="active" onclick="switchTab('dashboardTab')"><i class="fa-solid fa-chart-line"></i> Dashboard</button></li>
@@ -624,7 +549,6 @@
         </div>
 
         <div class="dashboard-grid-2">
-          
           <div class="card">
             <h3 style="font-size: 0.95rem; margin-bottom: 12px;"><i class="fa-solid fa-clock-rotate-left"></i> Live In-Gate Activity Log (Recent Check-Ins)</h3>
             <div class="table-responsive-wrapper">
@@ -655,12 +579,9 @@
                   <span style="font-size: 0.5rem; color:#64748b; font-weight: normal;">Visitors</span>
                 </div>
               </div>
-              <ul class="chart-legend" id="deptLegendList">
-                <!-- Dynamically populated to match all departments -->
-              </ul>
+              <ul class="chart-legend" id="deptLegendList"></ul>
             </div>
           </div>
-
         </div>
 
         <div class="dashboard-grid-3">
@@ -682,7 +603,6 @@
             </div>
           </div>
         </div>
-
       </div>
 
       <!-- VISITOR ENTRY TAB -->
@@ -811,10 +731,7 @@
               <button class="btn-action btn-success" style="padding: 10px 16px; font-size: 0.9rem; width: 100%;" onclick="window.print()"><i class="fa-solid fa-file-pdf"></i> Download Pass as PDF / Print</button>
             </div>
 
-            <!-- VERTICAL LANYARD POUCH BADGE FORMAT -->
             <div id="printablePass" class="pass-booklet-container">
-              
-              <!-- TOP FRONT FACE: PASS DETAILS -->
               <div class="booklet-side booklet-side-left">
                 <div class="badge-header">
                   <h2>SICAL MULTIMODAL AND RAIL TRANSPORT LIMITED</h2>
@@ -857,7 +774,6 @@
                 </div>
               </div>
 
-              <!-- BOTTOM BACK FACE: RULES & QR CODE -->
               <div class="booklet-side">
                 <div class="rules-side-container">
                   <div class="rules-box">
@@ -873,7 +789,6 @@
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
@@ -971,7 +886,6 @@
             </table>
           </div>
 
-          <!-- RECURRING WEEKLY / MONTHLY PASSES REPORT SECTION -->
           <h4 style="margin-top: 30px; margin-bottom: 10px; font-size: 0.9rem; color: var(--navy);"><i class="fa-solid fa-calendar-week"></i> Active Weekly & Monthly Pass Members Report</h4>
           <div class="table-responsive-wrapper">
             <table>
@@ -1058,7 +972,7 @@
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyldXDm1ciQe9VHnd6pHGYNeVcdZt2nq8di9fp4ncxN-DvEAKavbJT89HNwTCyCMAJZ/exec";
 
     let globalCloudLogs = [];
-    let globalUsersList = []; // Empty default array; credentials load securely from cloud DB
+    let globalUsersList = [];
 
     let dedicatedScanner = null;
     let selectedCameraId = null;
@@ -1148,7 +1062,6 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      // Ensure login form starts completely empty
       document.getElementById('username').value = '';
       document.getElementById('password').value = '';
 
@@ -1180,7 +1093,6 @@
         applyPermissions();
         initApp();
       } else {
-        // Pre-fetch user database to allow authentication against AppScript backend
         fetchCloudData();
       }
     });
@@ -1212,13 +1124,14 @@
       }
     });
 
+    // FIXED PERMISSION DISPLAY CONTROL FOR TOP MENU BAR
     function applyPermissions() {
       const menus = activeUser.menus || ['dashboard', 'entry', 'outGate', 'report', 'admin'];
-      document.getElementById('navDashboard').style.display = menus.includes('dashboard') ? 'inline-block' : 'none';
-      document.getElementById('navEntry').style.display = menus.includes('entry') ? 'inline-block' : 'none';
-      document.getElementById('navOutGate').style.display = menus.includes('outGate') ? 'inline-block' : 'none';
-      document.getElementById('navReport').style.display = menus.includes('report') ? 'inline-block' : 'none';
-      document.getElementById('navAdmin').style.display = menus.includes('admin') ? 'inline-block' : 'none';
+      document.getElementById('navDashboard').style.display = menus.includes('dashboard') ? 'block' : 'none';
+      document.getElementById('navEntry').style.display = menus.includes('entry') ? 'block' : 'none';
+      document.getElementById('navOutGate').style.display = menus.includes('outGate') ? 'block' : 'none';
+      document.getElementById('navReport').style.display = menus.includes('report') ? 'block' : 'none';
+      document.getElementById('navAdmin').style.display = menus.includes('admin') ? 'block' : 'none';
 
       if (menus.includes('dashboard')) switchTab('dashboardTab');
       else if (menus.includes('entry')) switchTab('entryTab');
@@ -1327,7 +1240,6 @@
       }
     }
 
-    /* MULTI-CAMERA SELECTOR & SCANNER INIT (AUTO-SELECTS MOBILE REAR CAMERA) */
     async function initCameraSelector() {
       try {
         const devices = await Html5Qrcode.getCameras();
@@ -1343,14 +1255,12 @@
             option.text = device.label || `Camera ${selectElem.children.length + 1}`;
             selectElem.appendChild(option);
 
-            // Auto-detect rear camera keywords
             const label = (device.label || '').toLowerCase();
             if (label.includes('back') || label.includes('rear') || label.includes('environment') || label.includes('camera 0')) {
               backCamId = device.id;
             }
           });
 
-          // Priority: Auto-select detected rear camera, else default to camera 0/last array item
           if (backCamId) {
             selectedCameraId = backCamId;
             selectElem.value = backCamId;
@@ -1421,7 +1331,6 @@
       document.getElementById('manualOutInput').value = '';
     }
 
-    /* INSTANT OPTIMISTIC SCANNER WITH NON-BLOCKING BACKGROUND SYNC */
     async function processOutGateCode(rawVal) {
       if (activeUser && activeUser.canMarkOut === false) {
         displayOutResult("Action Denied: Your account role does not have permission to mark visitors out.", false);
