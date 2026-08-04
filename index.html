@@ -360,7 +360,7 @@
     .qrcode-container-large img, .qrcode-container-large canvas { display: block; width: 100px !important; height: 100px !important; margin: 0 auto; border: 1.5px solid #0f172a; border-radius: 6px; padding: 3px; background: #fff; }
 
     .table-responsive-wrapper { width: 100%; overflow-x: auto; border-radius: 5px; border: 1px solid var(--border-color); }
-    table { width: 100%; min-width: 750px; border-collapse: collapse; font-size: 0.7rem; background: #ffffff; }
+    table { width: 100%; min-width: 800px; border-collapse: collapse; font-size: 0.7rem; background: #ffffff; }
     th, td { border: 1px solid var(--border-color); padding: 4px 6px; text-align: left; vertical-align: middle; line-height: 1.15; }
     th { background: var(--vms-light); color: var(--navy); font-weight: 800; text-align: center; white-space: nowrap; }
     tr:nth-child(even) { background: #f8fafc; }
@@ -999,8 +999,9 @@
               <thead>
                 <tr>
                   <th>Pass No</th>
-                  <th>Date</th>
+                  <th>In Date</th>
                   <th>Time In</th>
+                  <th>Out Date</th>
                   <th>Time Out</th>
                   <th>Visitor Name</th>
                   <th>Category</th>
@@ -1018,7 +1019,7 @@
                 </tr>
               </thead>
               <tbody id="logsTableBody">
-                <tr><td colspan="17" style="text-align:center;">Loading logs from Google Sheet...</td></tr>
+                <tr><td colspan="18" style="text-align:center;">Loading logs from Google Sheet...</td></tr>
               </tbody>
             </table>
           </div>
@@ -1281,7 +1282,7 @@
       }
     });
 
-    // STRICT FIXED PERMISSION ENFORCEMENT
+    // STRICT PERMISSION DISPLAY CONTROL & HIDING UNAUTHORIZED TABS
     function applyPermissions() {
       if (!activeUser) return;
 
@@ -1302,19 +1303,14 @@
       const hasOutGate = isMasterAdmin || menus.includes('outgate') || menus.includes('visitoroutgate');
       const hasReport = isMasterAdmin || menus.includes('report') || menus.includes('reports') || menus.includes('reports&logs');
 
+      // Completely hide unauthorized navigation tabs from the DOM view
       document.getElementById('navDashboard').style.display = hasDashboard ? 'inline-block' : 'none';
       document.getElementById('navEntry').style.display = hasEntry ? 'inline-block' : 'none';
       document.getElementById('navOutGate').style.display = hasOutGate ? 'inline-block' : 'none';
       document.getElementById('navReport').style.display = hasReport ? 'inline-block' : 'none';
-      
-      const adminNav = document.getElementById('navAdmin');
-      if (hasAdmin) {
-        adminNav.style.display = 'inline-block';
-      } else {
-        adminNav.style.display = 'none';
-      }
+      document.getElementById('navAdmin').style.display = hasAdmin ? 'inline-block' : 'none';
 
-      // Automatically route user to their first permitted tab if current tab is hidden
+      // Automatically redirect user if they land on a hidden/unauthorized tab
       const activeTab = document.querySelector('.tab-content.active');
       if (activeTab) {
         const activeTabId = activeTab.id;
@@ -1347,7 +1343,6 @@
     }
 
     function switchTab(tabId) {
-      // Security enforcement before switching tabs
       if (activeUser) {
         let menus = [];
         if (Array.isArray(activeUser.menus)) {
@@ -1579,9 +1574,11 @@
 
         if (activeInsideLog) {
           const outTime = getCurrentTime();
+          const outDate = getCurrentDate();
           activeInsideLog.timeOut = outTime;
+          activeInsideLog.outDate = outDate;
           
-          displayOutResult(`SUCCESS: Visitor ${masterRecord.name} (${masterRecord.passNo}) Checked-OUT at ${outTime}!`, true);
+          displayOutResult(`SUCCESS: Visitor ${masterRecord.name} (${masterRecord.passNo}) Checked-OUT at ${outTime} on ${outDate}!`, true);
           computeDashboardAnalytics(globalCloudLogs);
 
           if (GOOGLE_SCRIPT_URL) {
@@ -1593,7 +1590,8 @@
                 action: "updateTimeOut",
                 passNo: activeInsideLog.passNo,
                 timeIn: activeInsideLog.timeIn,
-                timeOut: outTime
+                timeOut: outTime,
+                outDate: outDate
               })
             }).catch(err => console.log("Background sync error: " + err.message));
           }
@@ -1628,6 +1626,7 @@
           passNo: masterRecord.passNo,
           date: todayStr,
           timeIn: newTimeIn,
+          outDate: '_______',
           timeOut: '_______',
           name: masterRecord.name,
           mobile: String(masterRecord.mobile || ''),
@@ -1708,6 +1707,7 @@
               ...log,
               mobile: String(log.mobile || "").trim(),
               date: cleanDateTimeDisplay(log.date, 'date'),
+              outDate: cleanDateTimeDisplay(log.outDate, 'date'),
               timeIn: cleanDateTimeDisplay(log.timeIn, 'time'),
               timeOut: cleanDateTimeDisplay(log.timeOut, 'time'),
               category: log.category || 'Others'
@@ -2384,6 +2384,7 @@
         passNo: passNo,
         date: getCurrentDate(),
         timeIn: getCurrentTime(),
+        outDate: '_______',
         timeOut: '_______',
         name: document.getElementById('visitorName').value,
         category: document.getElementById('visitorCategory').value,
@@ -2612,6 +2613,7 @@
       }
 
       const outTime = getCurrentTime();
+      const outDate = getCurrentDate();
 
       if (GOOGLE_SCRIPT_URL) {
         try {
@@ -2623,7 +2625,8 @@
               action: "updateTimeOut",
               passNo: passNo,
               timeIn: targetTimeIn,
-              timeOut: outTime
+              timeOut: outTime,
+              outDate: outDate
             })
           });
         } catch (err) {
@@ -2661,7 +2664,7 @@
       tbody.innerHTML = '';
 
       if (!logs || logs.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="17" style="text-align:center;">No visitor entries found.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="18" style="text-align:center;">No visitor entries found.</td></tr>';
         return;
       }
 
@@ -2669,7 +2672,10 @@
 
       [...logs].reverse().forEach(log => {
         let actionContent = '';
+        let outDateDisplay = log.outDate && log.outDate !== '_______' && log.outDate !== '--' ? log.outDate : '_______';
+
         if (log.timeOut === '_______' || log.timeOut === '--:--' || !log.timeOut) {
+          outDateDisplay = '_______';
           if (userCanMarkOut) {
             actionContent = `<button class="btn-out" onclick="recordTimeOut('${log.passNo}', '${log.timeIn}')">Mark Out</button>`;
           } else {
@@ -2690,6 +2696,7 @@
           <td><strong>${log.passNo}</strong></td>
           <td>${log.date}</td>
           <td>${log.timeIn}</td>
+          <td>${outDateDisplay}</td>
           <td><strong style="color: ${(log.timeOut !== '_______' && log.timeOut !== '--:--') ? '#0284c7' : '#94a3b8'}">${log.timeOut}</strong></td>
           <td>${log.name}</td>
           <td><span style="background:#e0f2fe; color:#0369a1; padding:2px 6px; border-radius:4px; font-weight:bold; font-size:0.7rem;">${log.category || 'Others'}</span></td>
@@ -2777,13 +2784,14 @@
       }
 
       let csvContent = "data:text/csv;charset=utf-8,";
-      csvContent += "Pass No,Date (DD-MM-YYYY),Time In,Time Out,Visitor Name,Category,Mobile Number,ID Type,ID Number,Company/From,Person To Meet,Department,Validity,Purpose,Vehicle No,Photo Link\n";
+      csvContent += "Pass No,In Date,Time In,Out Date,Time Out,Visitor Name,Category,Mobile Number,ID Type,ID Number,Company/From,Person To Meet,Department,Validity,Purpose,Vehicle No,Photo Link\n";
 
       globalCloudLogs.forEach(log => {
         const row = [
           `"${log.passNo}"`,
           `"${log.date}"`,
           `"${log.timeIn}"`,
+          `"${log.outDate || '_______'}"`,
           `"${log.timeOut}"`,
           `"${log.name}"`,
           `"${log.category || 'Others'}"`,
