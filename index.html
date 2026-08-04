@@ -1258,7 +1258,6 @@
         document.getElementById('appScreen').style.display = 'block';
         
         fetchCloudData().then(() => {
-          // Re-validate against latest fetched users list
           let verifiedMatch = globalUsersList.find(u => u.username.toLowerCase() === activeUser.username.toLowerCase());
           if (verifiedMatch) {
             activeUser = verifiedMatch;
@@ -1298,7 +1297,7 @@
       }
     });
 
-    // STRICT PERMISSION DISPLAY CONTROL & FIX FOR 100% ZOOM SCREEN DISPLAY
+    // STRICT PERMISSION DISPLAY CONTROL
     function applyPermissions() {
       if (!activeUser) return;
 
@@ -1322,7 +1321,6 @@
         adminNav.style.display = 'inline-block';
       } else {
         adminNav.style.display = 'none';
-        // If user somehow lands on admin tab without permission, push them to dashboard or first allowed tab
         if (document.getElementById('adminTab').classList.contains('active')) {
           if (menus.includes('dashboard')) switchTab('dashboardTab');
           else if (menus.includes('entry')) switchTab('entryTab');
@@ -1335,7 +1333,7 @@
     function logout() {
       stopCamera();
       stopDedicatedOutScanner();
-      sessionStorage.clear(); // Fully clear all session data
+      sessionStorage.clear(); 
       activeUser = null;
       document.getElementById('appScreen').style.display = 'none';
       document.getElementById('loginScreen').style.display = 'flex';
