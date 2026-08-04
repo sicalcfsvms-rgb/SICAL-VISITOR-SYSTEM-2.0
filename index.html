@@ -1281,25 +1281,26 @@
       }
     });
 
-    // STRICT PERMISSION DISPLAY CONTROL & DATA SYNC
+    // STRICT FIXED PERMISSION ENFORCEMENT
     function applyPermissions() {
       if (!activeUser) return;
 
       let menus = [];
       if (Array.isArray(activeUser.menus)) {
-        menus = activeUser.menus.map(m => String(m).toLowerCase().replace(/[^a-z]/g, "").trim());
+        menus = activeUser.menus.map(m => String(m).toLowerCase().trim());
       } else if (typeof activeUser.menus === 'string') {
-        menus = activeUser.menus.toLowerCase().replace(/[^a-z,]/g, "").split(',');
+        menus = activeUser.menus.toLowerCase().split(',').map(m => m.trim());
       }
 
       const role = String(activeUser.role || "").toLowerCase();
-      const isMasterAdmin = (role === 'admin' || activeUser.username.toUpperCase() === 'SICAL ADMIN' || activeUser.username.toUpperCase() === 'KUMARESAN_M');
+      const uName = String(activeUser.username || "").toUpperCase();
+      const isMasterAdmin = (role === 'admin' || uName === 'SICAL ADMIN' || uName === 'KUMARESAN_M');
 
-      const hasAdmin = isMasterAdmin || menus.some(m => m.includes('admin'));
-      const hasDashboard = isMasterAdmin || menus.some(m => m.includes('dashboard')) || menus.length === 0;
-      const hasEntry = isMasterAdmin || menus.some(m => m.includes('entry'));
-      const hasOutGate = isMasterAdmin || menus.some(m => m.includes('outgate') || m.includes('gate'));
-      const hasReport = isMasterAdmin || menus.some(m => m.includes('report') || m.includes('logs'));
+      const hasAdmin = isMasterAdmin || menus.includes('admin');
+      const hasDashboard = isMasterAdmin || menus.includes('dashboard');
+      const hasEntry = isMasterAdmin || menus.includes('entry');
+      const hasOutGate = isMasterAdmin || menus.includes('outgate') || menus.includes('visitoroutgate');
+      const hasReport = isMasterAdmin || menus.includes('report') || menus.includes('reports') || menus.includes('reports&logs');
 
       document.getElementById('navDashboard').style.display = hasDashboard ? 'inline-block' : 'none';
       document.getElementById('navEntry').style.display = hasEntry ? 'inline-block' : 'none';
@@ -1311,12 +1312,25 @@
         adminNav.style.display = 'inline-block';
       } else {
         adminNav.style.display = 'none';
-        const activeTab = document.querySelector('.tab-content.active');
-        if (activeTab && activeTab.id === 'adminTab') {
+      }
+
+      // Automatically route user to their first permitted tab if current tab is hidden
+      const activeTab = document.querySelector('.tab-content.active');
+      if (activeTab) {
+        const activeTabId = activeTab.id;
+        let isCurrentAllowed = true;
+        if (activeTabId === 'dashboardTab' && !hasDashboard) isCurrentAllowed = false;
+        if (activeTabId === 'entryTab' && !hasEntry) isCurrentAllowed = false;
+        if (activeTabId === 'outGateTab' && !hasOutGate) isCurrentAllowed = false;
+        if (activeTabId === 'reportTab' && !hasReport) isCurrentAllowed = false;
+        if (activeTabId === 'adminTab' && !hasAdmin) isCurrentAllowed = false;
+
+        if (!isCurrentAllowed) {
           if (hasDashboard) switchTab('dashboardTab');
           else if (hasReport) switchTab('reportTab');
           else if (hasEntry) switchTab('entryTab');
           else if (hasOutGate) switchTab('outGateTab');
+          else if (hasAdmin) switchTab('adminTab');
         }
       }
     }
@@ -1337,18 +1351,19 @@
       if (activeUser) {
         let menus = [];
         if (Array.isArray(activeUser.menus)) {
-          menus = activeUser.menus.map(m => String(m).toLowerCase().replace(/[^a-z]/g, "").trim());
+          menus = activeUser.menus.map(m => String(m).toLowerCase().trim());
         } else if (typeof activeUser.menus === 'string') {
-          menus = activeUser.menus.toLowerCase().replace(/[^a-z,]/g, "").split(',');
+          menus = activeUser.menus.toLowerCase().split(',').map(m => m.trim());
         }
         const role = String(activeUser.role || "").toLowerCase();
-        const isMasterAdmin = (role === 'admin' || activeUser.username.toUpperCase() === 'SICAL ADMIN' || activeUser.username.toUpperCase() === 'KUMARESAN_M');
+        const uName = String(activeUser.username || "").toUpperCase();
+        const isMasterAdmin = (role === 'admin' || uName === 'SICAL ADMIN' || uName === 'KUMARESAN_M');
 
-        const hasAdmin = isMasterAdmin || menus.some(m => m.includes('admin'));
-        const hasDashboard = isMasterAdmin || menus.some(m => m.includes('dashboard')) || menus.length === 0;
-        const hasEntry = isMasterAdmin || menus.some(m => m.includes('entry'));
-        const hasOutGate = isMasterAdmin || menus.some(m => m.includes('outgate') || m.includes('gate'));
-        const hasReport = isMasterAdmin || menus.some(m => m.includes('report') || m.includes('logs'));
+        const hasAdmin = isMasterAdmin || menus.includes('admin');
+        const hasDashboard = isMasterAdmin || menus.includes('dashboard');
+        const hasEntry = isMasterAdmin || menus.includes('entry');
+        const hasOutGate = isMasterAdmin || menus.includes('outgate') || menus.includes('visitoroutgate');
+        const hasReport = isMasterAdmin || menus.includes('report') || menus.includes('reports') || menus.includes('reports&logs');
 
         if (tabId === 'adminTab' && !hasAdmin) return;
         if (tabId === 'dashboardTab' && !hasDashboard) return;
@@ -1702,9 +1717,9 @@
               globalUsersList = data.users.map(u => {
                 let cleanedMenus = [];
                 if (Array.isArray(u.menus)) {
-                  cleanedMenus = u.menus.map(m => String(m).toLowerCase().replace(/[^a-z]/g, "").trim());
+                  cleanedMenus = u.menus.map(m => String(m).toLowerCase().trim());
                 } else if (typeof u.menus === 'string') {
-                  cleanedMenus = u.menus.toLowerCase().replace(/[^a-z,]/g, "").split(',');
+                  cleanedMenus = u.menus.toLowerCase().split(',').map(m => m.trim());
                 }
 
                 const uName = String(u.username || "").trim();
