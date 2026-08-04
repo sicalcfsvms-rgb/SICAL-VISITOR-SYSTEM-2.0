@@ -524,14 +524,14 @@
         </div>
 
         <div class="login-form-container">
-          <form id="loginForm">
+          <form id="loginForm" autocomplete="off">
             <div class="input-group">
               <label><i class="fa-solid fa-user"></i> Username</label>
-              <input type="text" id="username" placeholder="Enter username" required>
+              <input type="text" id="username" placeholder="Enter username" autocomplete="off" required>
             </div>
             <div class="input-group">
               <label><i class="fa-solid fa-lock"></i> Password</label>
-              <input type="password" id="password" placeholder="Enter password" required>
+              <input type="password" id="password" placeholder="Enter password" autocomplete="new-password" required>
             </div>
             <button type="submit" class="btn-login"><i class="fa-solid fa-right-to-bracket"></i> Login Portal</button>
             <div id="loginError" class="error-msg">Invalid Username or Password!</div>
@@ -1058,9 +1058,7 @@
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyldXDm1ciQe9VHnd6pHGYNeVcdZt2nq8di9fp4ncxN-DvEAKavbJT89HNwTCyCMAJZ/exec";
 
     let globalCloudLogs = [];
-    let globalUsersList = [
-      { username: 'SICAL ADMIN', pass: 'SICAL$321', role: 'admin', canMarkOut: true, menus: ['dashboard', 'entry', 'outGate', 'report', 'admin'] }
-    ];
+    let globalUsersList = []; // Empty default array; credentials load securely from cloud DB
 
     let dedicatedScanner = null;
     let selectedCameraId = null;
@@ -1150,6 +1148,10 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
+      // Ensure login form starts completely empty
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+
       const urlParams = new URLSearchParams(window.location.search);
       const passParam = urlParams.get('pass');
 
@@ -1177,6 +1179,9 @@
         document.getElementById('appScreen').style.display = 'block';
         applyPermissions();
         initApp();
+      } else {
+        // Pre-fetch user database to allow authentication against AppScript backend
+        fetchCloudData();
       }
     });
 
@@ -1227,6 +1232,7 @@
       sessionStorage.removeItem('sical_active_session');
       document.getElementById('appScreen').style.display = 'none';
       document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('username').value = '';
       document.getElementById('password').value = '';
     }
 
@@ -1321,7 +1327,7 @@
       }
     }
 
-    /* MULTI-CAMERA SELECTOR & SCANNER INIT */
+    /* MULTI-CAMERA SELECTOR & SCANNER INIT (AUTO-SELECTS MOBILE REAR CAMERA) */
     async function initCameraSelector() {
       try {
         const devices = await Html5Qrcode.getCameras();
@@ -1329,14 +1335,30 @@
         selectElem.innerHTML = '';
 
         if (devices && devices.length > 0) {
+          let backCamId = null;
+
           devices.forEach(device => {
             const option = document.createElement('option');
             option.value = device.id;
-            option.text = device.label || `Camera ${selectElem.length + 1}`;
+            option.text = device.label || `Camera ${selectElem.children.length + 1}`;
             selectElem.appendChild(option);
+
+            // Auto-detect rear camera keywords
+            const label = (device.label || '').toLowerCase();
+            if (label.includes('back') || label.includes('rear') || label.includes('environment') || label.includes('camera 0')) {
+              backCamId = device.id;
+            }
           });
 
-          selectedCameraId = devices[0].id;
+          // Priority: Auto-select detected rear camera, else default to camera 0/last array item
+          if (backCamId) {
+            selectedCameraId = backCamId;
+            selectElem.value = backCamId;
+          } else {
+            selectedCameraId = devices[devices.length - 1].id;
+            selectElem.value = selectedCameraId;
+          }
+
           startDedicatedOutScanner();
         } else {
           selectElem.innerHTML = '<option value="">No cameras detected</option>';
