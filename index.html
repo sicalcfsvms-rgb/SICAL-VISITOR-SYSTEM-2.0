@@ -32,6 +32,7 @@
       overflow-x: hidden;
     }
 
+    /* LOGIN SCREEN STYLING */
     #loginScreen {
       display: flex;
       min-height: 100vh;
@@ -274,7 +275,6 @@
     }
 
     .dashboard-grid-2 { display: grid; grid-template-columns: 1.2fr 1fr; gap: 15px; margin-bottom: 15px; }
-    .dashboard-grid-3 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 15px; }
 
     .alert-banner {
       background: #fef2f2; border: 1px solid #fca5a5; border-left: 4px solid #dc2626;
@@ -400,7 +400,6 @@
 
     @media (max-width: 1100px) {
       .dashboard-grid-2 { grid-template-columns: 1fr; }
-      .dashboard-grid-3 { grid-template-columns: 1fr; }
       .grid-2 { grid-template-columns: 1fr; }
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
     }
@@ -413,7 +412,7 @@
     @media print {
       @page { size: A4 portrait; margin: 5mm; }
       html, body { background: #ffffff !important; margin: 0 !important; padding: 0 !important; width: 100% !important; height: 100% !important; overflow: visible !important; }
-      #loginScreen, header, .top-navbar, .card, h3, .stats-grid, .dash-filter-bar, .quick-actions-bar, .dashboard-grid-2, .dashboard-grid-3, .alert-banner, .filter-bar, table, #addUserForm, #userTableBody, #mobilePdfBtnContainer, .quick-search-box { display: none !important; }
+      #loginScreen, header, .top-navbar, .card, h3, .stats-grid, .dash-filter-bar, .quick-actions-bar, .dashboard-grid-2, .alert-banner, .filter-bar, table, #addUserForm, #userTableBody, #mobilePdfBtnContainer, .quick-search-box { display: none !important; }
       body * { visibility: hidden !important; }
       #passPreviewCard, #printablePass, #printablePass * { visibility: visible !important; }
       #passPreviewCard { position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; display: flex !important; justify-content: center !important; align-items: flex-start !important; padding-top: 5mm !important; }
@@ -524,7 +523,7 @@
       <div id="dashboardTab" class="tab-content active">
         <h3 style="margin-bottom: 14px; color: var(--navy); font-size: 1.1rem;"><i class="fa-solid fa-chart-line"></i> CFS Visitor Security & Operations Center</h3>
         
-        <!-- DASHBOARD DATE FILTER BAR (Requirement 3.1) -->
+        <!-- DASHBOARD DATE FILTER BAR -->
         <div class="dash-filter-bar">
           <div class="dash-filter-inputs">
             <i class="fa-solid fa-filter" style="color: var(--vms-secondary);"></i>
@@ -575,7 +574,7 @@
           <button class="btn-action" style="background:#dc2626; padding: 3px 8px; font-size:0.75rem;" onclick="switchTab('reportTab')">Investigate Logs</button>
         </div>
 
-        <!-- REMIT 3.2 & 3.3: Total IN / OUT / NOT OUT & NOT OUT VISITOR LIST -->
+        <!-- Total IN / OUT / NOT OUT & NOT OUT VISITOR LIST -->
         <div class="dashboard-grid-2">
           <div class="card">
             <h3 style="font-size: 0.95rem; margin-bottom: 12px;"><i class="fa-solid fa-right-to-bracket"></i> Overall IN / OUT / NOT OUT Summary</h3>
@@ -619,7 +618,7 @@
           </div>
         </div>
 
-        <!-- REMIT 3.4 & 3.5: CATEGORY-WISE TABLE & MOST PERSON TO MEET -->
+        <!-- CATEGORY-WISE TABLE & MOST PERSON TO MEET -->
         <div class="dashboard-grid-2">
           <div class="card">
             <h3 style="font-size: 0.95rem; margin-bottom: 12px;"><i class="fa-solid fa-layer-group"></i> Visitor Category Breakdown</h3>
@@ -658,7 +657,7 @@
           </div>
         </div>
 
-        <!-- REMIT 3.6 & 3.7: MOST VISITED VISITORS & TIME CAPTURE OVERSTAY -->
+        <!-- MOST VISITED VISITORS & TRAFFIC BY DEPARTMENT -->
         <div class="dashboard-grid-2">
           <div class="card">
             <h3 style="font-size: 0.95rem; margin-bottom: 12px;"><i class="fa-solid fa-address-book"></i> Most Frequent Visitors</h3>
@@ -694,7 +693,7 @@
           </div>
         </div>
 
-        <!-- Requirement 3.7: Extended Duration Box Pattern -->
+        <!-- Extended Duration Box Pattern -->
         <div class="card" style="margin-bottom: 15px;">
           <h3 style="font-size: 0.95rem; color: #dc2626;"><i class="fa-solid fa-hourglass-alert"></i> Time Capture — Extended Stay Visitors (> 8 Hours Inside CFS Site)</h3>
           <div id="overstayBoxContainer" class="overstay-box-grid">
@@ -768,7 +767,6 @@
                   <input type="text" id="visitorName" required>
                 </div>
 
-                <!-- Requirement 1: Visitor Category Dropdown -->
                 <div class="input-group full-width">
                   <label>Visitor Category *</label>
                   <select id="visitorCategory" required>
@@ -834,7 +832,6 @@
                   </select>
                 </div>
 
-                <!-- Requirement 2: Custom Date Pass Option -->
                 <div class="input-group full-width">
                   <label>Pass Validity *</label>
                   <div class="checkbox-group">
@@ -1178,7 +1175,6 @@
       return String(val).trim();
     }
 
-    // Requirement 2: Custom Date Range Pass Handler
     function toggleCustomDaysInput(show) {
       const container = document.getElementById('customDaysContainer');
       if (container) {
@@ -1196,7 +1192,7 @@
       } else if (validityType === 'Monthly') {
         end.setMonth(start.getMonth() + 1);
         end.setDate(end.getDate() - 1);
-      } else if (validityType.startsWith('Custom')) {
+      } else if (validityType && validityType.startsWith('Custom')) {
         const match = validityType.match(/\d+/);
         const days = match ? parseInt(match[0], 10) : 2;
         end.setDate(start.getDate() + (days - 1));
@@ -1300,9 +1296,17 @@
       }
     });
 
+    // STRICT SANITIZED PERMISSIONS CONTROL
     function applyPermissions() {
-      const menus = (activeUser && activeUser.menus) ? activeUser.menus : ['dashboard', 'entry', 'outGate', 'report', 'admin'];
-      
+      if (!activeUser) return;
+
+      let menus = [];
+      if (Array.isArray(activeUser.menus)) {
+        menus = activeUser.menus.map(m => String(m).replace(/[\[\]"'\s]/g, "").trim());
+      } else if (typeof activeUser.menus === 'string') {
+        menus = activeUser.menus.replace(/[\[\]"'\s]/g, "").split(',');
+      }
+
       document.getElementById('navDashboard').style.display = menus.includes('dashboard') ? 'inline-block' : 'none';
       document.getElementById('navEntry').style.display = menus.includes('entry') ? 'inline-block' : 'none';
       document.getElementById('navOutGate').style.display = menus.includes('outGate') ? 'inline-block' : 'none';
@@ -1313,6 +1317,7 @@
       else if (menus.includes('entry')) switchTab('entryTab');
       else if (menus.includes('outGate')) switchTab('outGateTab');
       else if (menus.includes('report')) switchTab('reportTab');
+      else if (menus.includes('admin')) switchTab('adminTab');
     }
 
     function logout() {
@@ -1668,13 +1673,22 @@
             }));
             
             if (data.users && data.users.length > 0) {
-              globalUsersList = data.users.map(u => ({
-                username: u.username,
-                pass: u.pass,
-                role: u.role,
-                canMarkOut: (u.canMarkOut === true || String(u.canMarkOut).toUpperCase() === 'TRUE' || String(u.role).toLowerCase() === 'admin' || String(u.role).toLowerCase() === 'security'),
-                menus: u.menus
-              }));
+              globalUsersList = data.users.map(u => {
+                let cleanedMenus = [];
+                if (Array.isArray(u.menus)) {
+                  cleanedMenus = u.menus.map(m => String(m).replace(/[\[\]"'\s]/g, "").trim());
+                } else if (typeof u.menus === 'string') {
+                  cleanedMenus = u.menus.replace(/[\[\]"'\s]/g, "").split(',');
+                }
+
+                return {
+                  username: u.username,
+                  pass: u.pass,
+                  role: u.role,
+                  canMarkOut: (u.canMarkOut === true || String(u.canMarkOut).toUpperCase() === 'TRUE' || String(u.role).toLowerCase() === 'admin' || String(u.role).toLowerCase() === 'security'),
+                  menus: cleanedMenus
+                };
+              });
             }
 
             if (globalCloudLogs.length > 0) {
@@ -1712,7 +1726,6 @@
       updatePreview();
     }
 
-    // Requirement 3.1: Interactive Date Filtering on Dashboard
     function applyDashboardDateFilter() {
       const fromVal = document.getElementById('dashFromDate').value;
       const toVal = document.getElementById('dashToDate').value;
@@ -1747,7 +1760,6 @@
       computeDashboardAnalytics(globalCloudLogs);
     }
 
-    // REQUIREMENT 3: Comprehensive Dashboard Analytics Computation
     function computeDashboardAnalytics(logs) {
       if (!logs) logs = [];
 
@@ -1823,11 +1835,9 @@
           categoryCounts[cat].out++;
         }
 
-        // Host analytics
         let host = (log.personToMeet || 'N/A').trim();
         if(host && host !== '-') hostCounts[host] = (hostCounts[host] || 0) + 1;
 
-        // Visitor frequency analytics
         let vKey = `${log.name}_${log.mobile}`;
         if (!visitorCounts[vKey]) {
           visitorCounts[vKey] = { name: log.name, mobile: log.mobile, category: cat, validity: log.validity, count: 0 };
@@ -1844,30 +1854,19 @@
         else purposeCounts.Vendor++;
       });
 
-      // Update stat cards
       document.getElementById('statMonth').textContent = countMonth;
       document.getElementById('statToday').textContent = countSelectedPeriod;
       document.getElementById('statYesterday').textContent = countYesterday;
       document.getElementById('statInside').textContent = insideCount;
 
-      // Requirement 3.2: Total IN | Out | Not Out Summary Table
       document.getElementById('tblTotalIn').textContent = logs.length;
       document.getElementById('tblTotalOut').textContent = totalCheckedOut;
       document.getElementById('tblTotalNotOut').textContent = insideCount;
 
-      // Requirement 3.3: Render Not Out Visitor List
       renderNotOutVisitorList(notOutList);
-
-      // Requirement 3.4: Category Wise Table
       renderCategoryWiseTable(categoryCounts);
-
-      // Requirement 3.5: Most Person To Meet Table
       renderTopHostsTable(hostCounts);
-
-      // Requirement 3.6: Most Visited Visitors Table
       renderTopVisitorsTable(visitorCounts);
-
-      // Requirement 3.7: Overstay Extended Duration Box Pattern
       renderOverstayBoxPattern(overstayList);
 
       const alertBanner = document.getElementById('overstayAlertBanner');
@@ -1878,7 +1877,6 @@
         alertBanner.style.display = 'none';
       }
 
-      // Dept Donut Chart rendering
       const totalLogs = logs.length || 1;
       const legendList = document.getElementById('deptLegendList');
       legendList.innerHTML = '';
@@ -2011,7 +2009,6 @@
       });
     }
 
-    // REQUIREMENT 4 FIX: Total Hrs Logic (Now displays INSIDE duration if not out)
     function calculateTotalHoursObj(dateStr, timeInStr, timeOutStr) {
       if (!timeInStr || timeInStr === '--:--') return { displayStr: "INSIDE", rawHours: 0 };
       
@@ -2134,7 +2131,7 @@
       var allowedDays = 1;
       if (validityType === 'Weekly') allowedDays = 7;
       if (validityType === 'Monthly') allowedDays = 30;
-      if (validityType.startsWith('Custom')) {
+      if (validityType && validityType.startsWith('Custom')) {
         const m = validityType.match(/\d+/);
         if(m) allowedDays = parseInt(m[0], 10);
       }
@@ -2185,7 +2182,7 @@
         document.getElementById('idType').value = match.idType !== 'N/A' ? match.idType : 'Aadhaar Card';
         document.getElementById('idNumber').value = match.idNumber !== 'N/A' ? match.idNumber : '';
 
-        if (match.validity.startsWith('Custom')) {
+        if (match.validity && match.validity.startsWith('Custom')) {
           document.getElementById('radValidityCustom').checked = true;
           toggleCustomDaysInput(true);
           const m = match.validity.match(/\d+/);
@@ -2666,7 +2663,7 @@
         return;
       }
 
-      const longTermPasses = logs.filter(l => l.validity === 'Weekly' || l.validity === 'Monthly' || l.validity.startsWith('Custom'));
+      const longTermPasses = logs.filter(l => l.validity === 'Weekly' || l.validity === 'Monthly' || (l.validity && l.validity.startsWith('Custom')));
 
       if (longTermPasses.length === 0) {
         tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">No active weekly, monthly or custom pass members found.</td></tr>';
