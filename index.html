@@ -173,7 +173,7 @@
     .brand-title { font-size: 1.05rem; font-weight: 900; letter-spacing: 0.6px; color: #ffffff; }
     .brand-subtitle { font-size: 0.70rem; color: #a5f3fc; font-weight: 700; letter-spacing: 0.5px; }
 
-    /* TOP NAVIGATION MENU BAR (FORCED VISIBILITY) */
+    /* TOP NAVIGATION MENU BAR (FORCED VISIBILITY FIX) */
     .top-navbar {
       background: #1e293b !important;
       border-bottom: 1px solid var(--border-color);
@@ -1501,10 +1501,19 @@
               }));
             }
 
+            // MAX PASS NUMBER CALCULATION FIX: Scans entire database for highest sequence number
             if (globalCloudLogs.length > 0) {
-              const lastPass = globalCloudLogs[globalCloudLogs.length - 1].passNo;
-              const lastSeq = parseInt(lastPass.split('-')[2]);
-              if (!isNaN(lastSeq)) currentPassNumber = lastSeq + 1;
+              let maxSeq = 1000;
+              globalCloudLogs.forEach(log => {
+                if (log.passNo && log.passNo.includes('-')) {
+                  const parts = log.passNo.split('-');
+                  const seq = parseInt(parts[parts.length - 1], 10);
+                  if (!isNaN(seq) && seq > maxSeq) {
+                    maxSeq = seq;
+                  }
+                }
+              });
+              currentPassNumber = maxSeq + 1;
             } else {
               currentPassNumber = 1001;
             }
