@@ -1117,6 +1117,7 @@
     let selectedCameraId = null;
     let loadedVisitorPhoto = null;
     let isPassAlreadySaved = false;
+    let lockedPreviewPassNo = null; // Locks the preview card after save
 
     let lastScannedText = "";
     let lastScanTimestamp = 0;
@@ -1756,7 +1757,10 @@
             renderLogsTable(globalCloudLogs);
             renderLongTermLogsTable(globalCloudLogs);
             renderUsersTable();
-            updatePreview();
+            
+            if (!isPassAlreadySaved) {
+              updatePreview();
+            }
 
             if (activeUser) {
               let verifiedMatch = globalUsersList.find(u => u.username.toLowerCase() === activeUser.username.toLowerCase());
@@ -1778,7 +1782,9 @@
       renderLogsTable(globalCloudLogs);
       renderLongTermLogsTable(globalCloudLogs);
       renderUsersTable();
-      updatePreview();
+      if (!isPassAlreadySaved) {
+        updatePreview();
+      }
     }
 
     function applyDashboardDateFilter() {
@@ -2140,6 +2146,9 @@
     }
 
     function getFormattedPassNo() {
+      if (isPassAlreadySaved && lockedPreviewPassNo) {
+        return lockedPreviewPassNo;
+      }
       const year = new Date().getFullYear();
       return `VP-${year}-${currentPassNumber}`;
     }
@@ -2250,6 +2259,9 @@
 
         loadedVisitorPhoto = (match.photoUrl && match.photoUrl !== 'No Photo' && match.photoUrl !== 'NO_PHOTO') ? match.photoUrl : null;
         capturedPhotoData = loadedVisitorPhoto;
+
+        isPassAlreadySaved = true;
+        lockedPreviewPassNo = match.passNo;
 
         updatePreview();
         updatePhotoFrame(loadedVisitorPhoto);
@@ -2371,6 +2383,9 @@
       saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
 
       const passNo = getFormattedPassNo();
+      isPassAlreadySaved = true;
+      lockedPreviewPassNo = passNo;
+
       let validityVal = document.querySelector('input[name="validity"]:checked').value;
       if (validityVal === 'Custom') {
         const days = document.getElementById('customPassDays').value || '2';
@@ -2413,7 +2428,6 @@
         }
       }
 
-      isPassAlreadySaved = true;
       saveBtn.innerHTML = '<i class="fa-solid fa-check"></i> Pass Saved';
 
       alert(`Pass ${passNo} saved & sent to Google Sheet!`);
@@ -2431,6 +2445,7 @@
       capturedPhotoData = null;
       loadedVisitorPhoto = null;
       isPassAlreadySaved = false;
+      lockedPreviewPassNo = null;
 
       const saveBtn = document.getElementById('savePassBtn');
       saveBtn.disabled = false;
