@@ -1337,11 +1337,17 @@
       const hasReport = isMasterAdmin || menus.includes('report') || menus.includes('reports') || menus.includes('reports&logs');
 
       // Completely hide unauthorized navigation tabs from the DOM view
-      document.getElementById('navDashboard').style.display = hasDashboard ? 'inline-block' : 'none';
-      document.getElementById('navEntry').style.display = hasEntry ? 'inline-block' : 'none';
-      document.getElementById('navOutGate').style.display = hasOutGate ? 'inline-block' : 'none';
-      document.getElementById('navReport').style.display = hasReport ? 'inline-block' : 'none';
-      document.getElementById('navAdmin').style.display = hasAdmin ? 'inline-block' : 'none';
+      const navDashboard = document.getElementById('navDashboard');
+      const navEntry = document.getElementById('navEntry');
+      const navOutGate = document.getElementById('navOutGate');
+      const navReport = document.getElementById('navReport');
+      const navAdmin = document.getElementById('navAdmin');
+
+      if (navDashboard) navDashboard.style.display = hasDashboard ? 'inline-block' : 'none';
+      if (navEntry) navEntry.style.display = hasEntry ? 'inline-block' : 'none';
+      if (navOutGate) navOutGate.style.display = hasOutGate ? 'inline-block' : 'none';
+      if (navReport) navReport.style.display = hasReport ? 'inline-block' : 'none';
+      if (navAdmin) navAdmin.style.display = hasAdmin ? 'inline-block' : 'none';
 
       // Automatically redirect user if they land on a hidden/unauthorized tab
       const activeTab = document.querySelector('.tab-content.active');
