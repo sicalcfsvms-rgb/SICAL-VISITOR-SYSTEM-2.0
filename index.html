@@ -32,6 +32,38 @@
       overflow-x: hidden;
     }
 
+    /* PUBLIC PASS VIEW HIDING (WHEN SCANNED VIA QR ON MOBILE) */
+    body.public-pass-view #loginScreen,
+    body.public-pass-view header,
+    body.public-pass-view .top-navbar,
+    body.public-pass-view #entryFormCard,
+    body.public-pass-view .quick-search-box {
+      display: none !important;
+    }
+
+    body.public-pass-view #appScreen {
+      display: block !important;
+    }
+
+    body.public-pass-view #contentContainer {
+      padding: 10px !important;
+      display: flex !important;
+      justify-content: center !important;
+      align-items: flex-start !important;
+    }
+
+    body.public-pass-view #entryTab {
+      display: block !important;
+      opacity: 1 !important;
+      transform: none !important;
+      width: 100% !important;
+    }
+
+    body.public-pass-view .grid-2 {
+      display: flex !important;
+      justify-content: center !important;
+    }
+
     /* LOGIN SCREEN STYLING */
     #loginScreen {
       display: flex;
@@ -1225,9 +1257,6 @@
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('appScreen').style.display = 'block';
         
-        // Strictly hide header navigation and all tabs for public QR visitors
-        document.querySelector('header').style.display = 'none';
-        document.querySelector('.top-navbar').style.display = 'none';
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
         document.getElementById('entryTab').classList.add('active');
         document.getElementById('entryFormCard').style.display = 'none';
