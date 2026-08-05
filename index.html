@@ -1117,7 +1117,7 @@
     let selectedCameraId = null;
     let loadedVisitorPhoto = null;
     let isPassAlreadySaved = false;
-    let lockedPreviewPassNo = null; // Locks the preview card after save
+    let lockedPreviewPassNo = null;
 
     let lastScannedText = "";
     let lastScanTimestamp = 0;
@@ -1225,6 +1225,9 @@
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('appScreen').style.display = 'block';
         
+        // Strictly hide header navigation and all tabs for public QR visitors
+        document.querySelector('header').style.display = 'none';
+        document.querySelector('.top-navbar').style.display = 'none';
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
         document.getElementById('entryTab').classList.add('active');
         document.getElementById('entryFormCard').style.display = 'none';
