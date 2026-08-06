@@ -184,6 +184,28 @@
     }
     .input-group input:focus { outline: none; border-color: var(--vms-secondary); background: var(--card-bg); box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2); }
     
+    /* PASSWORD FIELD WRAPPER STYLES */
+    .password-wrapper {
+      position: relative;
+      width: 100%;
+    }
+    .password-wrapper input {
+      padding-right: 40px !important;
+    }
+    .password-wrapper i.toggle-password {
+      position: absolute;
+      top: 50%;
+      right: 12px;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #64748b;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .password-wrapper i.toggle-password:hover {
+      color: var(--vms-secondary);
+    }
+
     .btn-login {
       width: 100%; padding: 10px; background: var(--vms-secondary); color: white; border: none;
       border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.95rem; margin-top: 5px;
@@ -592,7 +614,10 @@
             </div>
             <div class="input-group">
               <label><i class="fa-solid fa-lock"></i> Password</label>
-              <input type="password" id="password" placeholder="Enter password" autocomplete="new-password" required>
+              <div class="password-wrapper">
+                <input type="password" id="password" placeholder="Enter password" autocomplete="new-password" required>
+                <i class="fa-solid fa-eye" id="togglePassword"></i>
+              </div>
             </div>
             <button type="submit" class="btn-login"><i class="fa-solid fa-right-to-bracket"></i> Login Portal</button>
             <div id="loginError" class="error-msg">Invalid Username or Password!</div>
@@ -1304,6 +1329,18 @@
 
     let lastScannedText = "";
     let lastScanTimestamp = 0;
+
+    // PASSWORD VISIBILITY TOGGLE SCRIPT
+    const togglePassword = document.querySelector('#togglePassword');
+    const passwordInput = document.querySelector('#password');
+    if (togglePassword && passwordInput) {
+      togglePassword.addEventListener('click', function () {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+      });
+    }
 
     // THEME TOGGLE LOGIC (Defaults to Light)
     function toggleTheme() {
@@ -3078,6 +3115,5 @@
       });
     }
   </script>
-</body>
 </body>
 </html>
