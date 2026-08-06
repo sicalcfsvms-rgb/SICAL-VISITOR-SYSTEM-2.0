@@ -1,13 +1,13 @@
 {
   "name": "SICAL Visitor Management System",
   "short_name": "SICAL VMS",
-  "start_url": "./index.html",
+  "start_url": "/SICAL-VISITOR-SYSTEM-2.0/index.html",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#1e3a8a",
   "icons": [
     {
-      "src": "icon.JPG",
+      "src": "/SICAL-VISITOR-SYSTEM-2.0/icon.jpg",
       "sizes": "512x512",
       "type": "image/jpeg",
       "purpose": "any maskable"
