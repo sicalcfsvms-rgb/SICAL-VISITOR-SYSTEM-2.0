@@ -306,7 +306,7 @@
       width: 100%; font-size: 0.75rem;
     }
 
-   .chart-box { display: flex; align-items: center; justify-content: space-around; gap: 8px; padding: 2px 0; }
+    .chart-box { display: flex; align-items: center; justify-content: space-around; gap: 8px; padding: 2px 0; }
     .donut-chart {
       width: 110px; height: 110px; border-radius: 50%; background: #cbd5e1;
       position: relative; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
@@ -396,6 +396,11 @@
     th, td { border: 1px solid var(--border-color); padding: 4px 6px; text-align: left; vertical-align: middle; line-height: 1.15; }
     th { background: var(--vms-light); color: var(--navy); font-weight: 800; text-align: center; white-space: nowrap; }
     tr:nth-child(even) { background: #f8fafc; }
+
+    /* Fix for summary small tables so they don't force horizontal scrollbars */
+    .dashboard-grid-2 .table-responsive-wrapper table {
+      min-width: 100% !important;
+    }
 
     .filter-bar { display: flex; gap: 8px; align-items: flex-end; margin-bottom: 10px; flex-wrap: wrap; width: 100%; }
     .search-box { flex: 1; min-width: 150px; }
@@ -592,9 +597,9 @@
               <table>
                 <thead>
                   <tr>
-                    <th>Total IN</th>
-                    <th>Checked OUT</th>
-                    <th>Currently NOT OUT</th>
+                    <th>📥 Total IN</th>
+                    <th>📤 Checked OUT</th>
+                    <th>🏢 Currently NOT OUT</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -605,6 +610,39 @@
                   </tr>
                 </tbody>
               </table>
+            </div>
+            
+            <!-- Triple Independent Metric Bars (Total IN, Checked OUT, Inside) -->
+            <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.68rem; font-weight: 700; color: #0284c7; margin-bottom: 2px;">
+                  <span>📥 Total Entries </span>
+                  <span id="labelShareTotal">100% (0 visitors)</span>
+                </div>
+                <div style="background: #e2e8f0; height: 6px; border-radius: 3px; overflow: hidden;">
+                  <div id="miniBarTotal" style="height: 100%; background: #0284c7; width: 100%; transition: width 0.5s ease;"></div>
+                </div>
+              </div>
+
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.68rem; font-weight: 700; color: #16a34a; margin-bottom: 2px;">
+                  <span>📤 Checked Out </span>
+                  <span id="labelShareOut">0% (0 visitors)</span>
+                </div>
+                <div style="background: #e2e8f0; height: 6px; border-radius: 3px; overflow: hidden;">
+                  <div id="miniBarOut" style="height: 100%; background: #16a34a; width: 0%; transition: width 0.5s ease;"></div>
+                </div>
+              </div>
+
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.68rem; font-weight: 700; color: #dc2626; margin-bottom: 2px;">
+                  <span>🏢 Inside Premises </span>
+                  <span id="labelShareInside">0% (0 visitors)</span>
+                </div>
+                <div style="background: #e2e8f0; height: 6px; border-radius: 3px; overflow: hidden;">
+                  <div id="miniBarInside" style="height: 100%; background: #dc2626; width: 0%; transition: width 0.5s ease;"></div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1961,6 +1999,19 @@
       document.getElementById('tblTotalIn').textContent = logs.length;
       document.getElementById('tblTotalOut').textContent = totalCheckedOut;
       document.getElementById('tblTotalNotOut').textContent = insideCount;
+
+      // Update Triple Independent Metric Bars
+      const totalInCount = logs.length;
+      const pctOut = totalInCount > 0 ? Math.round((totalCheckedOut / totalInCount) * 100) : 0;
+      const pctInside = totalInCount > 0 ? Math.round((insideCount / totalInCount) * 100) : 0;
+
+      document.getElementById('labelShareOut').textContent = `${pctOut}% (${totalCheckedOut} visitors)`;
+      document.getElementById('labelShareInside').textContent = `${pctInside}% (${insideCount} visitors)`;
+      document.getElementById('labelShareTotal').textContent = `100% (${totalInCount} visitors)`;
+
+      document.getElementById('miniBarOut').style.width = pctOut + '%';
+      document.getElementById('miniBarInside').style.width = pctInside + '%';
+      document.getElementById('miniBarTotal').style.width = '100%';
 
       renderNotOutVisitorList(notOutList);
       renderCategoryWiseTable(categoryCounts);
