@@ -501,8 +501,30 @@
     .btn-reset { background: #f59e0b; color: white; border: none; padding: 3px 6px; border-radius: 4px; cursor: pointer; font-size: 0.68rem; font-weight: bold; margin-right: 4px; }
     .btn-out { background: #e11d48; color: white; border: none; padding: 3px 7px; border-radius: 4px; cursor: pointer; font-size: 0.68rem; font-weight: bold; display: inline-block; }
 
-    .overstay-box-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 8px; margin-top: 6px; }
-    .overstay-card { background: var(--card-bg); border: 1px solid #fca5a5; border-left: 4px solid #dc2626; border-radius: 6px; padding: 6px 8px; font-size: 0.7rem; color: var(--text-dark); }
+    /* FIXED EXTENDED STAY GRID STYLING TO PREVENT STRETCHING */
+    .overstay-box-grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); 
+      gap: 8px; 
+      margin-top: 6px; 
+      max-height: 280px; 
+      overflow-y: auto;  
+      padding-right: 4px; 
+    }
+    .overstay-card { 
+      background: var(--card-bg); 
+      border: 1px solid #fca5a5; 
+      border-left: 4px solid #dc2626; 
+      border-radius: 6px; 
+      padding: 6px 8px; 
+      font-size: 0.7rem; 
+      color: var(--text-dark); 
+      height: 85px; 
+      display: flex; 
+      flex-direction: column; 
+      justify-content: space-between; 
+      box-sizing: border-box; 
+    }
     .overstay-card strong { color: var(--navy); }
 
     @media (max-width: 1100px) {
@@ -834,7 +856,7 @@
 
         <!-- Extended Duration Box Pattern -->
         <div class="card" style="margin-bottom: 10px;">
-          <h3 style="font-size: 0.85rem; color: #dc2626;"><i class="fa-solid fa-hourglass-alert"></i> Time Capture — Extended Stay Visitors (> 8 Hours Inside CFS Site)</h3>
+          <h3 id="overstayTitle" style="font-size: 0.85rem; color: #dc2626;"><i class="fa-solid fa-hourglass-alert"></i> Time Capture — Extended Stay Visitors (> 8 Hours Inside CFS Site) (0)</h3>
           <div id="overstayBoxContainer" class="overstay-box-grid">
             <div style="font-size:0.72rem; color:#64748b;">No visitors exceeding standard stay duration.</div>
           </div>
@@ -2258,6 +2280,13 @@
 
     function renderOverstayBoxPattern(list) {
       const container = document.getElementById('overstayBoxContainer');
+      const titleElem = document.getElementById('overstayTitle');
+      
+      // Update dynamic count inside the section title
+      if (titleElem) {
+        titleElem.innerHTML = `<i class="fa-solid fa-hourglass-alert"></i> Time Capture — Extended Stay Visitors (> 8 Hours Inside CFS Site) (${list ? list.length : 0})`;
+      }
+
       container.innerHTML = '';
       if(!list || list.length === 0) {
         container.innerHTML = '<div style="font-size:0.7rem; color:#64748b; padding:6px;">No visitors currently exceeding standard stay duration (>8 Hours).</div>';
