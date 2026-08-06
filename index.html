@@ -1050,7 +1050,7 @@
                     <div class="badge-row"><div class="badge-label">Name:</div><div class="badge-val" id="prevName">-</div></div>
                     <div class="badge-row"><div class="badge-label">Category:</div><div class="badge-val" id="prevCategory">Others</div></div>
                     <div class="badge-row"><div class="badge-label">Mobile:</div><div class="badge-val" id="prevMobile">-</div></div>
-                    <div class="badge-row"><div class="badge-label">ID Proof:</div><div class="badge-val"><span id="prevIdType">Aadhaar Card</span> (<span id="prevIdNumber">[Aadhaar Redacted]</span>)</div></div>
+                    <div class="badge-row"><div class="badge-label">ID Proof:</div><div class="badge-val"><span id="prevIdType">Aadhaar Card</span> (<span id="prevIdNumber">-</span>)</div></div>
                     <div class="badge-row"><div class="badge-label">Company:</div><div class="badge-val" id="prevCompany">-</div></div>
                     <div class="badge-row"><div class="badge-label">To Meet:</div><div class="badge-val" id="prevHost">-</div></div>
                     <div class="badge-row"><div class="badge-label">Dept:</div><div class="badge-val" id="prevDept">Admin</div></div>
@@ -1832,7 +1832,7 @@
           purpose: masterRecord.purpose,
           vehicle: masterRecord.vehicle || 'N/A',
           idType: masterRecord.idType || 'Aadhaar Card',
-          idNumber: masterRecord.idNumber || '[Aadhaar Redacted]',
+          idNumber: masterRecord.idNumber || 'N/A',
           photo: preservedPhoto,
           category: masterRecord.category || 'Others'
         };
@@ -2560,7 +2560,7 @@
       document.getElementById('prevMobile').textContent = mobileVal;
       document.getElementById('prevCompany').textContent = companyVal;
       document.getElementById('prevIdType').textContent = idTypeVal;
-      document.getElementById('prevIdNumber').textContent = '[Aadhaar Redacted]';
+      document.getElementById('prevIdNumber').textContent = idNumVal;
 
       document.getElementById('prevHost').textContent = hostVal;
       document.getElementById('prevDept').textContent = deptVal;
@@ -2618,7 +2618,7 @@
         purpose: document.getElementById('purposeSelect').value,
         vehicle: document.getElementById('vehicleNo').value || 'N/A',
         idType: document.getElementById('idType').value,
-        idNumber: document.getElementById('idNumber').value || '[Aadhaar Redacted]',
+        idNumber: document.getElementById('idNumber').value || 'N/A',
         photo: capturedPhotoData || 'NO_PHOTO'
       };
 
@@ -2924,7 +2924,7 @@
           <td><span style="padding:2px 6px; border-radius:4px; font-weight:bold; font-size:0.7rem;">${log.category || 'Others'}</span></td>
           <td>${log.mobile}</td>
           <td>${log.idType || 'Aadhaar Card'}</td>
-          <td>[Aadhaar Redacted]</td>
+          <td>${log.idNumber || 'N/A'}</td>
           <td>${log.company}</td>
           <td>${log.personToMeet}</td>
           <td>${deptDisplay}</td>
@@ -3019,7 +3019,7 @@
           `"${log.category || 'Others'}"`,
           `"${log.mobile}"`,
           `"${log.idType || 'Aadhaar Card'}"`,
-          `"[Aadhaar Redacted]"`,
+          `"${log.idNumber || 'N/A'}"`,
           `"${log.company}"`,
           `"${log.personToMeet}"`,
           `"${log.department}"`,
