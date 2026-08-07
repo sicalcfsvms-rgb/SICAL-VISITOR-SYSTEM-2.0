@@ -669,7 +669,7 @@
       <ul class="top-menu">
         <li id="navDashboard"><button class="active" onclick="switchTab('dashboardTab')"><i class="fa-solid fa-chart-line"></i> Dashboard</button></li>
         <li id="navEntry"><button onclick="switchTab('entryTab')"><i class="fa-solid fa-id-card"></i> Visitor Entry</button></li>
-        <li id="navOutGate"><button onclick="switchTab('outGateTab')"><i class="fa-solid fa-right-from-bracket"></i> Visitor Out-Gate</button></li>
+        <li id="navOutGate"><button onclick="switchTab('outGateTab')"><i class="fa-solid fa-right-from-bracket"></i> Gate Scan Terminal</button></li>
         <li id="navReport"><button onclick="switchTab('reportTab')"><i class="fa-solid fa-file-invoice"></i> Reports & Logs</button></li>
         <li id="navAdmin"><button onclick="switchTab('adminTab')"><i class="fa-solid fa-user-gear"></i> Admin Setup</button></li>
       </ul>
@@ -1143,10 +1143,10 @@
         </div>
       </div>
 
-      <!-- DEDICATED VISITOR OUT-GATE SCANNER TAB -->
+      <!-- DEDICATED GATE SCAN TERMINAL TAB -->
       <div id="outGateTab" class="tab-content">
         <div class="card" style="max-width: 800px; margin: 0 auto;">
-          <h3 style="font-size: 1rem; margin-bottom: 12px; color: var(--navy);"><i class="fa-solid fa-right-from-bracket"></i> Visitor In/Out-Gate Camera & QR Check-In & Out Terminal</h3>
+          <h3 style="font-size: 1rem; margin-bottom: 12px; color: var(--navy);"><i class="fa-solid fa-right-from-bracket"></i> Visitor Gate Scan Terminal (Auto In / Out Check)</h3>
           
           <div style="background: var(--vms-light); border: 2px dashed #0284c7; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
             <p style="font-size: 0.85rem; font-weight: 700; color: var(--text-dark); margin-bottom: 12px;">
@@ -1553,7 +1553,7 @@
       const hasAdmin = isMasterAdmin || menus.includes('admin');
       const hasDashboard = isMasterAdmin || menus.includes('dashboard');
       const hasEntry = isMasterAdmin || menus.includes('entry');
-      const hasOutGate = isMasterAdmin || menus.includes('outgate') || menus.includes('visitoroutgate');
+     const hasOutGate = isMasterAdmin || menus.includes('outgate') || menus.includes('visitoroutgate') || menus.includes('gatescanterminal');
       const hasReport = isMasterAdmin || menus.includes('report') || menus.includes('reports') || menus.includes('reports&logs');
 
       // Completely hide unauthorized navigation tabs from the DOM view
@@ -2786,7 +2786,7 @@
       
       const hasDash = confirm(`Allow "${userObj.username}" access to DASHBOARD?\n\nClick OK for YES, Cancel for NO.`);
       const hasEntry = confirm(`Allow "${userObj.username}" access to VISITOR ENTRY?\n\nClick OK for YES, Cancel for NO.`);
-      const hasOutGate = confirm(`Allow "${userObj.username}" access to VISITOR OUT-GATE?\n\nClick OK for YES, Cancel for NO.`);
+      const hasOutGate = confirm(`Allow "${userObj.username}" access to GATE SCAN TERMINAL?\n\nClick OK for YES, Cancel for NO.`);
       const hasReport = confirm(`Allow "${userObj.username}" access to REPORTS & LOGS?\n\nClick OK for YES, Cancel for NO.`);
       const canMarkOut = confirm(`Allow "${userObj.username}" permission to MARK OUT VISITORS?\n\nClick OK for YES (Security), Cancel for NO (Read-only viewers).`);
 
