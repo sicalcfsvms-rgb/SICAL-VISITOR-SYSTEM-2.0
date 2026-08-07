@@ -39,14 +39,25 @@
       --vms-light: #1e293b;
       --gray-bg: #0b0f19;
       --text-dark: #f1f5f9;
-      --border-color: #334155;
-      --card-bg: #111827;
-      --table-bg: #111827;
-      --table-alt: #0d1322;
-      --input-bg: #1f2937;
-      --header-bg: linear-gradient(135deg, #030712 0%, #111827 100%);
-      --badge-bg: #1e3a8a;
-      --badge-text: #38bdf8;
+      --border-color: #475569;
+      --card-bg: #1e293b;
+      --table-bg: #1e293b;
+      --table-alt: #0f172a;
+      --input-bg: #334155;
+      --header-bg: linear-gradient(135deg, #020617 0%, #0f172a 100%);
+      --badge-bg: #0369a1;
+      --badge-text: #e0f2fe;
+    }
+
+    [data-theme="dark"] input, 
+    [data-theme="dark"] select {
+      background-color: var(--input-bg);
+      color: var(--text-dark);
+      border-color: var(--border-color);
+    }
+
+    [data-theme="dark"] .table-responsive-wrapper {
+      border-color: var(--border-color);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
@@ -1283,7 +1294,7 @@
               <div class="checkbox-group">
                 <label><input type="checkbox" id="permDashboard" checked> Dashboard</label>
                 <label><input type="checkbox" id="permEntry" checked> Visitor Entry</label>
-                <label><input type="checkbox" id="permOutGate" checked> Visitor QR SCAN In&OUT</label>
+                <label><input type="checkbox" id="permOutGate" checked> Gate Scan Terminal</label>
                 <label><input type="checkbox" id="permReport" checked> Reports & Logs</label>
               </div>
             </div>
@@ -1553,7 +1564,7 @@
       const hasAdmin = isMasterAdmin || menus.includes('admin');
       const hasDashboard = isMasterAdmin || menus.includes('dashboard');
       const hasEntry = isMasterAdmin || menus.includes('entry');
-     const hasOutGate = isMasterAdmin || menus.includes('outgate') || menus.includes('visitoroutgate') || menus.includes('gatescanterminal');
+      const hasOutGate = isMasterAdmin || menus.includes('outgate') || menus.includes('visitoroutgate') || menus.includes('gatescanterminal');
       const hasReport = isMasterAdmin || menus.includes('report') || menus.includes('reports') || menus.includes('reports&logs');
 
       // Completely hide unauthorized navigation tabs from the DOM view
@@ -1616,7 +1627,7 @@
         const hasAdmin = isMasterAdmin || menus.includes('admin');
         const hasDashboard = isMasterAdmin || menus.includes('dashboard');
         const hasEntry = isMasterAdmin || menus.includes('entry');
-        const hasOutGate = isMasterAdmin || menus.includes('outgate') || menus.includes('visitoroutgate');
+        const hasOutGate = isMasterAdmin || menus.includes('outgate') || menus.includes('visitoroutgate') || menus.includes('gatescanterminal');
         const hasReport = isMasterAdmin || menus.includes('report') || menus.includes('reports') || menus.includes('reports&logs');
 
         if (tabId === 'adminTab' && !hasAdmin) return;
