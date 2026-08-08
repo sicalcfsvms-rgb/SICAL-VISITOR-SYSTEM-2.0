@@ -1316,7 +1316,6 @@
   </div>
 
   <script>
-    // Updated with your Version 37 Web App URL
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzvwX2kcT90QIVRMFQlTPowG2PRRvEPmFKk_SzPOHp-47ufnltlH-joqhRqhKuKoloLCA/exec";
 
     let globalCloudLogs = [];
@@ -1393,7 +1392,7 @@
       }
     });
 
-    // SECURE SERVER-SIDE LOGIN HANDLER (Fixed for redirect responses)
+    // SECURE SERVER-SIDE LOGIN HANDLER
     const loginForm = document.getElementById('loginForm');
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -1413,7 +1412,6 @@
         try {
           result = JSON.parse(textResp);
         } catch (parseErr) {
-          // Fallback if response text contains HTML or unexpected wrapping
           console.log("Raw response text: ", textResp);
           throw new Error("Invalid JSON response from server");
         }
