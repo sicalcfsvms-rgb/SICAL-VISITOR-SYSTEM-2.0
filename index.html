@@ -1316,7 +1316,7 @@
   </div>
 
   <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzvwX2kcT90QIVRMFQlTPowG2PRRvEPmFKk_SzPOHp-47ufnltlH-joqhRqhKuKoloLCA/exec";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyXj9tnxpAoeeHu5BGuyjMIEUCtQoIWsuiZXawGUjcQeOw-a_ZosWEDgVXth-Mubei3qw/exec";
 
     let globalCloudLogs = [];
     let dedicatedScanner = null;
@@ -2561,7 +2561,7 @@
       if (globalCloudLogs.length === 0) { alert("No data available to export."); return; }
       let csvContent = "data:text/csv;charset=utf-8,";
       csvContent += "Pass No,In Date,Time In,Out Date,Time Out,Visitor Name,Category,Mobile Number,ID Type,ID Number,Company/From,Person To Meet,Department,Validity,Purpose,Vehicle No,Photo Link\n";
-      globalCloudLogs.forEach(log => {
+      globalCloudLogs.headers.forEach(log => {
         csvContent += [
           `"${log.passNo}"`, `"${log.date}"`, `"${log.timeIn}"`, `"${log.outDate || '_______'}"`, `"${log.timeOut}"`,
           `"${log.name}"`, `"${log.category || 'Others'}"`, `"${log.mobile}"`, `"${log.idType || 'Aadhaar Card'}"`,
