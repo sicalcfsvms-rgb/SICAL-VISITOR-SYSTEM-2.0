@@ -1432,6 +1432,7 @@
       }
     });
 
+    // STRICT MENU PERMISSION CHECKER FOR USERS
     function applyPermissions() {
       if (!activeUser) return;
 
@@ -1446,7 +1447,7 @@
       const uName = String(activeUser.username || "").trim().toUpperCase();
       const isMasterAdmin = (role === 'admin' || uName === 'SICAL ADMIN' || uName === 'SICALADMIN' || uName === 'KUMARESAN_M');
 
-      // STRICT EXACT MENU MATCHING TO AVOID SUBSTRING BUGS
+      // STRICT EXACT MATCHING TO PREVENT CFS-VMS OR CFS HEAD FROM GETTING ADMIN ACCESS
       const hasAdmin = isMasterAdmin || menus.indexOf('admin') !== -1;
       const hasDashboard = isMasterAdmin || menus.indexOf('dashboard') !== -1;
       const hasEntry = isMasterAdmin || menus.indexOf('entry') !== -1 || menus.indexOf('visitor entry') !== -1;
@@ -1465,7 +1466,7 @@
       if (navReport) navReport.style.display = hasReport ? 'inline-block' : 'none';
       if (navAdmin) navAdmin.style.display = hasAdmin ? 'inline-block' : 'none';
 
-      // Ensure that if user does not have admin access, they land on an allowed tab
+      // Ensure user lands on an authorized tab if current tab is unauthorized
       const activeTab = document.querySelector('.tab-content.active');
       if (activeTab) {
         if (activeTab.id === 'adminTab' && !hasAdmin) switchToFirstAvailableTab(hasDashboard, hasEntry, hasOutGate, hasReport);
@@ -1686,7 +1687,7 @@
       if (matchingLogs.length > 0) {
         const masterRecord = matchingLogs[0];
         const todayStr = getCurrentDate();
-        const activeInsideLog = matchingLogs.slice().reverse().find(l => !l.timeOut || l.timeOut === '_______' || l.timeOut === '--:--');
+        const activeInsideLog = matchingLogs.slice().reverse().find(l => !l.timeOut || l.timeOut === '_______' || l.timeOut === '--:--' || l.timeOut === '--');
 
         if (activeInsideLog) {
           const outTime = getCurrentTime();
@@ -1782,6 +1783,44 @@
       resetForm();
     }
 
+    // ROBUST TIME PARSER TO CLEAN GOOGLE SHEETS EPOCH DATES
+    function cleanTimeString(rawTime) {
+      if (!rawTime) return '--:--';
+      let str = String(rawTime).trim();
+      if (str.includes('GMT') || str.includes('1899') || str.includes('1900')) {
+        try {
+          let dt = new Date(str);
+          if (!isNaN(dt.getTime())) {
+            let h = dt.getHours();
+            let m = dt.getMinutes();
+            let ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12;
+            h = h ? h : 12;
+            let mStr = m < 10 ? '0' + m : m;
+            return `${h}:${mStr} ${ampm}`;
+          }
+        } catch(e) {}
+      }
+      return str.replace(/'/g, '');
+    }
+
+    function cleanDateString(rawDate) {
+      if (!rawDate) return '';
+      let str = String(rawDate).trim();
+      if (str.includes('GMT') || str.includes('1899') || str.includes('1900')) {
+        try {
+          let dt = new Date(str);
+          if (!isNaN(dt.getTime())) {
+            let d = String(dt.getDate()).padStart(2, '0');
+            let m = String(dt.getMonth() + 1).padStart(2, '0');
+            let y = dt.getFullYear();
+            return `${d}-${m}-${y}`;
+          }
+        } catch(e) {}
+      }
+      return str.replace(/'/g, '');
+    }
+
     async function fetchCloudData() {
       document.getElementById('statMonth').textContent = "...";
       document.getElementById('statToday').textContent = "...";
@@ -1797,10 +1836,10 @@
             globalCloudLogs = (data.logs || []).map(log => ({
               ...log,
               mobile: String(log.mobile || "").trim(),
-              date: cleanDateTimeDisplay(log.date, 'date'),
-              outDate: cleanDateTimeDisplay(log.outDate, 'date'),
-              timeIn: cleanDateTimeDisplay(log.timeIn, 'time'),
-              timeOut: cleanDateTimeDisplay(log.timeOut, 'time'),
+              date: cleanDateString(log.date),
+              outDate: cleanDateString(log.outDate),
+              timeIn: cleanTimeString(log.timeIn),
+              timeOut: cleanTimeString(log.timeOut),
               category: log.category || 'Others'
             }));
 
@@ -1992,7 +2031,7 @@
           if (dObj.getMonth() === nowMonth && dObj.getFullYear() === nowYear) countMonth++;
         }
 
-        const isCheckedOut = (log.timeOut && log.timeOut !== '_______' && log.timeOut !== '--:--');
+        const isCheckedOut = (log.timeOut && log.timeOut !== '_______' && log.timeOut !== '--:--' && log.timeOut !== '--');
         let cat = log.category || 'Others';
         if (!categoryCounts[cat]) categoryCounts[cat] = { in: 0, out: 0, notOut: 0 };
         categoryCounts[cat].in++;
@@ -2204,29 +2243,34 @@
       return isNaN(d) ? null : d;
     }
 
-    function cleanDateTimeDisplay(val, type) {
-      if(!val) return type === 'date' ? '' : '--:--';
-      return String(val).replace(/'/g, '').trim();
-    }
-
     function calculateTotalHoursObj(dateStr, timeInStr, timeOutStr) {
       if (!timeInStr || timeInStr === '--:--') return { displayStr: "INSIDE", rawHours: 0 };
       try {
         const parseTime12 = (tStr) => {
-          const parts = tStr.trim().split(' ');
-          if(parts.length < 2) return null;
+          tStr = String(tStr).trim().toUpperCase();
+          let parts = tStr.split(' ');
+          if (parts.length < 2) {
+            let timeParts = tStr.split(':');
+            if(timeParts.length >= 2) {
+              let h = parseInt(timeParts[0], 10);
+              let m = parseInt(timeParts[1], 10);
+              return h * 60 + m;
+            }
+            return null;
+          }
           const timeParts = parts[0].split(':');
           let hours = parseInt(timeParts[0], 10);
           const minutes = parseInt(timeParts[1], 10);
-          const modifier = parts[1].toUpperCase();
+          const modifier = parts[1];
           if (modifier === 'PM' && hours < 12) hours += 12;
           if (modifier === 'AM' && hours === 12) hours = 0;
           return hours * 60 + minutes;
         };
+
         const minIn = parseTime12(timeInStr);
         if (minIn === null) return { displayStr: "INSIDE", rawHours: 0 };
         let minOut;
-        if (!timeOutStr || timeOutStr === '_______' || timeOutStr === '--:--') {
+        if (!timeOutStr || timeOutStr === '_______' || timeOutStr === '--:--' || timeOutStr === '--') {
           const now = new Date();
           minOut = now.getHours() * 60 + now.getMinutes();
         } else {
@@ -2239,7 +2283,7 @@
         if (hrs === 0) displayStr = `${mins} mins`;
         else if (mins === 0) displayStr = `${hrs} hr${hrs > 1 ? 's' : ''}`;
         else displayStr = `${hrs} hr ${mins} mins`;
-        if (!timeOutStr || timeOutStr === '_______' || timeOutStr === '--:--') {
+        if (!timeOutStr || timeOutStr === '_______' || timeOutStr === '--:--' || timeOutStr === '--') {
           displayStr = `INSIDE (${displayStr})`;
         }
         return { displayStr: displayStr, rawHours: rawHours };
@@ -2256,7 +2300,7 @@
         return;
       }
       recentLogs.forEach(log => {
-        const timeOutDisplay = (log.timeOut && log.timeOut !== '_______' && log.timeOut !== '--:--') ? log.timeOut : '--';
+        const timeOutDisplay = (log.timeOut && log.timeOut !== '_______' && log.timeOut !== '--:--' && log.timeOut !== '--') ? log.timeOut : '--';
         const hrsObj = calculateTotalHoursObj(log.date, log.timeIn, log.timeOut);
         const deptDisplay = log.department && log.department.toUpperCase() === 'SICAL IT' ? 'IT' : (log.department || 'Admin');
         tbody.innerHTML += `<tr>
@@ -2389,9 +2433,9 @@
 
         if (reprintExactPass) {
           document.getElementById('prevPassNo').textContent = match.passNo;
-          document.getElementById('prevDate').textContent = cleanDateTimeDisplay(match.date, 'date');
-          document.getElementById('prevTimeIn').textContent = cleanDateTimeDisplay(match.timeIn, 'time');
-          document.getElementById('prevTimeOut').textContent = (match.timeOut && match.timeOut !== '_______') ? cleanDateTimeDisplay(match.timeOut, 'time') : '_______';
+          document.getElementById('prevDate').textContent = cleanDateString(match.date);
+          document.getElementById('prevTimeIn').textContent = cleanTimeString(match.timeIn);
+          document.getElementById('prevTimeOut').textContent = (match.timeOut && match.timeOut !== '_______' && match.timeOut !== '--') ? cleanTimeString(match.timeOut) : '_______';
           document.getElementById('prevPurpose').textContent = match.purpose || 'Meeting';
           document.getElementById('prevValidity').textContent = getValidityDateRange(match.date, match.validity);
           generateQrCode("passQrCode", getQrWebUrl(match.passNo), 130);
@@ -2645,7 +2689,7 @@
         let actionContent = '';
         let outDateDisplay = log.outDate && log.outDate !== '_______' && log.outDate !== '--' ? log.outDate : '_______';
 
-        if (log.timeOut === '_______' || log.timeOut === '--:--' || !log.timeOut) {
+        if (log.timeOut === '_______' || log.timeOut === '--:--' || log.timeOut === '--' || !log.timeOut) {
           outDateDisplay = '_______';
           if (userCanMarkOut) {
             actionContent = `<button class="btn-out" onclick="recordTimeOut('${log.passNo}', '${log.timeIn}')">Mark Out</button>`;
@@ -2668,7 +2712,7 @@
           <td>${log.date}</td>
           <td>${log.timeIn}</td>
           <td>${outDateDisplay}</td>
-          <td><strong style="color: ${(log.timeOut !== '_______' && log.timeOut !== '--:--') ? '#0284c7' : '#94a3b8'}">${log.timeOut}</strong></td>
+          <td><strong style="color: ${(log.timeOut !== '_______' && log.timeOut !== '--:--' && log.timeOut !== '--') ? '#0284c7' : '#94a3b8'}">${log.timeOut}</strong></td>
           <td>${log.name}</td>
           <td><span style="padding:2px 6px; border-radius:4px; font-weight:bold; font-size:0.7rem;">${log.category || 'Others'}</span></td>
           <td>${log.mobile}</td>
@@ -2704,7 +2748,7 @@
           passMap[log.passNo] = { passNo: log.passNo, issuedDate: log.date, name: log.name, category: log.category || 'Others', mobile: log.mobile, company: log.company, validity: log.validity, inCount: 0, outCount: 0 };
         }
         passMap[log.passNo].inCount++;
-        if (log.timeOut && log.timeOut !== '_______' && log.timeOut !== '--:--') passMap[log.passNo].outCount++;
+        if (log.timeOut && log.timeOut !== '_______' && log.timeOut !== '--:--' && log.timeOut !== '--') passMap[log.passNo].outCount++;
       });
 
       Object.values(passMap).forEach(item => {
