@@ -1316,7 +1316,8 @@
   </div>
 
   <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyldXDm1ciQe9VHnd6pHGYNeVcdZt2nq8di9fp4ncxN-DvEAKavbJT89HNwTCyCMAJZ/exec";
+    // Updated with your Version 37 Web App URL
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzvwX2kcT90QIVRMFQlTPowG2PRRvEPmFKk_SzPOHp-47ufnltlH-joqhRqhKuKoloLCA/exec";
 
     let globalCloudLogs = [];
     let dedicatedScanner = null;
@@ -1350,106 +1351,6 @@
         document.documentElement.setAttribute('data-theme', 'dark');
         localStorage.setItem('sical_vms_theme', 'dark');
         if(icon) icon.className = 'fa-solid fa-sun';
-      }
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      const savedTheme = localStorage.getItem('sical_vms_theme') || 'light';
-      const icon = document.getElementById('themeIcon');
-      if (savedTheme === 'dark') {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        if(icon) icon.className = 'fa-solid fa-sun';
-      } else {
-        document.documentElement.removeAttribute('data-theme');
-        if(icon) icon.className = 'fa-solid fa-moon';
-      }
-    });
-
-    function parseToCleanDateObj(rawVal) {
-      if (!rawVal) return null;
-      var str = String(rawVal).trim();
-      if (/^\d{1,2}[-\/]\d{1,2}[-\/]\d{4}$/.test(str)) {
-        var p = str.split(/[-\/]/);
-        return new Date(parseInt(p[2], 10), parseInt(p[1], 10) - 1, parseInt(p[0], 10));
-      }
-      if (/^\d{4}[-\/]\d{1,2}[-\/]\d{1,2}$/.test(str)) {
-        var p = str.split(/[-\/]/);
-        return new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10));
-      }
-      var parsed = new Date(str);
-      return isNaN(parsed.getTime()) ? null : parsed;
-    }
-
-    function cleanDateTimeDisplay(val, type) {
-      if (!val || val === '_______' || val === '--:--' || val === 'N/A') return val || '_______';
-      var d = parseToCleanDateObj(val);
-      if (d) {
-        if (type === 'date') {
-          var day = String(d.getDate()).padStart(2, '0');
-          var month = String(d.getMonth() + 1).padStart(2, '0');
-          var year = d.getFullYear();
-          return day + '-' + month + '-' + year;
-        }
-        if (type === 'time') {
-          return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-        }
-      }
-      return String(val).trim();
-    }
-
-    function toggleCustomDaysInput(show) {
-      const container = document.getElementById('customDaysContainer');
-      if (container) {
-        container.style.display = show ? 'block' : 'none';
-      }
-      updatePreview();
-    }
-
-    function getValidityDateRange(entryDateStr, validityType) {
-      var start = parseToCleanDateObj(entryDateStr) || new Date();
-      var end = new Date(start);
-
-      if (validityType === 'Weekly') {
-        end.setDate(start.getDate() + 6);
-      } else if (validityType === 'Monthly') {
-        end.setMonth(start.getMonth() + 1);
-        end.setDate(end.getDate() - 1);
-      } else if (validityType && validityType.startsWith('Custom')) {
-        const match = validityType.match(/\d+/);
-        const days = match ? parseInt(match[0], 10) : 2;
-        end.setDate(start.getDate() + (days - 1));
-      }
-
-      var startFmt = cleanDateTimeDisplay(start, 'date');
-      var endFmt = cleanDateTimeDisplay(end, 'date');
-
-      if (validityType === 'Daily') return 'Daily';
-      return `${validityType} (${startFmt} to ${endFmt})`;
-    }
-
-    function getDirectDriveImageUrl(url) {
-      if (!url || url === 'No Photo' || url === 'NO_PHOTO' || url === 'undefined' || url === 'N/A') return null;
-      if (url.startsWith('data:image')) return url;
-      let fileId = null;
-      if (url.includes('drive.google.com/file/d/')) {
-        fileId = url.split('/d/')[1].split('/')[0].split('?')[0];
-      } else if (url.includes('googleusercontent.com/d/')) {
-        fileId = url.split('/d/')[1].split('/')[0].split('?')[0];
-      } else if (url.includes('id=')) {
-        fileId = url.split('id=')[1].split('&')[0];
-      }
-      if (fileId) {
-        return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
-      }
-      return url;
-    }
-
-    let activeUser = null;
-
-    function updateHeaderUsername(name) {
-      const displayElem = document.getElementById('displayUsername');
-      if (displayElem && name) {
-        displayElem.textContent = name;
       }
     }
 
@@ -1492,7 +1393,7 @@
       }
     });
 
-    // SECURE SERVER-SIDE LOGIN HANDLER
+    // SECURE SERVER-SIDE LOGIN HANDLER (Fixed for redirect responses)
     const loginForm = document.getElementById('loginForm');
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -1502,10 +1403,20 @@
       try {
         const response = await fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
+          redirect: 'follow',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({ action: "login", username: user, pass: pass })
         });
-        const result = await response.json();
+        
+        const textResp = await response.text();
+        let result;
+        try {
+          result = JSON.parse(textResp);
+        } catch (parseErr) {
+          // Fallback if response text contains HTML or unexpected wrapping
+          console.log("Raw response text: ", textResp);
+          throw new Error("Invalid JSON response from server");
+        }
 
         if (result && result.status === "success") {
           activeUser = result.user;
@@ -1770,6 +1681,7 @@
           if (GOOGLE_SCRIPT_URL) {
             fetch(GOOGLE_SCRIPT_URL, {
               method: 'POST',
+              redirect: 'follow',
               headers: { 'Content-Type': 'text/plain;charset=utf-8' },
               body: JSON.stringify({
                 action: "updateTimeOut",
@@ -1812,10 +1724,12 @@
           try {
             const resp = await fetch(GOOGLE_SCRIPT_URL, {
               method: 'POST',
+              redirect: 'follow',
               headers: { 'Content-Type': 'text/plain;charset=utf-8' },
               body: JSON.stringify(newEntry)
             });
-            const res = await resp.json();
+            const textResp = await resp.text();
+            const res = JSON.parse(textResp);
             if (res && res.status === "success") {
               displayOutResult(`SUCCESS: Visitor ${masterRecord.name} (${res.passNo}) Checked-IN at ${newTimeIn}!`, true);
             }
@@ -2433,10 +2347,12 @@
         try {
           const response = await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
+            redirect: 'follow',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(newEntry)
           });
-          const res = await response.json();
+          const textResp = await response.text();
+          const res = JSON.parse(textResp);
           if (res && res.status === "success") {
             isPassAlreadySaved = true;
             lockedPreviewPassNo = res.passNo;
@@ -2486,6 +2402,7 @@
         try {
           await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
+            redirect: 'follow',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({
               action: "addUser",
@@ -2514,6 +2431,7 @@
         try {
           await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
+            redirect: 'follow',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({
               action: "updateTimeOut",
