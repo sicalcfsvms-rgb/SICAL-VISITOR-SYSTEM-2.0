@@ -1537,14 +1537,14 @@
       }
 
       const role = String(activeUser.role || "").toLowerCase();
-      const uName = String(activeUser.username || "").toUpperCase();
-      const isMasterAdmin = (role === 'admin' || uName === 'SICAL ADMIN' || uName === 'KUMARESAN_M');
+      const uName = String(activeUser.username || "").trim().toUpperCase();
+      const isMasterAdmin = (role === 'admin' || uName === 'SICAL ADMIN' || uName === 'SICALADMIN' || uName === 'KUMARESAN_M');
 
-      const hasAdmin = isMasterAdmin || menus.includes('admin') || menus.includes('admintab');
-      const hasDashboard = isMasterAdmin || menus.includes('dashboard') || menus.includes('dashboardtab');
-      const hasEntry = isMasterAdmin || menus.includes('entry') || menus.includes('visitorentry') || menus.includes('visitor entry');
-      const hasOutGate = isMasterAdmin || menus.includes('outgate') || menus.includes('visitoroutgate') || menus.includes('gatescanterminal') || menus.includes('gate scan terminal');
-      const hasReport = isMasterAdmin || menus.includes('report') || menus.includes('reports') || menus.includes('reports&logs') || menus.includes('reports & logs');
+      const hasAdmin = isMasterAdmin || menus.some(m => m.includes('admin'));
+      const hasDashboard = isMasterAdmin || menus.some(m => m.includes('dashboard'));
+      const hasEntry = isMasterAdmin || menus.some(m => m.includes('entry') || m.includes('visitor entry'));
+      const hasOutGate = isMasterAdmin || menus.some(m => m.includes('outgate') || m.includes('gate scan') || m.includes('scan'));
+      const hasReport = isMasterAdmin || menus.some(m => m.includes('report') || m.includes('logs'));
 
       const navDashboard = document.getElementById('navDashboard');
       const navEntry = document.getElementById('navEntry');
