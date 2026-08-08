@@ -1542,9 +1542,9 @@
 
       const hasAdmin = isMasterAdmin || menus.includes('admin') || menus.includes('admintab');
       const hasDashboard = isMasterAdmin || menus.includes('dashboard') || menus.includes('dashboardtab');
-      const hasEntry = isMasterAdmin || menus.includes('entry') || menus.includes('visitorentry');
-      const hasOutGate = isMasterAdmin || menus.includes('outgate') || menus.includes('visitoroutgate') || menus.includes('gatescanterminal');
-      const hasReport = isMasterAdmin || menus.includes('report') || menus.includes('reports') || menus.includes('reports&logs');
+      const hasEntry = isMasterAdmin || menus.includes('entry') || menus.includes('visitorentry') || menus.includes('visitor entry');
+      const hasOutGate = isMasterAdmin || menus.includes('outgate') || menus.includes('visitoroutgate') || menus.includes('gatescanterminal') || menus.includes('gate scan terminal');
+      const hasReport = isMasterAdmin || menus.includes('report') || menus.includes('reports') || menus.includes('reports&logs') || menus.includes('reports & logs');
 
       const navDashboard = document.getElementById('navDashboard');
       const navEntry = document.getElementById('navEntry');
@@ -1560,12 +1560,20 @@
 
       // Ensure that if user does not have admin access, they land on an allowed tab
       const activeTab = document.querySelector('.tab-content.active');
-      if (activeTab && activeTab.id === 'adminTab' && !hasAdmin) {
-        if (hasDashboard) switchTab('dashboardTab');
-        else if (hasEntry) switchTab('entryTab');
-        else if (hasOutGate) switchTab('outGateTab');
-        else if (hasReport) switchTab('reportTab');
+      if (activeTab) {
+        if (activeTab.id === 'adminTab' && !hasAdmin) switchToFirstAvailableTab(hasDashboard, hasEntry, hasOutGate, hasReport);
+        if (activeTab.id === 'dashboardTab' && !hasDashboard) switchToFirstAvailableTab(hasDashboard, hasEntry, hasOutGate, hasReport);
+        if (activeTab.id === 'entryTab' && !hasEntry) switchToFirstAvailableTab(hasDashboard, hasEntry, hasOutGate, hasReport);
+        if (activeTab.id === 'outGateTab' && !hasOutGate) switchToFirstAvailableTab(hasDashboard, hasEntry, hasOutGate, hasReport);
+        if (activeTab.id === 'reportTab' && !hasReport) switchToFirstAvailableTab(hasDashboard, hasEntry, hasOutGate, hasReport);
       }
+    }
+
+    function switchToFirstAvailableTab(dash, entry, outGate, report) {
+      if (dash) switchTab('dashboardTab');
+      else if (entry) switchTab('entryTab');
+      else if (outGate) switchTab('outGateTab');
+      else if (report) switchTab('reportTab');
     }
 
     function logout() {
@@ -1909,15 +1917,109 @@
         return;
       }
       usersList.forEach(u => {
+        const uNameUpper = String(u.username || "").toUpperCase();
+        const isMaster = (uNameUpper === 'SICAL ADMIN' || uNameUpper === 'KUMARESAN_M' || String(u.role).toLowerCase() === 'admin');
+        
+        let actionCell = '';
+        let markOutStatus = u.canMarkOut ? '<span style="color:#16a34a; font-weight:bold;">✔ Allowed</span>' : '<span style="color:#dc2626; font-weight:bold;">✖ Disabled</span>';
+
+        if (isMaster) {
+          actionCell = `<button type="button" class="btn-action" style="background:#f59e0b; padding:3px 6px; font-size:0.68rem;" onclick="resetUserPassword('${u.username}')">🔑 Reset Pass</button> <span style="font-size:0.7rem; color:#64748b; font-weight:bold;">Master Admin</span>`;
+        } else {
+          actionCell = `
+            <button type="button" class="btn-action" style="background:#0284c7; padding:3px 6px; font-size:0.68rem; margin-right:4px;" onclick="openEditModal('${u.username}', '${u.menus}', ${u.canMarkOut})">✏ Edit Permissions</button>
+            <button type="button" class="btn-action" style="background:#f59e0b; padding:3px 6px; font-size:0.68rem; margin-right:4px;" onclick="resetUserPassword('${u.username}')">🔑 Reset Pass</button>
+            <button type="button" class="btn-action" style="background:#dc2626; padding:3px 6px; font-size:0.68rem;" onclick="deleteUserAccount('${u.username}')">🗑 Delete</button>
+          `;
+        }
+
         tbody.innerHTML += `<tr>
           <td><strong>${u.username}</strong></td>
           <td>${Array.isArray(u.menus) ? u.menus.join(', ') : u.menus}</td>
-          <td style="text-align:center;">${u.canMarkOut ? 'Yes' : 'No'}</td>
-          <td style="text-align:center;">
-            <span style="color:#64748b; font-size:0.75rem;">Synced from Sheet</span>
-          </td>
+          <td style="text-align:center;">${markOutStatus}</td>
+          <td style="text-align:center;">${actionCell}</td>
         </tr>`;
       });
+    }
+
+    async function openEditModal(username, currentMenus, canMarkOut) {
+      const newMenusInput = prompt(`Edit assigned menus for "${username}" (comma separated: dashboard, entry, outGate, report, admin):`, currentMenus);
+      if (newMenusInput === null) return;
+      const newCanMarkOut = confirm(`Allow "${username}" to mark visitors out? Click OK for Yes, Cancel for No.`);
+
+      const menusArray = newMenusInput.split(',').map(m => m.trim()).filter(m => m.length > 0);
+
+      try {
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "updatePermissions",
+            username: username,
+            canMarkOut: newCanMarkOut,
+            menus: menusArray
+          })
+        });
+        const res = await response.json();
+        if (res && res.status === "success") {
+          alert("Permissions updated successfully!");
+          fetchCloudData();
+        } else {
+          alert("Failed to update permissions.");
+        }
+      } catch (err) {
+        alert("Error updating permissions: " + err.message);
+      }
+    }
+
+    async function resetUserPassword(username) {
+      const newPass = prompt(`Enter new password for user "${username}":`);
+      if (!newPass) return;
+
+      try {
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "resetPassword",
+            username: username,
+            newPass: newPass
+          })
+        });
+        const res = await response.json();
+        if (res && res.status === "success") {
+          alert(`Password for "${username}" reset successfully!`);
+          fetchCloudData();
+        } else {
+          alert("Failed to reset password.");
+        }
+      } catch (err) {
+        alert("Error resetting password: " + err.message);
+      }
+    }
+
+    async function deleteUserAccount(username) {
+      if (!confirm(`Are you sure you want to delete user "${username}"?`)) return;
+
+      try {
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: "deleteUser",
+            username: username
+          })
+        });
+        const res = await response.json();
+        if (res && res.status === "success") {
+          alert(`User "${username}" deleted successfully!`);
+          fetchCloudData();
+        } else {
+          alert("Failed to delete user.");
+        }
+      } catch (err) {
+        alert("Error deleting user: " + err.message);
+      }
     }
 
     function applyDashboardDateFilter() {
