@@ -1316,9 +1316,10 @@
   </div>
 
   <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyldXDm1ciQe9VHnd6pHGYNeVcdZt2nq8di9fp4ncxN-DvEAKavbJT89HNwTCyCMAJZ/exec";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxo6fiGXBKhRvhLskxdfnzu7H4yXArJ2yYsXDEb9t8uvfTga_veQkK_LvwfVuBZx15Dfg/exec";
 
     let globalCloudLogs = [];
+    let globalCloudUsers = [];
     let dedicatedScanner = null;
     let selectedCameraId = null;
     let loadedVisitorPhoto = null;
@@ -1539,9 +1540,9 @@
       const uName = String(activeUser.username || "").toUpperCase();
       const isMasterAdmin = (role === 'admin' || uName === 'SICAL ADMIN' || uName === 'KUMARESAN_M');
 
-      const hasAdmin = isMasterAdmin || menus.includes('admin');
-      const hasDashboard = isMasterAdmin || menus.includes('dashboard');
-      const hasEntry = isMasterAdmin || menus.includes('entry');
+      const hasAdmin = isMasterAdmin || menus.includes('admin') || menus.includes('admintab');
+      const hasDashboard = isMasterAdmin || menus.includes('dashboard') || menus.includes('dashboardtab');
+      const hasEntry = isMasterAdmin || menus.includes('entry') || menus.includes('visitorentry');
       const hasOutGate = isMasterAdmin || menus.includes('outgate') || menus.includes('visitoroutgate') || menus.includes('gatescanterminal');
       const hasReport = isMasterAdmin || menus.includes('report') || menus.includes('reports') || menus.includes('reports&logs');
 
@@ -1556,6 +1557,15 @@
       if (navOutGate) navOutGate.style.display = hasOutGate ? 'inline-block' : 'none';
       if (navReport) navReport.style.display = hasReport ? 'inline-block' : 'none';
       if (navAdmin) navAdmin.style.display = hasAdmin ? 'inline-block' : 'none';
+
+      // Ensure that if user does not have admin access, they land on an allowed tab
+      const activeTab = document.querySelector('.tab-content.active');
+      if (activeTab && activeTab.id === 'adminTab' && !hasAdmin) {
+        if (hasDashboard) switchTab('dashboardTab');
+        else if (hasEntry) switchTab('entryTab');
+        else if (hasOutGate) switchTab('outGateTab');
+        else if (hasReport) switchTab('reportTab');
+      }
     }
 
     function logout() {
@@ -1875,9 +1885,12 @@
               category: log.category || 'Others'
             }));
 
+            globalCloudUsers = data.users || [];
+
             computeDashboardAnalytics(globalCloudLogs);
             renderLogsTable(globalCloudLogs);
             renderLongTermLogsTable(globalCloudLogs);
+            renderUserManagementTable(globalCloudUsers);
             if (!isPassAlreadySaved) updatePreview();
             return;
           }
@@ -1885,6 +1898,26 @@
           console.log("Failed to fetch cloud data: " + err.message);
         }
       }
+    }
+
+    function renderUserManagementTable(usersList) {
+      const tbody = document.getElementById('userTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      if (!usersList || usersList.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No registered users found.</td></tr>';
+        return;
+      }
+      usersList.forEach(u => {
+        tbody.innerHTML += `<tr>
+          <td><strong>${u.username}</strong></td>
+          <td>${Array.isArray(u.menus) ? u.menus.join(', ') : u.menus}</td>
+          <td style="text-align:center;">${u.canMarkOut ? 'Yes' : 'No'}</td>
+          <td style="text-align:center;">
+            <span style="color:#64748b; font-size:0.75rem;">Synced from Sheet</span>
+          </td>
+        </tr>`;
+      });
     }
 
     function applyDashboardDateFilter() {
