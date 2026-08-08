@@ -200,7 +200,6 @@
     }
     .input-group input:focus { outline: none; border-color: var(--vms-secondary); background: var(--card-bg); box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2); }
     
-    /* PASSWORD FIELD WRAPPER STYLES */
     .password-wrapper {
       position: relative;
       width: 100%;
@@ -310,7 +309,6 @@
     .top-menu li button.active { color: var(--navy); background: var(--vms-light); border-bottom: 3px solid #38bdf8; }
     [data-theme="dark"] .top-menu li button.active { color: #38bdf8; background: #1e293b; }
 
-    /* THEME TOGGLE BUTTON STYLING */
     .theme-toggle-btn {
       background: rgba(255, 255, 255, 0.15);
       border: 1px solid rgba(255, 255, 255, 0.3);
@@ -327,7 +325,6 @@
     }
     .theme-toggle-btn:hover { background: rgba(255, 255, 255, 0.25); transform: scale(1.08); }
 
-    /* OPTIMIZED FOR 100% FIT */
     .content-container {
       padding: 12px 16px; 
       width: 100%;
@@ -479,7 +476,6 @@
     .qrcode-container-large { text-align: center; padding-top: 6px; }
     .qrcode-container-large img, .qrcode-container-large canvas { display: block; width: 100px !important; height: 100px !important; margin: 0 auto; border: 1.5px solid #0f172a; border-radius: 6px; padding: 3px; background: #fff; }
 
-    /* SCROLLING TABLE WRAPPER WITH FIXED MAX-HEIGHT AND STICKY HEADER */
     .table-responsive-wrapper { 
       width: 100%; 
       max-height: 520px; 
@@ -506,14 +502,12 @@
     
     tr:nth-child(even) { background: var(--table-alt); }
 
-    /* Category Tag Badges for Dark/Light Contrast */
     .table-responsive-wrapper table td span {
       background: var(--badge-bg) !important;
       color: var(--badge-text) !important;
       border: 1px solid var(--border-color);
     }
 
-    /* Fix for summary small tables so they don't force horizontal scrollbars */
     .dashboard-grid-2 .table-responsive-wrapper table {
       min-width: 100% !important;
     }
@@ -539,7 +533,6 @@
     .btn-reset { background: #f59e0b; color: white; border: none; padding: 3px 6px; border-radius: 4px; cursor: pointer; font-size: 0.68rem; font-weight: bold; margin-right: 4px; }
     .btn-out { background: #e11d48; color: white; border: none; padding: 3px 7px; border-radius: 4px; cursor: pointer; font-size: 0.68rem; font-weight: bold; display: inline-block; }
 
-    /* FIXED EXTENDED STAY GRID STYLING TO PREVENT STRETCHING */
     .overstay-box-grid { 
       display: grid; 
       grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); 
@@ -667,7 +660,6 @@
         <span id="activeUserDisplay" style="font-size: 0.82rem; font-weight: 700; color: #a5f3fc; background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 20px;">
           <i class="fa-solid fa-user-gear"></i> <span id="displayUsername">User</span>
         </span>
-        <!-- Theme Toggle Icon Button -->
         <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Switch Light/Dark Theme">
           <i class="fa-solid fa-moon" id="themeIcon"></i>
         </button>
@@ -692,7 +684,6 @@
       <div id="dashboardTab" class="tab-content active">
         <h3 style="margin-bottom: 10px; color: var(--navy); font-size: 1rem;"><i class="fa-solid fa-chart-line"></i> CFS Visitor Security & Operations Center</h3>
         
-        <!-- DASHBOARD DATE FILTER BAR -->
         <div class="dash-filter-bar">
           <div class="dash-filter-inputs">
             <i class="fa-solid fa-filter" style="color: var(--vms-secondary);"></i>
@@ -743,7 +734,6 @@
           <button class="btn-action" style="background:#dc2626; padding: 3px 7px; font-size: 0.7rem;" onclick="switchTab('reportTab')">Investigate Logs</button>
         </div>
 
-        <!-- Total IN / OUT / NOT OUT & NOT OUT VISITOR LIST -->
         <div class="dashboard-grid-2">
           <div class="card">
             <h3 style="font-size: 0.85rem; margin-bottom: 8px;"><i class="fa-solid fa-right-to-bracket"></i> Overall IN / OUT / NOT OUT Summary</h3>
@@ -766,7 +756,6 @@
               </table>
             </div>
             
-            <!-- Triple Independent Metric Bars (Total IN, Checked OUT, Inside) -->
             <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
               <div>
                 <div style="display: flex; justify-content: space-between; font-size: 0.68rem; font-weight: 700; color: #0284c7; margin-bottom: 2px;">
@@ -820,7 +809,6 @@
           </div>
         </div>
 
-        <!-- CATEGORY-WISE TABLE & MOST PERSON TO MEET -->
         <div class="dashboard-grid-2">
           <div class="card">
             <h3 style="font-size: 0.85rem; margin-bottom: 8px;"><i class="fa-solid fa-layer-group"></i> Visitor Category Breakdown</h3>
@@ -859,7 +847,6 @@
           </div>
         </div>
 
-        <!-- MOST VISITED VISITORS & TRAFFIC BY DEPARTMENT -->
         <div class="dashboard-grid-2">
           <div class="card">
             <h3 style="font-size: 0.85rem; margin-bottom: 8px;"><i class="fa-solid fa-address-book"></i> Most Frequent Visitors</h3>
@@ -895,7 +882,6 @@
           </div>
         </div>
 
-        <!-- Extended Duration Box Pattern -->
         <div class="card" style="margin-bottom: 10px;">
           <h3 id="overstayTitle" style="font-size: 0.85rem; color: #dc2626;"><i class="fa-solid fa-hourglass-alert"></i> Time Capture — Extended Stay Visitors (> 8 Hours Inside CFS Site) (0)</h3>
           <div id="overstayBoxContainer" class="overstay-box-grid">
@@ -1154,7 +1140,7 @@
         </div>
       </div>
 
-      <!-- DEDICATED GATE SCAN TERMINAL TAB -->
+      <!-- GATE SCAN TERMINAL TAB -->
       <div id="outGateTab" class="tab-content">
         <div class="card" style="max-width: 800px; margin: 0 auto;">
           <h3 style="font-size: 1rem; margin-bottom: 12px; color: var(--navy);"><i class="fa-solid fa-right-from-bracket"></i> Visitor Gate Scan Terminal (Auto In / Out Check)</h3>
@@ -1346,7 +1332,6 @@
     let lastScannedText = "";
     let lastScanTimestamp = 0;
 
-    // PASSWORD VISIBILITY TOGGLE SCRIPT
     const togglePassword = document.querySelector('#togglePassword');
     const passwordInput = document.querySelector('#password');
     if (togglePassword && passwordInput) {
@@ -1358,7 +1343,6 @@
       });
     }
 
-    // THEME TOGGLE LOGIC (Defaults to Light)
     function toggleTheme() {
       const currentTheme = document.documentElement.getAttribute('data-theme');
       const icon = document.getElementById('themeIcon');
@@ -1388,7 +1372,6 @@
     function parseToCleanDateObj(rawVal) {
       if (!rawVal) return null;
       var str = String(rawVal).trim();
-
       if (/^\d{1,2}[-\/]\d{1,2}[-\/]\d{4}$/.test(str)) {
         var p = str.split(/[-\/]/);
         return new Date(parseInt(p[2], 10), parseInt(p[1], 10) - 1, parseInt(p[0], 10));
@@ -1451,7 +1434,6 @@
     function getDirectDriveImageUrl(url) {
       if (!url || url === 'No Photo' || url === 'NO_PHOTO' || url === 'undefined' || url === 'N/A') return null;
       if (url.startsWith('data:image')) return url;
-      
       let fileId = null;
       if (url.includes('drive.google.com/file/d/')) {
         fileId = url.split('/d/')[1].split('/')[0].split('?')[0];
@@ -1460,7 +1442,6 @@
       } else if (url.includes('id=')) {
         fileId = url.split('id=')[1].split('&')[0];
       }
-      
       if (fileId) {
         return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
       }
@@ -1507,11 +1488,6 @@
         document.getElementById('appScreen').style.display = 'block';
         
         fetchCloudData().then(() => {
-          let verifiedMatch = globalUsersList.find(u => u.username.toLowerCase() === activeUser.username.toLowerCase());
-          if (verifiedMatch) {
-            activeUser = verifiedMatch;
-            sessionStorage.setItem('sical_active_session', JSON.stringify(verifiedMatch));
-          }
           applyPermissions();
         });
         initApp();
@@ -1520,33 +1496,39 @@
       }
     });
 
+    // SECURE SERVER-SIDE LOGIN HANDLER
     const loginForm = document.getElementById('loginForm');
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const user = document.getElementById('username').value.trim();
       const pass = document.getElementById('password').value.trim();
 
-      if (globalUsersList.length === 0) {
-        await fetchCloudData();
-      }
+      try {
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: "login", username: user, pass: pass })
+        });
+        const result = await response.json();
 
-      let matched = globalUsersList.find(u => u.username.toLowerCase() === user.toLowerCase() && u.pass === pass);
-
-      if (matched) {
-        activeUser = matched;
-        updateHeaderUsername(matched.username);
-        sessionStorage.setItem('sical_active_session', JSON.stringify(matched));
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('appScreen').style.display = 'block';
-        document.getElementById('loginError').style.display = 'none';
-        applyPermissions();
-        initApp();
-      } else {
+        if (result && result.status === "success") {
+          activeUser = result.user;
+          updateHeaderUsername(activeUser.username);
+          sessionStorage.setItem('sical_active_session', JSON.stringify(result.user));
+          document.getElementById('loginScreen').style.display = 'none';
+          document.getElementById('appScreen').style.display = 'block';
+          document.getElementById('loginError').style.display = 'none';
+          applyPermissions();
+          initApp();
+        } else {
+          document.getElementById('loginError').style.display = 'block';
+        }
+      } catch (err) {
+        console.log("Login error: " + err.message);
         document.getElementById('loginError').style.display = 'block';
       }
     });
 
-    // STRICT PERMISSION DISPLAY CONTROL & HIDING UNAUTHORIZED TABS
     function applyPermissions() {
       if (!activeUser) return;
 
@@ -1567,7 +1549,6 @@
       const hasOutGate = isMasterAdmin || menus.includes('outgate') || menus.includes('visitoroutgate') || menus.includes('gatescanterminal');
       const hasReport = isMasterAdmin || menus.includes('report') || menus.includes('reports') || menus.includes('reports&logs');
 
-      // Completely hide unauthorized navigation tabs from the DOM view
       const navDashboard = document.getElementById('navDashboard');
       const navEntry = document.getElementById('navEntry');
       const navOutGate = document.getElementById('navOutGate');
@@ -1579,26 +1560,6 @@
       if (navOutGate) navOutGate.style.display = hasOutGate ? 'inline-block' : 'none';
       if (navReport) navReport.style.display = hasReport ? 'inline-block' : 'none';
       if (navAdmin) navAdmin.style.display = hasAdmin ? 'inline-block' : 'none';
-
-      // Automatically redirect user if they land on a hidden/unauthorized tab
-      const activeTab = document.querySelector('.tab-content.active');
-      if (activeTab) {
-        const activeTabId = activeTab.id;
-        let isCurrentAllowed = true;
-        if (activeTabId === 'dashboardTab' && !hasDashboard) isCurrentAllowed = false;
-        if (activeTabId === 'entryTab' && !hasEntry) isCurrentAllowed = false;
-        if (activeTabId === 'outGateTab' && !hasOutGate) isCurrentAllowed = false;
-        if (activeTabId === 'reportTab' && !hasReport) isCurrentAllowed = false;
-        if (activeTabId === 'adminTab' && !hasAdmin) isCurrentAllowed = false;
-
-        if (!isCurrentAllowed) {
-          if (hasDashboard) switchTab('dashboardTab');
-          else if (hasReport) switchTab('reportTab');
-          else if (hasEntry) switchTab('entryTab');
-          else if (hasOutGate) switchTab('outGateTab');
-          else if (hasAdmin) switchTab('adminTab');
-        }
-      }
     }
 
     function logout() {
@@ -1613,33 +1574,8 @@
     }
 
     function switchTab(tabId) {
-      if (activeUser) {
-        let menus = [];
-        if (Array.isArray(activeUser.menus)) {
-          menus = activeUser.menus.map(m => String(m).toLowerCase().trim());
-        } else if (typeof activeUser.menus === 'string') {
-          menus = activeUser.menus.toLowerCase().split(',').map(m => m.trim());
-        }
-        const role = String(activeUser.role || "").toLowerCase();
-        const uName = String(activeUser.username || "").toUpperCase();
-        const isMasterAdmin = (role === 'admin' || uName === 'SICAL ADMIN' || uName === 'KUMARESAN_M');
-
-        const hasAdmin = isMasterAdmin || menus.includes('admin');
-        const hasDashboard = isMasterAdmin || menus.includes('dashboard');
-        const hasEntry = isMasterAdmin || menus.includes('entry');
-        const hasOutGate = isMasterAdmin || menus.includes('outgate') || menus.includes('visitoroutgate') || menus.includes('gatescanterminal');
-        const hasReport = isMasterAdmin || menus.includes('report') || menus.includes('reports') || menus.includes('reports&logs');
-
-        if (tabId === 'adminTab' && !hasAdmin) return;
-        if (tabId === 'dashboardTab' && !hasDashboard) return;
-        if (tabId === 'entryTab' && !hasEntry) return;
-        if (tabId === 'outGateTab' && !hasOutGate) return;
-        if (tabId === 'reportTab' && !hasReport) return;
-      }
-
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.top-menu button').forEach(el => el.classList.remove('active'));
-      
       document.getElementById(tabId).classList.add('active');
 
       const btnMap = {
@@ -1696,26 +1632,22 @@
         alert("Please start camera first!");
         return;
       }
-
       const context = canvas.getContext('2d');
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
       capturedPhotoData = canvas.toDataURL('image/jpeg');
       loadedVisitorPhoto = capturedPhotoData;
-
       updatePhotoFrame(capturedPhotoData);
     }
 
     function updatePhotoFrame(photoSrc) {
       const frame = document.getElementById('prevPhotoFrame');
       const directUrl = getDirectDriveImageUrl(photoSrc);
-
       let fileId = null;
       if (photoSrc && photoSrc.includes('/d/')) {
         fileId = photoSrc.split('/d/')[1].split('/')[0].split('?')[0];
       } else if (photoSrc && photoSrc.includes('id=')) {
         fileId = photoSrc.split('id=')[1].split('&')[0];
       }
-
       if (directUrl) {
         if (fileId) {
           frame.innerHTML = `<img src="${directUrl}" alt="Visitor Photo" onerror="if(this.src!='https://lh3.googleusercontent.com/d/${fileId}'){ this.src='https://lh3.googleusercontent.com/d/${fileId}'; } else { this.onerror=null; this.parentElement.innerHTML='NO PHOTO'; }">`;
@@ -1732,22 +1664,18 @@
         const devices = await Html5Qrcode.getCameras();
         const selectElem = document.getElementById('cameraSelect');
         selectElem.innerHTML = '';
-
         if (devices && devices.length > 0) {
           let backCamId = null;
-
           devices.forEach(device => {
             const option = document.createElement('option');
             option.value = device.id;
             option.text = device.label || `Camera ${selectElem.children.length + 1}`;
             selectElem.appendChild(option);
-
             const label = (device.label || '').toLowerCase();
             if (label.includes('back') || label.includes('rear') || label.includes('environment') || label.includes('camera 0')) {
               backCamId = device.id;
             }
           });
-
           if (backCamId) {
             selectedCameraId = backCamId;
             selectElem.value = backCamId;
@@ -1755,7 +1683,6 @@
             selectedCameraId = devices[devices.length - 1].id;
             selectElem.value = selectedCameraId;
           }
-
           startDedicatedOutScanner();
         } else {
           selectElem.innerHTML = '<option value="">No cameras detected</option>';
@@ -1777,18 +1704,13 @@
       if (!dedicatedScanner) {
         dedicatedScanner = new Html5Qrcode("dedicatedReader");
         const config = { fps: 15, qrbox: { width: 250, height: 250 } };
-        
         const qrCodeSuccessCallback = (decodedText) => {
           const now = Date.now();
-          if (decodedText === lastScannedText && (now - lastScanTimestamp) < 1500) {
-            return;
-          }
+          if (decodedText === lastScannedText && (now - lastScanTimestamp) < 1500) return;
           lastScannedText = decodedText;
           lastScanTimestamp = now;
-
           processOutGateCode(decodedText);
         };
-
         if (selectedCameraId) {
           dedicatedScanner.start(selectedCameraId, config, qrCodeSuccessCallback, (errorMessage) => {});
         } else {
@@ -1823,7 +1745,6 @@
         displayOutResult("Action Denied: Your account role does not have permission to mark visitors out.", false);
         return;
       }
-
       let extractedPass = rawVal.trim();
       if (rawVal.includes("pass=")) {
         const match = rawVal.match(/pass=([^&]+)/i);
@@ -1847,7 +1768,6 @@
           const outDate = getCurrentDate();
           activeInsideLog.timeOut = outTime;
           activeInsideLog.outDate = outDate;
-          
           displayOutResult(`SUCCESS: Visitor ${masterRecord.name} (${masterRecord.passNo}) Checked-OUT at ${outTime} on ${outDate}!`, true);
           computeDashboardAnalytics(globalCloudLogs);
 
@@ -1868,26 +1788,7 @@
           return;
         }
 
-        if (masterRecord.validity === 'Daily') {
-          const completedToday = matchingLogs.some(l => l.date === todayStr && l.timeOut && l.timeOut !== '_______' && l.timeOut !== '--:--');
-          if (completedToday || masterRecord.date !== todayStr) {
-            displayOutResult(`INVALID PASS: Daily Pass (${masterRecord.passNo}) has already completed its single IN/OUT cycle or belongs to another date.`, false);
-            return;
-          }
-        } else if (masterRecord.validity === 'Weekly' || masterRecord.validity === 'Monthly' || masterRecord.validity.startsWith('Custom')) {
-          const status = checkPassExpiration(masterRecord.date, masterRecord.validity);
-          if (status.isExpired) {
-            displayOutResult(`EXPIRED PASS: ${masterRecord.name}'s ${masterRecord.validity} Pass has expired! Please issue a new pass.`, false);
-            return;
-          }
-        }
-
         let preservedPhoto = masterRecord.photoUrl || masterRecord.photo || 'NO_PHOTO';
-        if (preservedPhoto === 'No Photo' || preservedPhoto === 'NO_PHOTO' || !preservedPhoto) {
-          const photoLog = matchingLogs.slice().reverse().find(l => l.photoUrl && l.photoUrl !== 'No Photo' && l.photoUrl !== 'NO_PHOTO');
-          if (photoLog) preservedPhoto = photoLog.photoUrl;
-        }
-
         let deptVal = masterRecord.department || 'Admin';
         if (deptVal.toUpperCase() === 'SICAL IT') deptVal = 'IT';
 
@@ -1924,7 +1825,6 @@
             body: JSON.stringify(newEntry)
           }).catch(err => console.log("Background sync error: " + err.message));
         }
-
       } else {
         displayOutResult(`ERROR: No visitor record found for "${extractedPass}".`, false);
       }
@@ -1943,10 +1843,7 @@
         box.style.color = '#dc2626';
         box.style.border = '1px solid #fca5a5';
       }
-
-      setTimeout(() => {
-        box.style.display = 'none';
-      }, 4000);
+      setTimeout(() => { box.style.display = 'none'; }, 4000);
     }
 
     let currentPassNumber = 1001;
@@ -1982,29 +1879,6 @@
               timeOut: cleanDateTimeDisplay(log.timeOut, 'time'),
               category: log.category || 'Others'
             }));
-            
-            if (data.users && data.users.length > 0) {
-              globalUsersList = data.users.map(u => {
-                let cleanedMenus = [];
-                if (Array.isArray(u.menus)) {
-                  cleanedMenus = u.menus.map(m => String(m).toLowerCase().trim());
-                } else if (typeof u.menus === 'string') {
-                  cleanedMenus = u.menus.toLowerCase().split(',').map(m => m.trim());
-                }
-
-                const uName = String(u.username || "").trim();
-                const uRole = String(u.role || "").trim().toLowerCase();
-                const isMaster = (uRole === 'admin' || uName.toUpperCase() === 'SICAL ADMIN' || uName.toUpperCase() === 'KUMARESAN_M');
-
-                return {
-                  username: uName,
-                  pass: String(u.pass || "").trim(),
-                  role: uRole,
-                  canMarkOut: (u.canMarkOut === true || String(u.canMarkOut).toUpperCase() === 'TRUE' || isMaster || uRole === 'security'),
-                  menus: cleanedMenus
-                };
-              });
-            }
 
             if (globalCloudLogs.length > 0) {
               let maxSeq = 1000;
@@ -2012,9 +1886,7 @@
                 if (log.passNo && log.passNo.includes('-')) {
                   const parts = log.passNo.split('-');
                   const seq = parseInt(parts[parts.length - 1], 10);
-                  if (!isNaN(seq) && seq > maxSeq) {
-                    maxSeq = seq;
-                  }
+                  if (!isNaN(seq) && seq > maxSeq) maxSeq = seq;
                 }
               });
               currentPassNumber = maxSeq + 1;
@@ -2025,47 +1897,23 @@
             computeDashboardAnalytics(globalCloudLogs);
             renderLogsTable(globalCloudLogs);
             renderLongTermLogsTable(globalCloudLogs);
-            renderUsersTable();
-            
-            if (!isPassAlreadySaved) {
-              updatePreview();
-            }
-
-            if (activeUser) {
-              let verifiedMatch = globalUsersList.find(u => u.username.toLowerCase() === activeUser.username.toLowerCase());
-              if (verifiedMatch) {
-                activeUser = verifiedMatch;
-                sessionStorage.setItem('sical_active_session', JSON.stringify(verifiedMatch));
-              }
-              applyPermissions();
-            }
-
+            if (!isPassAlreadySaved) updatePreview();
             return;
           }
         } catch (err) {
           console.log("Failed to fetch cloud data: " + err.message);
         }
       }
-
-      computeDashboardAnalytics(globalCloudLogs);
-      renderLogsTable(globalCloudLogs);
-      renderLongTermLogsTable(globalCloudLogs);
-      renderUsersTable();
-      if (!isPassAlreadySaved) {
-        updatePreview();
-      }
     }
 
     function applyDashboardDateFilter() {
       const fromVal = document.getElementById('dashFromDate').value;
       const toVal = document.getElementById('dashToDate').value;
-
       if(!fromVal && !toVal) {
         computeDashboardAnalytics(globalCloudLogs);
         document.getElementById('dashFilterActiveLabel').textContent = "Showing: All Data";
         return;
       }
-
       const fromDate = fromVal ? new Date(fromVal) : null;
       const toDate = toVal ? new Date(toVal) : null;
       if (fromDate) fromDate.setHours(0,0,0,0);
@@ -2092,23 +1940,10 @@
 
     function computeDashboardAnalytics(logs) {
       if (!logs) logs = [];
-
-      let insideCount = 0;
-      let overstayCount = 0;
-      let countSelectedPeriod = 0;
-      let countYesterday = 0;
-      let countMonth = 0;
-
-      let now = new Date();
-      let nowDay = now.getDate();
-      let nowMonth = now.getMonth();
-      let nowYear = now.getFullYear();
-
-      let yesterday = new Date();
-      yesterday.setDate(now.getDate() - 1);
-      let yDay = yesterday.getDate();
-      let yMonth = yesterday.getMonth();
-      let yYear = yesterday.getFullYear();
+      let insideCount = 0, overstayCount = 0, countSelectedPeriod = 0, countYesterday = 0, countMonth = 0;
+      let now = new Date(), nowDay = now.getDate(), nowMonth = now.getMonth(), nowYear = now.getFullYear();
+      let yesterday = new Date(); yesterday.setDate(now.getDate() - 1);
+      let yDay = yesterday.getDate(), yMonth = yesterday.getMonth(), yYear = yesterday.getFullYear();
 
       let categoryCounts = {
         'Customer': { in: 0, out: 0, notOut: 0 },
@@ -2119,33 +1954,18 @@
         'Others': { in: 0, out: 0, notOut: 0 }
       };
 
-      let hostCounts = {};
-      let visitorCounts = {};
-      let deptCounts = {};
-      let purposeCounts = { EXIM: 0, Meeting: 0, Vendor: 0 };
-
-      let notOutList = [];
-      let overstayList = [];
-
-      let totalCheckedOut = 0;
+      let hostCounts = {}, visitorCounts = {}, deptCounts = {}, purposeCounts = { EXIM: 0, Meeting: 0, Vendor: 0 };
+      let notOutList = [], overstayList = [], totalCheckedOut = 0;
 
       logs.forEach(log => {
         var dObj = parseToCleanDateObj(log.date);
-
         if (dObj) {
-          if (dObj.getDate() === nowDay && dObj.getMonth() === nowMonth && dObj.getFullYear() === nowYear) {
-            countSelectedPeriod++;
-          }
-          if (dObj.getDate() === yDay && dObj.getMonth() === yMonth && dObj.getFullYear() === yYear) {
-            countYesterday++;
-          }
-          if (dObj.getMonth() === nowMonth && dObj.getFullYear() === nowYear) {
-            countMonth++;
-          }
+          if (dObj.getDate() === nowDay && dObj.getMonth() === nowMonth && dObj.getFullYear() === nowYear) countSelectedPeriod++;
+          if (dObj.getDate() === yDay && dObj.getMonth() === yMonth && dObj.getFullYear() === yYear) countYesterday++;
+          if (dObj.getMonth() === nowMonth && dObj.getFullYear() === nowYear) countMonth++;
         }
 
         const isCheckedOut = (log.timeOut && log.timeOut !== '_______' && log.timeOut !== '--:--');
-        
         let cat = log.category || 'Others';
         if (!categoryCounts[cat]) categoryCounts[cat] = { in: 0, out: 0, notOut: 0 };
         categoryCounts[cat].in++;
@@ -2154,7 +1974,6 @@
           insideCount++;
           categoryCounts[cat].notOut++;
           notOutList.push(log);
-
           const hrsCalc = calculateTotalHoursObj(log.date, log.timeIn, log.timeOut);
           if (hrsCalc.rawHours >= 8) {
             overstayCount++;
@@ -2169,9 +1988,7 @@
         if(host && host !== '-') hostCounts[host] = (hostCounts[host] || 0) + 1;
 
         let vKey = `${log.name}_${log.mobile}`;
-        if (!visitorCounts[vKey]) {
-          visitorCounts[vKey] = { name: log.name, mobile: log.mobile, category: cat, validity: log.validity, count: 0 };
-        }
+        if (!visitorCounts[vKey]) visitorCounts[vKey] = { name: log.name, mobile: log.mobile, category: cat, validity: log.validity, count: 0 };
         visitorCounts[vKey].count++;
 
         let deptName = (log.department || 'Admin').trim();
@@ -2188,12 +2005,10 @@
       document.getElementById('statToday').textContent = countSelectedPeriod;
       document.getElementById('statYesterday').textContent = countYesterday;
       document.getElementById('statInside').textContent = insideCount;
-
       document.getElementById('tblTotalIn').textContent = logs.length;
       document.getElementById('tblTotalOut').textContent = totalCheckedOut;
       document.getElementById('tblTotalNotOut').textContent = insideCount;
 
-      // Update Triple Independent Metric Bars
       const totalInCount = logs.length;
       const pctOut = totalInCount > 0 ? Math.round((totalCheckedOut / totalInCount) * 100) : 0;
       const pctInside = totalInCount > 0 ? Math.round((insideCount / totalInCount) * 100) : 0;
@@ -2223,27 +2038,21 @@
       const totalLogs = logs.length || 1;
       const legendList = document.getElementById('deptLegendList');
       legendList.innerHTML = '';
-
       const colorPalette = ['#0284c7', '#16a34a', '#f59e0b', '#e11d48', '#0d9488', '#7c3aed', '#db2777', '#ca8a04', '#4f46e5', '#64748b'];
-      let conicStops = [];
-      let currentPercent = 0;
-      let colorIndex = 0;
+      let conicStops = [], currentPercent = 0, colorIndex = 0;
 
-      const deptEntries = Object.entries(deptCounts);
-      deptEntries.forEach(([dept, count]) => {
+      Object.entries(deptCounts).forEach(([dept, count]) => {
         const pct = Math.round((count / totalLogs) * 100);
         const color = colorPalette[colorIndex % colorPalette.length];
         colorIndex++;
-
         const nextPercent = currentPercent + pct;
         conicStops.push(`${color} ${currentPercent}% ${nextPercent}%`);
         currentPercent = nextPercent;
-
         legendList.innerHTML += `<li><span class="legend-dot" style="background: ${color};"></span> ${dept}: <b>${pct}%</b> (${count})</li>`;
       });
 
       document.getElementById('donutTotalCount').textContent = logs.length;
-      if (deptEntries.length > 0 && totalLogs > 0) {
+      if (Object.entries(deptCounts).length > 0 && totalLogs > 0) {
         document.getElementById('deptDonutChart').style.background = `conic-gradient(${conicStops.join(', ')})`;
       } else {
         document.getElementById('deptDonutChart').style.background = `#cbd5e1`;
@@ -2334,12 +2143,9 @@
     function renderOverstayBoxPattern(list) {
       const container = document.getElementById('overstayBoxContainer');
       const titleElem = document.getElementById('overstayTitle');
-      
-      // Update dynamic count inside the section title
       if (titleElem) {
         titleElem.innerHTML = `<i class="fa-solid fa-hourglass-alert"></i> Time Capture — Extended Stay Visitors (> 8 Hours Inside CFS Site) (${list ? list.length : 0})`;
       }
-
       container.innerHTML = '';
       if(!list || list.length === 0) {
         container.innerHTML = '<div style="font-size:0.7rem; color:#64748b; padding:6px;">No visitors currently exceeding standard stay duration (>8 Hours).</div>';
@@ -2361,7 +2167,6 @@
 
     function calculateTotalHoursObj(dateStr, timeInStr, timeOutStr) {
       if (!timeInStr || timeInStr === '--:--') return { displayStr: "INSIDE", rawHours: 0 };
-      
       try {
         const parseTime12 = (tStr) => {
           const parts = tStr.trim().split(' ');
@@ -2374,10 +2179,8 @@
           if (modifier === 'AM' && hours === 12) hours = 0;
           return hours * 60 + minutes;
         };
-
         const minIn = parseTime12(timeInStr);
         if (minIn === null) return { displayStr: "INSIDE", rawHours: 0 };
-
         let minOut;
         if (!timeOutStr || timeOutStr === '_______' || timeOutStr === '--:--') {
           const now = new Date();
@@ -2385,23 +2188,16 @@
         } else {
           minOut = parseTime12(timeOutStr);
         }
-
         let diff = minOut - minIn;
         if (diff < 0) diff += 24 * 60;
-
-        const rawHours = diff / 60;
-        const hrs = Math.floor(diff / 60);
-        const mins = diff % 60;
-
+        const rawHours = diff / 60, hrs = Math.floor(diff / 60), mins = diff % 60;
         let displayStr = "";
         if (hrs === 0) displayStr = `${mins} mins`;
         else if (mins === 0) displayStr = `${hrs} hr${hrs > 1 ? 's' : ''}`;
         else displayStr = `${hrs} hr ${mins} mins`;
-
         if (!timeOutStr || timeOutStr === '_______' || timeOutStr === '--:--') {
           displayStr = `INSIDE (${displayStr})`;
         }
-
         return { displayStr: displayStr, rawHours: rawHours };
       } catch(e) {
         return { displayStr: "INSIDE", rawHours: 0 };
@@ -2411,18 +2207,15 @@
     function renderDashLiveLogs(recentLogs) {
       const tbody = document.getElementById('dashLiveLogsBody');
       tbody.innerHTML = '';
-
       if (!recentLogs || recentLogs.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No recent check-ins recorded.</td></tr>';
         return;
       }
-
       recentLogs.forEach(log => {
         const timeOutDisplay = (log.timeOut && log.timeOut !== '_______' && log.timeOut !== '--:--') ? log.timeOut : '--';
         const hrsObj = calculateTotalHoursObj(log.date, log.timeIn, log.timeOut);
         const deptDisplay = log.department && log.department.toUpperCase() === 'SICAL IT' ? 'IT' : (log.department || 'Admin');
-
-        const row = `<tr>
+        tbody.innerHTML += `<tr>
           <td><strong>${log.passNo}</strong></td>
           <td>${log.name}</td>
           <td>${deptDisplay}</td>
@@ -2430,14 +2223,11 @@
           <td><strong style="color: ${timeOutDisplay !== '--' ? '#0284c7' : '#94a3b8'}">${timeOutDisplay}</strong></td>
           <td><strong style="color: ${hrsObj.displayStr.startsWith('INSIDE') ? '#dc2626' : '#16a34a'}">${hrsObj.displayStr}</strong></td>
         </tr>`;
-        tbody.innerHTML += row;
       });
     }
 
     function getFormattedPassNo() {
-      if (isPassAlreadySaved && lockedPreviewPassNo) {
-        return lockedPreviewPassNo;
-      }
+      if (isPassAlreadySaved && lockedPreviewPassNo) return lockedPreviewPassNo;
       const year = new Date().getFullYear();
       return `VP-${year}-${currentPassNumber}`;
     }
@@ -2448,18 +2238,13 @@
 
     function getCurrentDate() {
       const d = new Date();
-      const day = String(d.getDate()).padStart(2, '0');
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const year = d.getFullYear();
-      return `${day}-${month}-${year}`;
+      return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`;
     }
 
     function formatDateToDDMMYYYY(dateString) {
       if(!dateString) return '';
       const parts = dateString.split('-');
-      if(parts.length === 3 && parts[0].length === 4) {
-        return `${parts[2]}-${parts[1]}-${parts[0]}`;
-      }
+      if(parts.length === 3 && parts[0].length === 4) return `${parts[2]}-${parts[1]}-${parts[0]}`;
       return dateString;
     }
 
@@ -2473,14 +2258,10 @@
 
     function checkPassExpiration(entryDateStr, validityType) {
       if (!entryDateStr) return { isExpired: false, label: "VALID PASS" };
-
       var passDate = parseToCleanDateObj(entryDateStr);
       if (!passDate) return { isExpired: false, label: "VALID PASS" };
-
       var now = new Date();
-      passDate.setHours(0, 0, 0, 0);
-      now.setHours(0, 0, 0, 0);
-
+      passDate.setHours(0, 0, 0, 0); now.setHours(0, 0, 0, 0);
       var allowedDays = 1;
       if (validityType === 'Weekly') allowedDays = 7;
       if (validityType === 'Monthly') allowedDays = 30;
@@ -2488,10 +2269,7 @@
         const m = validityType.match(/\d+/);
         if(m) allowedDays = parseInt(m[0], 10);
       }
-
-      var diffTime = now - passDate;
-      var diffDays = diffTime / (1000 * 60 * 60 * 24);
-
+      var diffDays = (now - passDate) / (1000 * 60 * 60 * 24);
       if (diffDays < 0 || diffDays >= allowedDays) {
         return { isExpired: true, label: `EXPIRED PASS (${validityType} limit ${allowedDays} day/s exceeded)` };
       }
@@ -2500,11 +2278,7 @@
 
     function searchAndLoadVisitor(reprintExactPass = false) {
       let query = document.getElementById('entrySearchInput').value.trim().toLowerCase();
-      if (!query) {
-        alert("Please enter Pass No or Mobile No!");
-        return;
-      }
-
+      if (!query) { alert("Please enter Pass No or Mobile No!"); return; }
       if (query.includes("pass=")) {
         const matchPass = query.match(/pass=([^&]+)/i);
         if (matchPass) query = decodeURIComponent(matchPass[1]).toLowerCase();
@@ -2512,11 +2286,7 @@
         const matchPass = query.match(/(vp-\d{4}-\d+)/i);
         if (matchPass) query = matchPass[1].toLowerCase();
       }
-
-      const matches = globalCloudLogs.filter(log => 
-        log.passNo.toLowerCase() === query || String(log.mobile).trim().toLowerCase() === query
-      );
-
+      const matches = globalCloudLogs.filter(log => log.passNo.toLowerCase() === query || String(log.mobile).trim().toLowerCase() === query);
       if (matches.length > 0) {
         let match = matches[matches.length - 1];
         const withPhoto = matches.slice().reverse().find(l => l.photoUrl && l.photoUrl !== 'No Photo' && l.photoUrl !== 'NO_PHOTO');
@@ -2548,13 +2318,11 @@
 
         loadedVisitorPhoto = (match.photoUrl && match.photoUrl !== 'No Photo' && match.photoUrl !== 'NO_PHOTO') ? match.photoUrl : null;
         capturedPhotoData = loadedVisitorPhoto;
-
         isPassAlreadySaved = true;
         lockedPreviewPassNo = match.passNo;
 
         updatePreview();
         updatePhotoFrame(loadedVisitorPhoto);
-
         const status = checkPassExpiration(match.date, match.validity);
         const banner = document.getElementById('validityBanner');
         banner.textContent = status.label;
@@ -2567,7 +2335,6 @@
           document.getElementById('prevTimeOut').textContent = (match.timeOut && match.timeOut !== '_______') ? cleanDateTimeDisplay(match.timeOut, 'time') : '_______';
           document.getElementById('prevPurpose').textContent = match.purpose || 'Meeting';
           document.getElementById('prevValidity').textContent = getValidityDateRange(match.date, match.validity);
-          
           generateQrCode("passQrCode", getQrWebUrl(match.passNo), 130);
         } else {
           alert(`Visitor details loaded for ${match.name}! Ready to issue a NEW Pass.`);
@@ -2596,7 +2363,6 @@
       const container = document.getElementById(containerId);
       if (!container) return;
       container.innerHTML = '';
-      
       try {
         new QRCode(container, {
           text: textData,
@@ -2636,51 +2402,37 @@
       document.getElementById('prevDate').textContent = dateVal;
       document.getElementById('prevTimeIn').textContent = timeVal;
       document.getElementById('prevTimeOut').textContent = '_______';
-
       document.getElementById('prevName').textContent = nameVal;
       document.getElementById('prevCategory').textContent = catVal;
       document.getElementById('prevMobile').textContent = mobileVal;
       document.getElementById('prevCompany').textContent = companyVal;
       document.getElementById('prevIdType').textContent = idTypeVal;
       document.getElementById('prevIdNumber').textContent = idNumVal;
-
       document.getElementById('prevHost').textContent = hostVal;
       document.getElementById('prevDept').textContent = deptVal;
       document.getElementById('prevPurpose').textContent = purposeVal;
       document.getElementById('prevValidity').textContent = getValidityDateRange(dateVal, validityTypeVal);
 
       updatePhotoFrame(loadedVisitorPhoto || capturedPhotoData);
-
       generateQrCode("passQrCode", getQrWebUrl(currentPass), 130);
     }
 
     async function saveEntryOnly() {
-      if (isPassAlreadySaved) {
-        alert("This pass has already been saved! Click 'Clear Form / Next Visitor' to issue a new pass.");
-        return;
-      }
-
+      if (isPassAlreadySaved) { alert("This pass has already been saved!"); return; }
       const form = document.getElementById('visitorForm');
-      if (!form.checkValidity()) {
-        alert("Please fill required fields (*)");
-        return;
-      }
+      if (!form.checkValidity()) { alert("Please fill required fields (*)"); return; }
 
       const saveBtn = document.getElementById('savePassBtn');
-      saveBtn.disabled = true;
-      saveBtn.style.opacity = '0.6';
+      saveBtn.disabled = true; saveBtn.style.opacity = '0.6';
       saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
 
       const passNo = getFormattedPassNo();
-      isPassAlreadySaved = true;
-      lockedPreviewPassNo = passNo;
-
+      isPassAlreadySaved = true; lockedPreviewPassNo = passNo;
       let validityVal = document.querySelector('input[name="validity"]:checked').value;
       if (validityVal === 'Custom') {
         const days = document.getElementById('customPassDays').value || '2';
         validityVal = `Custom (${days} Days)`;
       }
-
       let deptVal = document.getElementById('department').value;
       if (deptVal.toUpperCase() === 'SICAL IT') deptVal = 'IT';
 
@@ -2712,38 +2464,26 @@
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(newEntry)
           });
-        } catch (err) {
-          console.log("Cloud sync error: " + err.message);
-        }
+        } catch (err) { console.log("Cloud sync error: " + err.message); }
       }
 
       saveBtn.innerHTML = '<i class="fa-solid fa-check"></i> Pass Saved';
-
       alert(`Pass ${passNo} saved & sent to Google Sheet!`);
       currentPassNumber++;
       setTimeout(() => { fetchCloudData(); }, 1000);
     }
 
-    function printOnly() {
-      window.print();
-    }
+    function printOnly() { window.print(); }
 
     function resetForm() {
       document.getElementById('visitorForm').reset();
       document.getElementById('entrySearchInput').value = '';
-      capturedPhotoData = null;
-      loadedVisitorPhoto = null;
-      isPassAlreadySaved = false;
-      lockedPreviewPassNo = null;
-
+      capturedPhotoData = null; loadedVisitorPhoto = null;
+      isPassAlreadySaved = false; lockedPreviewPassNo = null;
       const saveBtn = document.getElementById('savePassBtn');
-      saveBtn.disabled = false;
-      saveBtn.style.opacity = '1';
+      saveBtn.disabled = false; saveBtn.style.opacity = '1';
       saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Visitor Pass';
-
-      const banner = document.getElementById('validityBanner');
-      banner.style.display = 'none';
-
+      document.getElementById('validityBanner').style.display = 'none';
       toggleCustomDaysInput(false);
       updatePhotoFrame(null);
       updatePreview();
@@ -2754,12 +2494,6 @@
       const userVal = document.getElementById('newUsername').value.trim();
       const passVal = document.getElementById('newPassword').value.trim();
       const canMarkOutVal = document.getElementById('permCanMarkOut').checked;
-
-      const existingUser = globalUsersList.find(u => u.username.toLowerCase() === userVal.toLowerCase());
-      if (existingUser) {
-        alert(`User "${userVal}" already exists!`);
-        return;
-      }
 
       const menus = [];
       if (document.getElementById('permDashboard').checked) menus.push('dashboard');
@@ -2782,9 +2516,7 @@
               menus: menus
             })
           });
-        } catch (err) {
-          console.log("Error adding user: " + err.message);
-        }
+        } catch (err) { console.log("Error adding user: " + err.message); }
       }
 
       alert(`User "${userVal}" created successfully! Syncing to sheet...`);
@@ -2792,133 +2524,12 @@
       setTimeout(() => { fetchCloudData(); }, 1000);
     }
 
-    async function editUserPermissions(index) {
-      const userObj = globalUsersList[index];
-      
-      const hasDash = confirm(`Allow "${userObj.username}" access to DASHBOARD?\n\nClick OK for YES, Cancel for NO.`);
-      const hasEntry = confirm(`Allow "${userObj.username}" access to VISITOR ENTRY?\n\nClick OK for YES, Cancel for NO.`);
-      const hasOutGate = confirm(`Allow "${userObj.username}" access to GATE SCAN TERMINAL?\n\nClick OK for YES, Cancel for NO.`);
-      const hasReport = confirm(`Allow "${userObj.username}" access to REPORTS & LOGS?\n\nClick OK for YES, Cancel for NO.`);
-      const canMarkOut = confirm(`Allow "${userObj.username}" permission to MARK OUT VISITORS?\n\nClick OK for YES (Security), Cancel for NO (Read-only viewers).`);
-
-      const newMenus = [];
-      if (hasDash) newMenus.push('dashboard');
-      if (hasEntry) newMenus.push('entry');
-      if (hasOutGate) newMenus.push('outGate');
-      if (hasReport) newMenus.push('report');
-
-      if (GOOGLE_SCRIPT_URL) {
-        try {
-          await fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({
-              action: "updatePermissions",
-              username: userObj.username,
-              canMarkOut: canMarkOut,
-              menus: newMenus
-            })
-          });
-        } catch (err) {
-          console.log("Error updating permissions: " + err.message);
-        }
-      }
-
-      alert(`Permissions updated for ${userObj.username}!`);
-      setTimeout(() => { fetchCloudData(); }, 1000);
-    }
-
-    async function resetUserPassword(index) {
-      const userObj = globalUsersList[index];
-      const newPass = prompt(`Enter new password for "${userObj.username}":`);
-      if (!newPass || !newPass.trim()) return;
-
-      if (GOOGLE_SCRIPT_URL) {
-        try {
-          await fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({
-              action: "resetPassword",
-              username: userObj.username,
-              newPass: newPass.trim()
-            })
-          });
-        } catch (err) {
-          console.log("Error resetting password: " + err.message);
-        }
-      }
-
-      alert(`Password updated for ${userObj.username}!`);
-      setTimeout(() => { fetchCloudData(); }, 1000);
-    }
-
-    async function deleteUser(index) {
-      const userObj = globalUsersList[index];
-      if (confirm(`Delete user "${userObj.username}"?`)) {
-        if (GOOGLE_SCRIPT_URL) {
-          try {
-            await fetch(GOOGLE_SCRIPT_URL, {
-              method: 'POST',
-              mode: 'no-cors',
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-              body: JSON.stringify({
-                action: "deleteUser",
-                username: userObj.username
-              })
-            });
-          } catch (err) {
-            console.log("Error deleting user: " + err.message);
-          }
-        }
-        alert(`User ${userObj.username} deleted!`);
-        setTimeout(() => { fetchCloudData(); }, 1000);
-      }
-    }
-
-    function renderUsersTable() {
-      const tbody = document.getElementById('userTableBody');
-      tbody.innerHTML = '';
-      
-      if (!globalUsersList || globalUsersList.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No users registered.</td></tr>';
-        return;
-      }
-
-      globalUsersList.forEach((u, i) => {
-        const menuDisplay = Array.isArray(u.menus) ? u.menus.join(', ') : u.menus;
-        const markOutText = u.canMarkOut !== false 
-          ? `<span style="color:#16a34a; font-weight:bold;"><i class="fa-solid fa-check"></i> Allowed</span>` 
-          : `<span style="color:#dc2626; font-weight:bold;"><i class="fa-solid fa-xmark"></i> Disabled</span>`;
-
-        const editPermBtn = u.role === 'admin' 
-          ? '' 
-          : `<button class="btn-action" style="background:#0284c7; padding:4px 8px; font-size:0.75rem; margin-right:5px;" onclick="editUserPermissions(${i})"><i class="fa-solid fa-pen-to-square"></i> Edit Permissions</button>`;
-        const resetBtn = `<button class="btn-reset" onclick="resetUserPassword(${i})"><i class="fa-solid fa-key"></i> Reset Pass</button>`;
-        const deleteBtn = u.role === 'admin' 
-          ? `<span style="color:#64748b; font-weight:bold; font-size:0.75rem;">Master Admin</span>` 
-          : `<button class="btn-out" onclick="deleteUser(${i})"><i class="fa-solid fa-trash"></i> Delete</button>`;
-        
-        tbody.innerHTML += `<tr>
-          <td><strong>${u.username}</strong></td>
-          <td>${menuDisplay}</td>
-          <td style="text-align:center;">${markOutText}</td>
-          <td>${editPermBtn}${resetBtn}${deleteBtn}</td>
-        </tr>`;
-      });
-    }
-
     async function recordTimeOut(passNo, targetTimeIn = null) {
       if (activeUser && activeUser.canMarkOut === false) {
         alert("Action Denied: Your account role does not have permission to mark visitors out.");
         return;
       }
-
-      const outTime = getCurrentTime();
-      const outDate = getCurrentDate();
-
+      const outTime = getCurrentTime(), outDate = getCurrentDate();
       if (GOOGLE_SCRIPT_URL) {
         try {
           await fetch(GOOGLE_SCRIPT_URL, {
@@ -2933,11 +2544,8 @@
               outDate: outDate
             })
           });
-        } catch (err) {
-          console.log("Error updating Time Out: " + err.message);
-        }
+        } catch (err) { console.log("Error updating Time Out: " + err.message); }
       }
-
       setTimeout(() => { fetchCloudData(); }, 1000);
     }
 
@@ -2956,22 +2564,18 @@
 
         if (from && log.date < from) return false;
         if (to && log.date > to) return false;
-
         return matchesQuery;
       });
-
       renderLogsTable(filtered);
     }
 
     function renderLogsTable(logs) {
       const tbody = document.getElementById('logsTableBody');
       tbody.innerHTML = '';
-
       if (!logs || logs.length === 0) {
         tbody.innerHTML = '<tr><td colspan="18" style="text-align:center;">No visitor entries found.</td></tr>';
         return;
       }
-
       const userCanMarkOut = !activeUser || activeUser.canMarkOut !== false;
 
       [...logs].reverse().forEach(log => {
@@ -2996,7 +2600,7 @@
 
         let deptDisplay = log.department && log.department.toUpperCase() === 'SICAL IT' ? 'IT' : (log.department || 'Admin');
 
-        const row = `<tr>
+        tbody.innerHTML += `<tr>
           <td><strong>${log.passNo}</strong></td>
           <td>${log.date}</td>
           <td>${log.timeIn}</td>
@@ -3016,57 +2620,35 @@
           <td>${photoCell}</td>
           <td>${actionContent}</td>
         </tr>`;
-        tbody.innerHTML += row;
       });
     }
 
     function renderLongTermLogsTable(logs) {
       const tbody = document.getElementById('longTermLogsBody');
       tbody.innerHTML = '';
-
       if (!logs || logs.length === 0) {
         tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">No long-term pass members found.</td></tr>';
         return;
       }
-
       const longTermPasses = logs.filter(l => l.validity === 'Weekly' || l.validity === 'Monthly' || (l.validity && l.validity.startsWith('Custom')));
-
       if (longTermPasses.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">No active weekly, monthly or custom pass members found.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">No active long-term pass members found.</td></tr>';
         return;
       }
-
       const passMap = {};
       longTermPasses.forEach(log => {
         if (!passMap[log.passNo]) {
-          passMap[log.passNo] = {
-            passNo: log.passNo,
-            issuedDate: log.date,
-            name: log.name,
-            category: log.category || 'Others',
-            mobile: log.mobile,
-            company: log.company,
-            validity: log.validity,
-            inCount: 0,
-            outCount: 0
-          };
+          passMap[log.passNo] = { passNo: log.passNo, issuedDate: log.date, name: log.name, category: log.category || 'Others', mobile: log.mobile, company: log.company, validity: log.validity, inCount: 0, outCount: 0 };
         }
         passMap[log.passNo].inCount++;
-        if (log.timeOut && log.timeOut !== '_______' && log.timeOut !== '--:--') {
-          passMap[log.passNo].outCount++;
-        }
+        if (log.timeOut && log.timeOut !== '_______' && log.timeOut !== '--:--') passMap[log.passNo].outCount++;
       });
 
       Object.values(passMap).forEach(item => {
         const rangeStr = getValidityDateRange(item.issuedDate, item.validity);
         const status = checkPassExpiration(item.issuedDate, item.validity);
-        const statusTag = status.isExpired 
-          ? `<span style="color:#dc2626; font-weight:bold;">EXPIRED</span>` 
-          : `<span style="color:#16a34a; font-weight:bold;">ACTIVE</span>`;
-
-        const visitsSummary = `Visit(s) - IN - ${item.inCount} / OUT - ${item.outCount}`;
-
-        const row = `<tr>
+        const statusTag = status.isExpired ? `<span style="color:#dc2626; font-weight:bold;">EXPIRED</span>` : `<span style="color:#16a34a; font-weight:bold;">ACTIVE</span>`;
+        tbody.innerHTML += `<tr>
           <td><strong>${item.passNo}</strong></td>
           <td>${item.issuedDate}</td>
           <td>${item.name}</td>
@@ -3075,60 +2657,29 @@
           <td>${item.company}</td>
           <td>${rangeStr}</td>
           <td style="text-align:center;">${statusTag}</td>
-          <td style="text-align:center;"><strong>${visitsSummary}</strong></td>
+          <td style="text-align:center;"><strong>Visit(s) - IN - ${item.inCount} / OUT - ${item.outCount}</strong></td>
         </tr>`;
-        tbody.innerHTML += row;
       });
     }
 
     function exportToCSV() {
-      if (globalCloudLogs.length === 0) {
-        alert("No data available to export.");
-        return;
-      }
-
+      if (globalCloudLogs.length === 0) { alert("No data available to export."); return; }
       let csvContent = "data:text/csv;charset=utf-8,";
       csvContent += "Pass No,In Date,Time In,Out Date,Time Out,Visitor Name,Category,Mobile Number,ID Type,ID Number,Company/From,Person To Meet,Department,Validity,Purpose,Vehicle No,Photo Link\n";
-
       globalCloudLogs.forEach(log => {
-        const row = [
-          `"${log.passNo}"`,
-          `"${log.date}"`,
-          `"${log.timeIn}"`,
-          `"${log.outDate || '_______'}"`,
-          `"${log.timeOut}"`,
-          `"${log.name}"`,
-          `"${log.category || 'Others'}"`,
-          `"${log.mobile}"`,
-          `"${log.idType || 'Aadhaar Card'}"`,
-          `"${log.idNumber || 'N/A'}"`,
-          `"${log.company}"`,
-          `"${log.personToMeet}"`,
-          `"${log.department}"`,
-          `"${log.validity}"`,
-          `"${log.purpose}"`,
-          `"${log.vehicle || 'N/A'}"`,
-          `"${log.photoUrl || 'N/A'}"`
-        ].join(",");
-        csvContent += row + "\n";
+        csvContent += [
+          `"${log.passNo}"`, `"${log.date}"`, `"${log.timeIn}"`, `"${log.outDate || '_______'}"`, `"${log.timeOut}"`,
+          `"${log.name}"`, `"${log.category || 'Others'}"`, `"${log.mobile}"`, `"${log.idType || 'Aadhaar Card'}"`,
+          `"${log.idNumber || 'N/A'}"`, `"${log.company}"`, `"${log.personToMeet}"`, `"${log.department}"`,
+          `"${log.validity}"`, `"${log.purpose}"`, `"${log.vehicle || 'N/A'}"`, `"${log.photoUrl || 'N/A'}"`
+        ].join(",") + "\n";
       });
-
-      const encodedUri = encodeURI(csvContent);
       const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
+      link.setAttribute("href", encodeURI(csvContent));
       link.setAttribute("download", `SICAL_Visitor_Report_${getCurrentDate()}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-    }
-  </script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/SICAL-VISITOR-SYSTEM-2.0/service-worker.js')
-          .then(reg => console.log('PWA Service Worker Registered Successfully!', reg.scope))
-          .catch(err => console.log('Service Worker Registration Failed:', err));
-      });
     }
   </script>
 </body>
