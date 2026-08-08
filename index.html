@@ -1316,10 +1316,11 @@
   </div>
 
   <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxr5K-XXqslEgy6gI2lVyxCypR12d511cr7GSUO5aEeu3_7rObwjc5le-4SCitZ7EaqYA/exec";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyzpfT0yHXU81KQKIUA9Gp6EaJraWWGJNknPfqh8HP37zDEXfr5NNJ6--_N6da9RNqcdA/exec";
 
     let globalCloudLogs = [];
     let globalCloudUsers = [];
+    let activeUser = null;
     let dedicatedScanner = null;
     let selectedCameraId = null;
     let loadedVisitorPhoto = null;
@@ -1393,6 +1394,11 @@
       }
     });
 
+    function updateHeaderUsername(username) {
+      const displayElem = document.getElementById('displayUsername');
+      if (displayElem) displayElem.textContent = username;
+    }
+
     // SECURE SERVER-SIDE LOGIN HANDLER
     const loginForm = document.getElementById('loginForm');
     loginForm.addEventListener('submit', async (e) => {
@@ -1431,21 +1437,21 @@
 
       let menus = [];
       if (Array.isArray(activeUser.menus)) {
-        menus = activeUser.menus.map(m => String(m).toLowerCase().trim());
+        menus = activeUser.menus.map(function(m) { return String(m).toLowerCase().trim(); });
       } else if (typeof activeUser.menus === 'string') {
-        menus = activeUser.menus.toLowerCase().split(',').map(m => m.trim());
+        menus = activeUser.menus.toLowerCase().split(',').map(function(m) { return m.trim(); });
       }
 
       const role = String(activeUser.role || "").toLowerCase();
       const uName = String(activeUser.username || "").trim().toUpperCase();
       const isMasterAdmin = (role === 'admin' || uName === 'SICAL ADMIN' || uName === 'SICALADMIN' || uName === 'KUMARESAN_M');
 
-      // STRICT EXACT MENU MATCHING TO AVOID SUBSTRING BUGS (e.g., 'outGate' containing 'admin')
-      const hasAdmin = isMasterAdmin || menus.includes('admin');
-      const hasDashboard = isMasterAdmin || menus.includes('dashboard');
-      const hasEntry = isMasterAdmin || menus.includes('entry') || menus.includes('visitor entry');
-      const hasOutGate = isMasterAdmin || menus.includes('outgate') || menus.includes('gate scan terminal') || menus.includes('scan');
-      const hasReport = isMasterAdmin || menus.includes('report') || menus.includes('reports') || menus.includes('reports & logs');
+      // STRICT EXACT MENU MATCHING TO AVOID SUBSTRING BUGS
+      const hasAdmin = isMasterAdmin || menus.indexOf('admin') !== -1;
+      const hasDashboard = isMasterAdmin || menus.indexOf('dashboard') !== -1;
+      const hasEntry = isMasterAdmin || menus.indexOf('entry') !== -1 || menus.indexOf('visitor entry') !== -1;
+      const hasOutGate = isMasterAdmin || menus.indexOf('outgate') !== -1 || menus.indexOf('gate scan terminal') !== -1 || menus.indexOf('scan') !== -1;
+      const hasReport = isMasterAdmin || menus.indexOf('report') !== -1 || menus.indexOf('reports') !== -1 || menus.indexOf('reports & logs') !== -1;
 
       const navDashboard = document.getElementById('navDashboard');
       const navEntry = document.getElementById('navEntry');
@@ -1552,6 +1558,10 @@
       capturedPhotoData = canvas.toDataURL('image/jpeg');
       loadedVisitorPhoto = capturedPhotoData;
       updatePhotoFrame(capturedPhotoData);
+    }
+
+    function getDirectDriveImageUrl(url) {
+      return url;
     }
 
     function updatePhotoFrame(photoSrc) {
@@ -2182,6 +2192,23 @@
       });
     }
 
+    function parseToCleanDateObj(dateStr) {
+      if(!dateStr) return null;
+      var clean = String(dateStr).replace(/'/g, '').trim();
+      var parts = clean.split('-');
+      if(parts.length === 3) {
+        if(parts[0].length === 4) return new Date(parts[0], parts[1]-1, parts[2]);
+        if(parts[2].length === 4) return new Date(parts[2], parts[1]-1, parts[0]);
+      }
+      var d = new Date(clean);
+      return isNaN(d) ? null : d;
+    }
+
+    function cleanDateTimeDisplay(val, type) {
+      if(!val) return type === 'date' ? '' : '--:--';
+      return String(val).replace(/'/g, '').trim();
+    }
+
     function calculateTotalHoursObj(dateStr, timeInStr, timeOutStr) {
       if (!timeInStr || timeInStr === '--:--') return { displayStr: "INSIDE", rawHours: 0 };
       try {
@@ -2267,6 +2294,22 @@
       return `${baseUrl}?pass=${encodeURIComponent(passNo)}`;
     }
 
+    function getValidityDateRange(entryDateStr, validityType) {
+      var d = parseToCleanDateObj(entryDateStr);
+      if(!d) return validityType;
+      var startStr = `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth()+1).padStart(2, '0')}-${d.getFullYear()}`;
+      var addDays = 1;
+      if(validityType === 'Weekly') addDays = 7;
+      else if(validityType === 'Monthly') addDays = 30;
+      else if(validityType && validityType.startsWith('Custom')) {
+        const m = validityType.match(/\d+/);
+        if(m) addDays = parseInt(m[0], 10);
+      }
+      d.setDate(d.getDate() + addDays);
+      var endStr = `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth()+1).padStart(2, '0')}-${d.getFullYear()}`;
+      return `${startStr} to ${endStr} (${validityType})`;
+    }
+
     function checkPassExpiration(entryDateStr, validityType) {
       if (!entryDateStr) return { isExpired: false, label: "VALID PASS" };
       var passDate = parseToCleanDateObj(entryDateStr);
@@ -2285,6 +2328,11 @@
         return { isExpired: true, label: `EXPIRED PASS (${validityType} limit ${allowedDays} day/s exceeded)` };
       }
       return { isExpired: false, label: `VALID PASS (${validityType})` };
+    }
+
+    function toggleCustomDaysInput(show) {
+      document.getElementById('customDaysContainer').style.display = show ? 'block' : 'none';
+      updatePreview();
     }
 
     function searchAndLoadVisitor(reprintExactPass = false) {
