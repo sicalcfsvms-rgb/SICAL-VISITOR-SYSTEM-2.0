@@ -9,8 +9,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="apple-touch-icon" href="/SICAL-VISITOR-SYSTEM-2.0/icon.jpg">
-  <!-- FontAwesome Icons CDN -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- FontAwesome Icons CDN with SRI Hash -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
   <!-- QRCode.js & html5-qrcode CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://unpkg.com/html5-qrcode"></script>
@@ -73,7 +73,6 @@
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
-    /* PUBLIC PASS VIEW HIDING (WHEN SCANNED VIA QR ON MOBILE) */
     body.public-pass-view #loginScreen,
     body.public-pass-view header,
     body.public-pass-view .top-navbar,
@@ -105,7 +104,6 @@
       justify-content: center !important;
     }
 
-    /* LOGIN SCREEN STYLING */
     #loginScreen {
       display: flex;
       min-height: 100vh;
@@ -1321,8 +1319,6 @@
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyldXDm1ciQe9VHnd6pHGYNeVcdZt2nq8di9fp4ncxN-DvEAKavbJT89HNwTCyCMAJZ/exec";
 
     let globalCloudLogs = [];
-    let globalUsersList = [];
-
     let dedicatedScanner = null;
     let selectedCameraId = null;
     let loadedVisitorPhoto = null;
@@ -1774,7 +1770,6 @@
           if (GOOGLE_SCRIPT_URL) {
             fetch(GOOGLE_SCRIPT_URL, {
               method: 'POST',
-              mode: 'no-cors',
               headers: { 'Content-Type': 'text/plain;charset=utf-8' },
               body: JSON.stringify({
                 action: "updateTimeOut",
@@ -1794,7 +1789,7 @@
 
         const newTimeIn = getCurrentTime();
         const newEntry = {
-          passNo: masterRecord.passNo,
+          action: "saveEntry",
           date: todayStr,
           timeIn: newTimeIn,
           outDate: '_______',
@@ -1813,18 +1808,20 @@
           category: masterRecord.category || 'Others'
         };
 
-        globalCloudLogs.push(newEntry);
-        displayOutResult(`SUCCESS: Visitor ${masterRecord.name} (${masterRecord.validity} Pass) Checked-IN at ${newTimeIn}!`, true);
-        computeDashboardAnalytics(globalCloudLogs);
-
         if (GOOGLE_SCRIPT_URL) {
-          fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(newEntry)
-          }).catch(err => console.log("Background sync error: " + err.message));
+          try {
+            const resp = await fetch(GOOGLE_SCRIPT_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: JSON.stringify(newEntry)
+            });
+            const res = await resp.json();
+            if (res && res.status === "success") {
+              displayOutResult(`SUCCESS: Visitor ${masterRecord.name} (${res.passNo}) Checked-IN at ${newTimeIn}!`, true);
+            }
+          } catch (err) { console.log("Background sync error: " + err.message); }
         }
+        setTimeout(() => { fetchCloudData(); }, 1000);
       } else {
         displayOutResult(`ERROR: No visitor record found for "${extractedPass}".`, false);
       }
@@ -1845,8 +1842,6 @@
       }
       setTimeout(() => { box.style.display = 'none'; }, 4000);
     }
-
-    let currentPassNumber = 1001;
 
     function initApp(autoPass = null) {
       fetchCloudData().then(() => {
@@ -1879,20 +1874,6 @@
               timeOut: cleanDateTimeDisplay(log.timeOut, 'time'),
               category: log.category || 'Others'
             }));
-
-            if (globalCloudLogs.length > 0) {
-              let maxSeq = 1000;
-              globalCloudLogs.forEach(log => {
-                if (log.passNo && log.passNo.includes('-')) {
-                  const parts = log.passNo.split('-');
-                  const seq = parseInt(parts[parts.length - 1], 10);
-                  if (!isNaN(seq) && seq > maxSeq) maxSeq = seq;
-                }
-              });
-              currentPassNumber = maxSeq + 1;
-            } else {
-              currentPassNumber = 1001;
-            }
 
             computeDashboardAnalytics(globalCloudLogs);
             renderLogsTable(globalCloudLogs);
@@ -2226,12 +2207,6 @@
       });
     }
 
-    function getFormattedPassNo() {
-      if (isPassAlreadySaved && lockedPreviewPassNo) return lockedPreviewPassNo;
-      const year = new Date().getFullYear();
-      return `VP-${year}-${currentPassNumber}`;
-    }
-
     function getCurrentTime() {
       return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
     }
@@ -2378,7 +2353,7 @@
     }
 
     function updatePreview() {
-      const currentPass = getFormattedPassNo();
+      const currentPass = lockedPreviewPassNo || "VP-2026-XXXX";
       const dateVal = getCurrentDate();
       const timeVal = getCurrentTime();
       const nameVal = document.getElementById('visitorName').value || '-';
@@ -2426,8 +2401,6 @@
       saveBtn.disabled = true; saveBtn.style.opacity = '0.6';
       saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
 
-      const passNo = getFormattedPassNo();
-      isPassAlreadySaved = true; lockedPreviewPassNo = passNo;
       let validityVal = document.querySelector('input[name="validity"]:checked').value;
       if (validityVal === 'Custom') {
         const days = document.getElementById('customPassDays').value || '2';
@@ -2437,7 +2410,7 @@
       if (deptVal.toUpperCase() === 'SICAL IT') deptVal = 'IT';
 
       const newEntry = {
-        passNo: passNo,
+        action: "saveEntry",
         date: getCurrentDate(),
         timeIn: getCurrentTime(),
         outDate: '_______',
@@ -2458,18 +2431,26 @@
 
       if (GOOGLE_SCRIPT_URL) {
         try {
-          await fetch(GOOGLE_SCRIPT_URL, {
+          const response = await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
-            mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(newEntry)
           });
-        } catch (err) { console.log("Cloud sync error: " + err.message); }
+          const res = await response.json();
+          if (res && res.status === "success") {
+            isPassAlreadySaved = true;
+            lockedPreviewPassNo = res.passNo;
+            document.getElementById('prevPassNo').textContent = res.passNo;
+            saveBtn.innerHTML = '<i class="fa-solid fa-check"></i> Pass Saved';
+            alert(`Pass ${res.passNo} saved securely on the server!`);
+            generateQrCode("passQrCode", getQrWebUrl(res.passNo), 130);
+          }
+        } catch (err) { 
+          console.log("Cloud sync error: " + err.message); 
+          saveBtn.disabled = false;
+          saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Visitor Pass';
+        }
       }
-
-      saveBtn.innerHTML = '<i class="fa-solid fa-check"></i> Pass Saved';
-      alert(`Pass ${passNo} saved & sent to Google Sheet!`);
-      currentPassNumber++;
       setTimeout(() => { fetchCloudData(); }, 1000);
     }
 
@@ -2505,7 +2486,6 @@
         try {
           await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
-            mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({
               action: "addUser",
@@ -2534,7 +2514,6 @@
         try {
           await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
-            mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({
               action: "updateTimeOut",
