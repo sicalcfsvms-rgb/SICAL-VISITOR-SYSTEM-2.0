@@ -1433,7 +1433,7 @@
     });
 
     // STRICT MENU PERMISSION CHECKER FOR USERS
-    function applyPermissions() {
+   function applyPermissions() {
       if (!activeUser) return;
 
       let menus = [];
@@ -1445,14 +1445,16 @@
 
       const role = String(activeUser.role || "").toLowerCase();
       const uName = String(activeUser.username || "").trim().toUpperCase();
+      
+      // STRICT MASTER ADMIN IDENTIFICATION
       const isMasterAdmin = (role === 'admin' || uName === 'SICAL ADMIN' || uName === 'SICALADMIN' || uName === 'KUMARESAN_M');
 
-      // STRICT EXACT MATCHING TO PREVENT CFS-VMS OR CFS HEAD FROM GETTING ADMIN ACCESS
-      const hasAdmin = isMasterAdmin || menus.indexOf('admin') !== -1;
-      const hasDashboard = isMasterAdmin || menus.indexOf('dashboard') !== -1;
-      const hasEntry = isMasterAdmin || menus.indexOf('entry') !== -1 || menus.indexOf('visitor entry') !== -1;
-      const hasOutGate = isMasterAdmin || menus.indexOf('outgate') !== -1 || menus.indexOf('gate scan terminal') !== -1 || menus.indexOf('scan') !== -1;
-      const hasReport = isMasterAdmin || menus.indexOf('report') !== -1 || menus.indexOf('reports') !== -1 || menus.indexOf('reports & logs') !== -1;
+      // STRICT CHECK: Ensure admin is only true if explicitly granted or master admin
+      const hasAdmin = isMasterAdmin || menus.includes('admin') || menus.includes('admin setup');
+      const hasDashboard = isMasterAdmin || menus.includes('dashboard');
+      const hasEntry = isMasterAdmin || menus.includes('entry') || menus.includes('visitor entry');
+      const hasOutGate = isMasterAdmin || menus.includes('outgate') || menus.includes('gate scan terminal') || menus.includes('scan');
+      const hasReport = isMasterAdmin || menus.includes('report') || menus.includes('reports') || menus.includes('reports & logs');
 
       const navDashboard = document.getElementById('navDashboard');
       const navEntry = document.getElementById('navEntry');
@@ -1464,16 +1466,13 @@
       if (navEntry) navEntry.style.display = hasEntry ? 'inline-block' : 'none';
       if (navOutGate) navOutGate.style.display = hasOutGate ? 'inline-block' : 'none';
       if (navReport) navReport.style.display = hasReport ? 'inline-block' : 'none';
+      
+      // STRICTLY HIDES ADMIN SETUP FOR NON-ADMIN USERS
       if (navAdmin) navAdmin.style.display = hasAdmin ? 'inline-block' : 'none';
 
-      // Ensure user lands on an authorized tab if current tab is unauthorized
       const activeTab = document.querySelector('.tab-content.active');
-      if (activeTab) {
-        if (activeTab.id === 'adminTab' && !hasAdmin) switchToFirstAvailableTab(hasDashboard, hasEntry, hasOutGate, hasReport);
-        if (activeTab.id === 'dashboardTab' && !hasDashboard) switchToFirstAvailableTab(hasDashboard, hasEntry, hasOutGate, hasReport);
-        if (activeTab.id === 'entryTab' && !hasEntry) switchToFirstAvailableTab(hasDashboard, hasEntry, hasOutGate, hasReport);
-        if (activeTab.id === 'outGateTab' && !hasOutGate) switchToFirstAvailableTab(hasDashboard, hasEntry, hasOutGate, hasReport);
-        if (activeTab.id === 'reportTab' && !hasReport) switchToFirstAvailableTab(hasDashboard, hasEntry, hasOutGate, hasReport);
+      if (activeTab && activeTab.id === 'adminTab' && !hasAdmin) {
+        switchToFirstAvailableTab(hasDashboard, hasEntry, hasOutGate, hasReport);
       }
     }
 
