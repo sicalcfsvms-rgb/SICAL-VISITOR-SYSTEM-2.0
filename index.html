@@ -1509,17 +1509,17 @@
       if(tabId === 'reportTab') {
         stopCamera();
         stopDedicatedOutScanner();
-        fetchCloudData();
+        renderLogsTable(globalCloudLogs);
       } else if(tabId === 'entryTab') {
         stopDedicatedOutScanner();
         startCamera();
       } else if(tabId === 'outGateTab') {
         stopCamera();
         initCameraSelector();
-      } else if(tabId === 'dashboardTab' || tabId === 'adminTab') {
+      } else if(tabId === 'dashboardTab') {
         stopCamera();
         stopDedicatedOutScanner();
-        fetchCloudData();
+        computeDashboardAnalytics(globalCloudLogs);
       }
     }
 
@@ -1747,9 +1747,10 @@
         if (deptVal.toUpperCase() === 'SICAL IT') deptVal = 'IT';
 
         const newTimeIn = getCurrentTime();
+        // FIXED: Explicitly pass masterRecord.passNo so recurring weekly/monthly/custom passes retain their exact numbers
         const recurringEntry = {
           action: "saveEntry",
-          passNo: masterRecord.passNo, // <--- PRESERVES THE EXACT EXISTING PASS NUMBER FOR WEEKLY/MONTHLY/CUSTOM PASSES
+          passNo: masterRecord.passNo,
           date: todayStr,
           timeIn: newTimeIn,
           outDate: '_______',
@@ -2603,7 +2604,11 @@
     }
 
     async function saveEntryOnly() {
-      if (isPassAlreadySaved) { alert("This pass has already been saved!"); return; }
+      // FIXED: Only use lockedPreviewPassNo if an existing record was explicitly loaded for a recurring check-in.
+      // If it's a new form entry, passToSend is empty so the server generates a unique sequential Daily pass number.
+      const currentPassInput = document.getElementById('entrySearchInput').value.trim();
+      const passToSend = (isPassAlreadySaved && currentPassInput) ? lockedPreviewPassNo : "";
+
       const form = document.getElementById('visitorForm');
       if (!form.checkValidity()) { alert("Please fill required fields (*)"); return; }
 
@@ -2621,7 +2626,7 @@
 
       const newEntry = {
         action: "saveEntry",
-        passNo: lockedPreviewPassNo || "",
+        passNo: passToSend,
         date: getCurrentDate(),
         timeIn: getCurrentTime(),
         outDate: '_______',
@@ -2671,7 +2676,8 @@
       document.getElementById('visitorForm').reset();
       document.getElementById('entrySearchInput').value = '';
       capturedPhotoData = null; loadedVisitorPhoto = null;
-      isPassAlreadySaved = false; lockedPreviewPassNo = null;
+      isPassAlreadySaved = false; 
+      lockedPreviewPassNo = null; // FIXED: Clears the lock so next form entries do not inherit old pass numbers
       const saveBtn = document.getElementById('savePassBtn');
       saveBtn.disabled = false; saveBtn.style.opacity = '1';
       saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Visitor Pass';
@@ -2739,24 +2745,29 @@
       setTimeout(() => { fetchCloudData(); }, 1000);
     }
 
+    // FIXED: Added debounce timer for lightning-fast search filtering without typing lag
+    let searchTimer = null;
     function filterLogs() {
-      const query = document.getElementById('searchInput').value.toLowerCase().trim();
-      const from = formatDateToDDMMYYYY(document.getElementById('fromDate').value);
-      const to = formatDateToDDMMYYYY(document.getElementById('toDate').value);
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        const query = document.getElementById('searchInput').value.toLowerCase().trim();
+        const from = formatDateToDDMMYYYY(document.getElementById('fromDate').value);
+        const to = formatDateToDDMMYYYY(document.getElementById('toDate').value);
 
-      const filtered = globalCloudLogs.filter(log => {
-        const matchesQuery = !query || 
-          log.passNo.toLowerCase().includes(query) || 
-          String(log.mobile).trim().toLowerCase().includes(query) ||
-          log.name.toLowerCase().includes(query) ||
-          (log.category || '').toLowerCase().includes(query) ||
-          log.idNumber.toLowerCase().includes(query);
+        const filtered = globalCloudLogs.filter(log => {
+          const matchesQuery = !query || 
+            log.passNo.toLowerCase().includes(query) || 
+            String(log.mobile).trim().toLowerCase().includes(query) ||
+            log.name.toLowerCase().includes(query) ||
+            (log.category || '').toLowerCase().includes(query) ||
+            log.idNumber.toLowerCase().includes(query);
 
-        if (from && log.date < from) return false;
-        if (to && log.date > to) return false;
-        return matchesQuery;
-      });
-      renderLogsTable(filtered);
+          if (from && log.date < from) return false;
+          if (to && log.date > to) return false;
+          return matchesQuery;
+        });
+        renderLogsTable(filtered);
+      }, 250);
     }
 
     function renderLogsTable(logs) {
