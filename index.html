@@ -1822,7 +1822,7 @@
       return str.replace(/'/g, '');
     }
 
-    async function fetchCloudData() {
+   async function fetchCloudData() {
       document.getElementById('statMonth').textContent = "...";
       document.getElementById('statToday').textContent = "...";
       document.getElementById('statYesterday').textContent = "...";
@@ -1836,11 +1836,13 @@
           if (data && data.status === "success") {
             globalCloudLogs = (data.logs || []).map(log => ({
               ...log,
-              mobile: String(log.mobile || "").trim(),
+              passNo: String(log.passNo || "").trim(),
               date: cleanDateString(log.date),
-              outDate: cleanDateString(log.outDate),
               timeIn: cleanTimeString(log.timeIn),
+              outDate: cleanDateString(log.outDate),
               timeOut: cleanTimeString(log.timeOut),
+              name: String(log.name || "").trim(),
+              mobile: String(log.mobile || "").trim(),
               category: log.category || 'Others'
             }));
 
