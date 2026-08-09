@@ -1433,7 +1433,7 @@
     });
 
     // STRICT MENU PERMISSION CHECKER FOR USERS
-   function applyPermissions() {
+  function applyPermissions() {
       if (!activeUser) return;
 
       let menus = [];
@@ -1446,15 +1446,13 @@
       const role = String(activeUser.role || "").toLowerCase();
       const uName = String(activeUser.username || "").trim().toUpperCase();
       
-      // STRICT MASTER ADMIN IDENTIFICATION
-      const isMasterAdmin = (role === 'admin' || uName === 'SICAL ADMIN' || uName === 'SICALADMIN' || uName === 'KUMARESAN_M');
-
-      // STRICT CHECK: Ensure admin is only true if explicitly granted or master admin
-      const hasAdmin = isMasterAdmin || menus.includes('admin') || menus.includes('admin setup');
-      const hasDashboard = isMasterAdmin || menus.includes('dashboard');
-      const hasEntry = isMasterAdmin || menus.includes('entry') || menus.includes('visitor entry');
-      const hasOutGate = isMasterAdmin || menus.includes('outgate') || menus.includes('gate scan terminal') || menus.includes('scan');
-      const hasReport = isMasterAdmin || menus.includes('report') || menus.includes('reports') || menus.includes('reports & logs');
+      // STRICT ADMIN CHECK: Role must be exactly 'admin' OR 'admin' must be listed in their menu permissions
+      const hasAdmin = (role === 'admin') || menus.includes('admin');
+      
+      const hasDashboard = menus.includes('dashboard') || hasAdmin;
+      const hasEntry = menus.includes('entry') || menus.includes('visitor entry') || hasAdmin;
+      const hasOutGate = menus.includes('outgate') || menus.includes('gate scan terminal') || menus.includes('scan') || hasAdmin;
+      const hasReport = menus.includes('report') || menus.includes('reports') || menus.includes('reports & logs') || hasAdmin;
 
       const navDashboard = document.getElementById('navDashboard');
       const navEntry = document.getElementById('navEntry');
@@ -1467,7 +1465,7 @@
       if (navOutGate) navOutGate.style.display = hasOutGate ? 'inline-block' : 'none';
       if (navReport) navReport.style.display = hasReport ? 'inline-block' : 'none';
       
-      // STRICTLY HIDES ADMIN SETUP FOR NON-ADMIN USERS
+      // THIS WILL NOW BE STRICTLY HIDDEN FOR CFS-VMS (Since role is 'security' and menu does not contain 'admin')
       if (navAdmin) navAdmin.style.display = hasAdmin ? 'inline-block' : 'none';
 
       const activeTab = document.querySelector('.tab-content.active');
