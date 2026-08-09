@@ -1685,7 +1685,7 @@
       );
 
       if (matchingLogs.length > 0) {
-        const masterRecord = matchingLogs[0];
+        const masterRecord = matchingLogs[matchingLogs.length - 1];
         const todayStr = getCurrentDate();
         const activeInsideLog = matchingLogs.slice().reverse().find(l => !l.timeOut || l.timeOut === '_______' || l.timeOut === '--:--' || l.timeOut === '--');
 
@@ -1718,8 +1718,9 @@
         if (deptVal.toUpperCase() === 'SICAL IT') deptVal = 'IT';
 
         const newTimeIn = getCurrentTime();
-        const newEntry = {
+        const recurringEntry = {
           action: "saveEntry",
+          passNo: masterRecord.passNo,
           date: todayStr,
           timeIn: newTimeIn,
           outDate: '_______',
@@ -1743,17 +1744,17 @@
             const resp = await fetch(GOOGLE_SCRIPT_URL, {
               method: 'POST',
               headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-              body: JSON.stringify(newEntry)
+              body: JSON.stringify(recurringEntry)
             });
             const res = await resp.json();
             if (res && res.status === "success") {
-              displayOutResult(`SUCCESS: Visitor ${masterRecord.name} (${res.passNo}) Checked-IN at ${newTimeIn}!`, true);
+              displayOutResult(`SUCCESS: Existing Member ${masterRecord.name} (${masterRecord.passNo}) Checked-IN again at ${newTimeIn}!`, true);
             }
           } catch (err) { console.log("Background sync error: " + err.message); }
         }
         setTimeout(() => { fetchCloudData(); }, 1000);
       } else {
-        displayOutResult(`ERROR: No visitor record found for "${extractedPass}".`, false);
+        displayOutResult(`ERROR: Pass number "${extractedPass}" not found in system records. Please issue a new pass.`, false);
       }
     }
 
@@ -2589,6 +2590,7 @@
 
       const newEntry = {
         action: "saveEntry",
+        passNo: lockedPreviewPassNo || "",
         date: getCurrentDate(),
         timeIn: getCurrentTime(),
         outDate: '_______',
