@@ -1432,8 +1432,8 @@
       }
     });
 
-    // STRICT MENU PERMISSION CHECKER FOR USERS
-  function applyPermissions() {
+ // STRICT MENU PERMISSION CHECKER FOR USERS
+    function applyPermissions() {
       if (!activeUser) return;
 
       let menus = [];
@@ -1465,7 +1465,7 @@
       if (navOutGate) navOutGate.style.display = hasOutGate ? 'inline-block' : 'none';
       if (navReport) navReport.style.display = hasReport ? 'inline-block' : 'none';
       
-      // THIS WILL NOW BE STRICTLY HIDDEN FOR CFS-VMS (Since role is 'security' and menu does not contain 'admin')
+      // STRICTLY HIDES ADMIN SETUP FOR NON-ADMIN USERS
       if (navAdmin) navAdmin.style.display = hasAdmin ? 'inline-block' : 'none';
 
       const activeTab = document.querySelector('.tab-content.active');
@@ -1474,25 +1474,25 @@
       }
     }
 
-    function switchToFirstAvailableTab(dash, entry, outGate, report) {
-      if (dash) switchTab('dashboardTab');
-      else if (entry) switchTab('entryTab');
-      else if (outGate) switchTab('outGateTab');
-      else if (report) switchTab('reportTab');
-    }
-
-    function logout() {
-      stopCamera();
-      stopDedicatedOutScanner();
-      sessionStorage.clear(); 
-      activeUser = null;
-      document.getElementById('appScreen').style.display = 'none';
-      document.getElementById('loginScreen').style.display = 'flex';
-      document.getElementById('username').value = '';
-      document.getElementById('password').value = '';
-    }
-
     function switchTab(tabId) {
+      // SECURITY GUARD: Prevent non-admins from switching to admin tab
+      if (tabId === 'adminTab') {
+        let menus = [];
+        if (Array.isArray(activeUser?.menus)) {
+          menus = activeUser.menus.map(m => String(m).toLowerCase().trim());
+        } else if (typeof activeUser?.menus === 'string') {
+          menus = activeUser.menus.toLowerCase().split(',').map(m => m.trim());
+        }
+        const role = String(activeUser?.role || "").toLowerCase();
+        const uName = String(activeUser?.username || "").trim().toUpperCase();
+        const hasAdmin = (role === 'admin') || menus.includes('admin') || (uName === 'SICAL ADMIN' || uName === 'KUMARESAN_M');
+
+        if (!hasAdmin) {
+          alert("Access Denied: You do not have permission to access Admin Setup.");
+          return; // Block tab switch entirely
+        }
+      }
+
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.top-menu button').forEach(el => el.classList.remove('active'));
       document.getElementById(tabId).classList.add('active');
@@ -1505,7 +1505,10 @@
         'adminTab': '#navAdmin button'
       };
 
-      if(btnMap[tabId]) document.querySelector(btnMap[tabId]).classList.add('active');
+      if(btnMap[tabId]) {
+        const btn = document.querySelector(btnMap[tabId]);
+        if(btn) btn.classList.add('active');
+      }
 
       if(tabId === 'reportTab') {
         stopCamera();
