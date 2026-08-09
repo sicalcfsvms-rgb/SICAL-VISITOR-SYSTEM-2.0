@@ -661,7 +661,7 @@
         <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Switch Light/Dark Theme">
           <i class="fa-solid fa-moon" id="themeIcon"></i>
         </button>
-       <button class="nav-btn" onclick="logout()" style="background: #dc2626; color:white; border:none; padding:6px 14px; border-radius:6px; cursor:pointer; font-size:0.8rem; font-weight: bold;"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+        <button class="nav-btn" onclick="logout()" style="background: #dc2626; color:white; border:none; padding:6px 14px; border-radius:6px; cursor:pointer; font-size:0.8rem; font-weight: bold;"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
       </div>
     </header>
 
@@ -1432,7 +1432,7 @@
       }
     });
 
- // STRICT MENU PERMISSION CHECKER FOR USERS
+    // STRICT MENU PERMISSION CHECKER FOR USERS
     function applyPermissions() {
       if (!activeUser) return;
 
@@ -1446,8 +1446,7 @@
       const role = String(activeUser.role || "").toLowerCase();
       const uName = String(activeUser.username || "").trim().toUpperCase();
       
-      // STRICT ADMIN CHECK: Role must be exactly 'admin' OR 'admin' must be listed in their menu permissions
-      const hasAdmin = (role === 'admin') || menus.includes('admin');
+      const hasAdmin = (role === 'admin') && menus.includes('admin');
       
       const hasDashboard = menus.includes('dashboard') || hasAdmin;
       const hasEntry = menus.includes('entry') || menus.includes('visitor entry') || hasAdmin;
@@ -1465,7 +1464,6 @@
       if (navOutGate) navOutGate.style.display = hasOutGate ? 'inline-block' : 'none';
       if (navReport) navReport.style.display = hasReport ? 'inline-block' : 'none';
       
-      // STRICTLY HIDES ADMIN SETUP FOR NON-ADMIN USERS
       if (navAdmin) navAdmin.style.display = hasAdmin ? 'inline-block' : 'none';
 
       const activeTab = document.querySelector('.tab-content.active');
@@ -1475,7 +1473,6 @@
     }
 
     function switchTab(tabId) {
-      // SECURITY GUARD: Prevent non-admins from switching to admin tab
       if (tabId === 'adminTab') {
         let menus = [];
         if (Array.isArray(activeUser?.menus)) {
@@ -1484,12 +1481,11 @@
           menus = activeUser.menus.toLowerCase().split(',').map(m => m.trim());
         }
         const role = String(activeUser?.role || "").toLowerCase();
-        const uName = String(activeUser?.username || "").trim().toUpperCase();
-        const hasAdmin = (role === 'admin') || menus.includes('admin') || (uName === 'SICAL ADMIN' || uName === 'KUMARESAN_M');
+        const hasAdmin = (role === 'admin') && menus.includes('admin');
 
         if (!hasAdmin) {
           alert("Access Denied: You do not have permission to access Admin Setup.");
-          return; // Block tab switch entirely
+          return;
         }
       }
 
@@ -1525,6 +1521,39 @@
         stopDedicatedOutScanner();
         fetchCloudData();
       }
+    }
+
+    function switchToFirstAvailableTab(dash, entry, outGate, report) {
+      if (dash) switchTab('dashboardTab');
+      else if (entry) switchTab('entryTab');
+      else if (outGate) switchTab('outGateTab');
+      else if (report) switchTab('reportTab');
+    }
+
+    function logout() {
+      try {
+        stopCamera();
+        stopDedicatedOutScanner();
+      } catch (e) {
+        console.log("Scanner cleanup error: " + e.message);
+      }
+      
+      sessionStorage.clear();
+      localStorage.removeItem('sical_active_session');
+      activeUser = null;
+
+      const appScreen = document.getElementById('appScreen');
+      const loginScreen = document.getElementById('loginScreen');
+      
+      if (appScreen) appScreen.style.display = 'none';
+      if (loginScreen) loginScreen.style.display = 'flex';
+
+      const userField = document.getElementById('username');
+      const passField = document.getElementById('password');
+      if (userField) userField.value = '';
+      if (passField) passField.value = '';
+
+      window.location.href = window.location.pathname;
     }
 
     let videoStream = null;
@@ -1822,7 +1851,7 @@
       return str.replace(/'/g, '');
     }
 
-   async function fetchCloudData() {
+    async function fetchCloudData() {
       document.getElementById('statMonth').textContent = "...";
       document.getElementById('statToday').textContent = "...";
       document.getElementById('statYesterday').textContent = "...";
