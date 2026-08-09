@@ -1749,7 +1749,7 @@
         const newTimeIn = getCurrentTime();
         const recurringEntry = {
           action: "saveEntry",
-          passNo: masterRecord.passNo,
+          passNo: masterRecord.passNo, // <--- PRESERVES THE EXACT EXISTING PASS NUMBER FOR WEEKLY/MONTHLY/CUSTOM PASSES
           date: todayStr,
           timeIn: newTimeIn,
           outDate: '_______',
