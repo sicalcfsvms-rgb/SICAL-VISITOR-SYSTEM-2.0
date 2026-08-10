@@ -2543,6 +2543,9 @@
           generateQrCode("passQrCode", getQrWebUrl(match.passNo), 130);
         } else {
           alert(`Visitor details loaded for ${match.name}! Ready to issue a NEW Pass.`);
+ 	isPassAlreadySaved = false;
+        lockedPreviewPassNo = null;
+        updatePreview();
         }
       } else {
         alert("No record found matching: " + query);
