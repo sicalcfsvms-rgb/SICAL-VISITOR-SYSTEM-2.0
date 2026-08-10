@@ -2624,6 +2624,11 @@
       let deptVal = document.getElementById('department').value;
       if (deptVal.toUpperCase() === 'SICAL IT') deptVal = 'IT';
 
+// FIXED: Only use lockedPreviewPassNo if an existing visitor was explicitly searched/loaded.
+      // For brand new entries, passNo must be empty so the server generates a unique sequential Daily pass.
+      const searchInputValue = document.getElementById('entrySearchInput').value.trim();
+      const passToSend = (isPassAlreadySaved && searchInputValue) ? lockedPreviewPassNo : "";
+      
       const newEntry = {
         action: "saveEntry",
         passNo: passToSend,
