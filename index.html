@@ -1398,8 +1398,7 @@
       const displayElem = document.getElementById('displayUsername');
       if (displayElem) displayElem.textContent = username;
     }
-
-  // SECURE SERVER-SIDE LOGIN HANDLER WITH ERROR HANDLING
+// SECURE SERVER-SIDE LOGIN HANDLER WITH DETAILED ERROR LOGGING
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
       loginForm.addEventListener('submit', async (e) => {
@@ -1408,10 +1407,9 @@
         const pass = document.getElementById('password').value.trim();
         const errorMsgElem = document.getElementById('loginError');
 
-        // Show a temporary loading state on the button
         const loginBtn = loginForm.querySelector('.btn-login');
         const originalBtnText = loginBtn.innerHTML;
-        loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Logging in...';
+        loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Authenticating...';
         loginBtn.disabled = true;
 
         try {
@@ -1428,7 +1426,7 @@
             updateHeaderUsername(activeUser.username);
             sessionStorage.setItem('sical_active_session', JSON.stringify(result.user));
             
-            // Explicitly force hide login and show dashboard
+            // Hide login screen, display main app
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('appScreen').style.display = 'block';
             if (errorMsgElem) errorMsgElem.style.display = 'none';
@@ -1442,9 +1440,9 @@
             }
           }
         } catch (err) {
-          console.log("Login network error: " + err.message);
+          console.log("Login error details: " + err.message);
           if (errorMsgElem) {
-            errorMsgElem.textContent = "Connection error. Please try again.";
+            errorMsgElem.textContent = "Server connection failed. Check your Web App URL.";
             errorMsgElem.style.display = 'block';
           }
         } finally {
@@ -1453,7 +1451,7 @@
         }
       });
     }
-
+    
     // STRICT MENU PERMISSION CHECKER FOR USERS
     function applyPermissions() {
       if (!activeUser) return;
