@@ -1399,38 +1399,60 @@
       if (displayElem) displayElem.textContent = username;
     }
 
-    // SECURE SERVER-SIDE LOGIN HANDLER
+  // SECURE SERVER-SIDE LOGIN HANDLER WITH ERROR HANDLING
     const loginForm = document.getElementById('loginForm');
-    loginForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const user = document.getElementById('username').value.trim();
-      const pass = document.getElementById('password').value.trim();
+    if (loginForm) {
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const user = document.getElementById('username').value.trim();
+        const pass = document.getElementById('password').value.trim();
+        const errorMsgElem = document.getElementById('loginError');
 
-      try {
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action: "login", username: user, pass: pass })
-        });
-        const result = await response.json();
+        // Show a temporary loading state on the button
+        const loginBtn = loginForm.querySelector('.btn-login');
+        const originalBtnText = loginBtn.innerHTML;
+        loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Logging in...';
+        loginBtn.disabled = true;
 
-        if (result && result.status === "success") {
-          activeUser = result.user;
-          updateHeaderUsername(activeUser.username);
-          sessionStorage.setItem('sical_active_session', JSON.stringify(result.user));
-          document.getElementById('loginScreen').style.display = 'none';
-          document.getElementById('appScreen').style.display = 'block';
-          document.getElementById('loginError').style.display = 'none';
-          applyPermissions();
-          initApp();
-        } else {
-          document.getElementById('loginError').style.display = 'block';
+        try {
+          const response = await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: "login", username: user, pass: pass })
+          });
+          
+          const result = await response.json();
+
+          if (result && result.status === "success") {
+            activeUser = result.user;
+            updateHeaderUsername(activeUser.username);
+            sessionStorage.setItem('sical_active_session', JSON.stringify(result.user));
+            
+            // Explicitly force hide login and show dashboard
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('appScreen').style.display = 'block';
+            if (errorMsgElem) errorMsgElem.style.display = 'none';
+            
+            applyPermissions();
+            initApp();
+          } else {
+            if (errorMsgElem) {
+              errorMsgElem.textContent = result.message || "Invalid Username or Password!";
+              errorMsgElem.style.display = 'block';
+            }
+          }
+        } catch (err) {
+          console.log("Login network error: " + err.message);
+          if (errorMsgElem) {
+            errorMsgElem.textContent = "Connection error. Please try again.";
+            errorMsgElem.style.display = 'block';
+          }
+        } finally {
+          loginBtn.innerHTML = originalBtnText;
+          loginBtn.disabled = false;
         }
-      } catch (err) {
-        console.log("Login error: " + err.message);
-        document.getElementById('loginError').style.display = 'block';
-      }
-    });
+      });
+    }
 
     // STRICT MENU PERMISSION CHECKER FOR USERS
     function applyPermissions() {
