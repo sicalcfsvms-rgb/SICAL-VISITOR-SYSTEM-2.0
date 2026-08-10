@@ -1398,7 +1398,8 @@
       const displayElem = document.getElementById('displayUsername');
       if (displayElem) displayElem.textContent = username;
     }
-// SECURE SERVER-SIDE LOGIN HANDLER WITH DETAILED ERROR LOGGING
+
+    // SECURE SERVER-SIDE LOGIN HANDLER
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
       loginForm.addEventListener('submit', async (e) => {
@@ -1426,7 +1427,6 @@
             updateHeaderUsername(activeUser.username);
             sessionStorage.setItem('sical_active_session', JSON.stringify(result.user));
             
-            // Hide login screen, display main app
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('appScreen').style.display = 'block';
             if (errorMsgElem) errorMsgElem.style.display = 'none';
@@ -1451,7 +1451,7 @@
         }
       });
     }
-    
+
     // STRICT MENU PERMISSION CHECKER FOR USERS
     function applyPermissions() {
       if (!activeUser) return;
@@ -1767,7 +1767,6 @@
         if (deptVal.toUpperCase() === 'SICAL IT') deptVal = 'IT';
 
         const newTimeIn = getCurrentTime();
-        // FIXED: Explicitly pass masterRecord.passNo so recurring weekly/monthly/custom passes retain their exact numbers
         const recurringEntry = {
           action: "saveEntry",
           passNo: masterRecord.passNo,
@@ -2624,8 +2623,6 @@
     }
 
     async function saveEntryOnly() {
-      // FIXED: Only use lockedPreviewPassNo if an existing record was explicitly loaded for a recurring check-in.
-      // If it's a new form entry, passToSend is empty so the server generates a unique sequential Daily pass number.
       const currentPassInput = document.getElementById('entrySearchInput').value.trim();
       const passToSend = (isPassAlreadySaved && currentPassInput) ? lockedPreviewPassNo : "";
 
@@ -2644,11 +2641,6 @@
       let deptVal = document.getElementById('department').value;
       if (deptVal.toUpperCase() === 'SICAL IT') deptVal = 'IT';
 
-// FIXED: Only use lockedPreviewPassNo if an existing visitor was explicitly searched/loaded.
-      // For brand new entries, passNo must be empty so the server generates a unique sequential Daily pass.
-      const searchInputValue = document.getElementById('entrySearchInput').value.trim();
-      const passToSend = (isPassAlreadySaved && searchInputValue) ? lockedPreviewPassNo : "";
-      
       const newEntry = {
         action: "saveEntry",
         passNo: passToSend,
@@ -2702,7 +2694,7 @@
       document.getElementById('entrySearchInput').value = '';
       capturedPhotoData = null; loadedVisitorPhoto = null;
       isPassAlreadySaved = false; 
-      lockedPreviewPassNo = null; // FIXED: Clears the lock so next form entries do not inherit old pass numbers
+      lockedPreviewPassNo = null; 
       const saveBtn = document.getElementById('savePassBtn');
       saveBtn.disabled = false; saveBtn.style.opacity = '1';
       saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Visitor Pass';
@@ -2770,7 +2762,6 @@
       setTimeout(() => { fetchCloudData(); }, 1000);
     }
 
-    // FIXED: Added debounce timer for lightning-fast search filtering without typing lag
     let searchTimer = null;
     function filterLogs() {
       clearTimeout(searchTimer);
