@@ -2541,12 +2541,8 @@
           document.getElementById('prevPurpose').textContent = match.purpose || 'Meeting';
           document.getElementById('prevValidity').textContent = getValidityDateRange(match.date, match.validity);
           generateQrCode("passQrCode", getQrWebUrl(match.passNo), 130);
-    } else {
-      alert(`Visitor details loaded for ${match.name}! Ready to issue a NEW Pass.`);
-      isPassAlreadySaved = false;
-      lockedPreviewPassNo = null;
-      updatePreview();
-    }        
+        } else {
+          alert(`Visitor details loaded for ${match.name}! Ready to issue a NEW Pass.`);
         }
       } else {
         alert("No record found matching: " + query);
