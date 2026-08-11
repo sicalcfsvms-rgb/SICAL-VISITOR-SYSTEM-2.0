@@ -1387,6 +1387,8 @@
         
         fetchCloudData().then(() => {
           applyPermissions();
+          computeDashboardAnalytics(globalCloudLogs);
+          renderLogsTable(globalCloudLogs);
         });
         initApp();
       } else {
@@ -1492,6 +1494,7 @@
       }
     }
 
+    // OPTIMIZED INSTANT TAB SWITCHING (Uses local cache without redundant network fetches)
     function switchTab(tabId) {
       if (tabId === 'adminTab') {
         let menus = [];
@@ -1529,7 +1532,6 @@
       if(tabId === 'reportTab') {
         stopCamera();
         stopDedicatedOutScanner();
-        renderLogsTable(globalCloudLogs);
       } else if(tabId === 'entryTab') {
         stopDedicatedOutScanner();
         startCamera();
@@ -1871,6 +1873,7 @@
       return str.replace(/'/g, '');
     }
 
+    // OPTIMIZED BACKGROUND CACHE LOADER (Fetches once, stores in memory)
     async function fetchCloudData() {
       document.getElementById('statMonth').textContent = "...";
       document.getElementById('statToday').textContent = "...";
@@ -2543,7 +2546,7 @@
           generateQrCode("passQrCode", getQrWebUrl(match.passNo), 130);
         } else {
           alert(`Visitor details loaded for ${match.name}! Ready to issue a NEW Pass.`);
- 	isPassAlreadySaved = false;
+ isPassAlreadySaved = false;
         lockedPreviewPassNo = null;
         updatePreview();
         }
