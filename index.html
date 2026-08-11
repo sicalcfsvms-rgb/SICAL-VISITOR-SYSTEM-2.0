@@ -2546,9 +2546,9 @@
           generateQrCode("passQrCode", getQrWebUrl(match.passNo), 130);
         } else {
           alert(`Visitor details loaded for ${match.name}! Ready to issue a NEW Pass.`);
- isPassAlreadySaved = false;
-        lockedPreviewPassNo = null;
-        updatePreview();
+          isPassAlreadySaved = false;
+          lockedPreviewPassNo = null;
+          updatePreview();
         }
       } else {
         alert("No record found matching: " + query);
@@ -2629,8 +2629,9 @@
     }
 
     async function saveEntryOnly() {
+      // FIX: Check if we are saving a brand new pass or re-saving an existing locked one
       const currentPassInput = document.getElementById('entrySearchInput').value.trim();
-      const passToSend = (isPassAlreadySaved && currentPassInput) ? lockedPreviewPassNo : "";
+      const passToSend = (isPassAlreadySaved && currentPassInput && lockedPreviewPassNo && document.getElementById('prevPassNo').textContent === lockedPreviewPassNo) ? lockedPreviewPassNo : "";
 
       const form = document.getElementById('visitorForm');
       if (!form.checkValidity()) { alert("Please fill required fields (*)"); return; }
@@ -2792,6 +2793,7 @@
       }, 250);
     }
 
+    // PERFORMANCE OPTIMIZED TABLE RENDERER (Limits initial DOM nodes to prevent browser freeze)
     function renderLogsTable(logs) {
       const tbody = document.getElementById('logsTableBody');
       tbody.innerHTML = '';
@@ -2801,7 +2803,10 @@
       }
       const userCanMarkOut = !activeUser || activeUser.canMarkOut !== false;
 
-      [...logs].reverse().forEach(log => {
+      const dataToRender = [...logs].reverse();
+      const limitedLogs = dataToRender.slice(0, 100);
+
+      limitedLogs.forEach(log => {
         let actionContent = '';
         let outDateDisplay = log.outDate && log.outDate !== '_______' && log.outDate !== '--' ? log.outDate : '_______';
 
