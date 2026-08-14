@@ -1717,7 +1717,7 @@
       document.getElementById('manualOutInput').value = '';
     }
 
-    async function processOutGateCode(rawVal) {
+   async function processOutGateCode(rawVal) {
       if (activeUser && activeUser.canMarkOut === false) {
         displayOutResult("Action Denied: Your account role does not have permission to mark visitors out.", false);
         return;
@@ -1737,8 +1737,19 @@
 
       if (matchingLogs.length > 0) {
         const masterRecord = matchingLogs[matchingLogs.length - 1];
-        const todayStr = getCurrentDate();
+        
+        // --- EXPIRATION VALIDATION CHECK ---
+        const expirationStatus = checkPassExpiration(masterRecord.date, masterRecord.validity);
         const activeInsideLog = matchingLogs.slice().reverse().find(l => !l.timeOut || l.timeOut === '_______' || l.timeOut === '--:--' || l.timeOut === '--');
+
+        // If the visitor is NOT currently inside, but their pass is expired, BLOCK them!
+        if (!activeInsideLog && expirationStatus.isExpired) {
+          displayOutResult(`ERROR: Pass ${masterRecord.passNo} has EXPIRED (${masterRecord.validity} limit exceeded). Please issue a new pass!`, false);
+          return;
+        }
+        // -----------------------------------
+
+        const todayStr = getCurrentDate();
 
         if (activeInsideLog) {
           const outTime = getCurrentTime();
