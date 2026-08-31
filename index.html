@@ -1232,7 +1232,10 @@
             </table>
           </div>
 
-          <h4 style="margin-top: 30px; margin-bottom: 10px; font-size: 0.9rem; color: var(--navy);"><i class="fa-solid fa-calendar-week"></i> Active Weekly, Monthly & Custom Pass Members Report</h4>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+  <h4 style="font-size: 0.9rem; color: var(--navy); margin: 0;"><i class="fa-solid fa-calendar-week"></i> Active Weekly, Monthly & Custom Pass Members Report</h4>
+  <button class="btn-action btn-success" style="padding: 4px 10px; font-size: 0.75rem;" onclick="exportLongTermPassesToCSV()"><i class="fa-solid fa-file-excel"></i> Download Long-Term Report CSV</button>
+</div>
           <div class="table-responsive-wrapper">
             <table>
               <thead>
@@ -2898,7 +2901,62 @@
           <td style="text-align:center;">${statusTag}</td>
           <td style="text-align:center;"><strong>Visit(s) - IN - ${item.inCount} / OUT - ${item.outCount}</strong></td>
         </tr>`;
+   // ... (your existing code ends right here)
+});
+}
+
+    function exportLongTermPassesToCSV() {
+      if (!globalCloudLogs || globalCloudLogs.length === 0) { 
+        alert("No data available to export."); 
+        return; 
+      }
+      
+      const longTermPasses = globalCloudLogs.filter(l => l.validity === 'Weekly' || l.validity === 'Monthly' || (l.validity && l.validity.startsWith('Custom')));
+      if (longTermPasses.length === 0) {
+        alert("No active long-term pass members found to export.");
+        return;
+      }
+
+      const passMap = {};
+      longTermPasses.forEach(log => {
+        if (!passMap[log.passNo]) {
+          passMap[log.passNo] = { passNo: log.passNo, issuedDate: log.date, name: log.name, category: log.category || 'Others', mobile: log.mobile, company: log.company, validity: log.validity, inCount: 0, outCount: 0 };
+        }
+        passMap[log.passNo].inCount++;
+        if (log.timeOut && log.timeOut !== '_______' && log.timeOut !== '--:--' && log.timeOut !== '--') {
+          passMap[log.passNo].outCount++;
+        }
       });
+
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += "Pass No,Issued Date,Visitor Name,Category,Mobile,Company,Validity Range,Pass Status,Total Visits Recorded\n";
+
+      Object.values(passMap).forEach(item => {
+        const rangeStr = getValidityDateRange(item.issuedDate, item.validity);
+        const status = checkPassExpiration(item.issuedDate, item.validity);
+        const statusText = status.isExpired ? "EXPIRED" : "ACTIVE";
+        const visitsStr = `IN - ${item.inCount} / OUT - ${item.outCount}`;
+
+        csvContent += [
+          `"${item.passNo}"`,
+          `"${item.issuedDate}"`,
+          `"${item.name}"`,
+          `"${item.category}"`,
+          `"${item.mobile}"`,
+          `"${item.company}"`,
+          `"${rangeStr}"`,
+          `"${statusText}"`,
+          `"${visitsStr}"`
+        ].join(",") + "\n";
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `SICAL_LongTerm_Pass_Report_${getCurrentDate()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
     function exportToCSV() {
