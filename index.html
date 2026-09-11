@@ -1720,38 +1720,52 @@
       document.getElementById('manualOutInput').value = '';
     }
 
-   async function processOutGateCode(rawVal) {
+    async function processOutGateCode(rawVal) {
       if (activeUser && activeUser.canMarkOut === false) {
         displayOutResult("Action Denied: Your account role does not have permission to mark visitors out.", false);
         return;
       }
-      let extractedPass = rawVal.trim();
+      let extractedQuery = rawVal.trim();
       if (rawVal.includes("pass=")) {
         const match = rawVal.match(/pass=([^&]+)/i);
-        if (match) extractedPass = decodeURIComponent(match[1]).trim();
+        if (match) extractedQuery = decodeURIComponent(match[1]).trim();
       } else if (rawVal.includes("VP-")) {
         const match = rawVal.match(/(VP-\d{4}-\d+)/i);
-        if (match) extractedPass = match[1].trim();
+        if (match) extractedQuery = match[1].trim();
       }
 
-      const matchingLogs = globalCloudLogs.filter(log => 
-        log.passNo.toLowerCase() === extractedPass.toLowerCase() || String(log.mobile).trim() === String(extractedPass).trim()
-      );
+      const isMobileQuery = /^\d+$/.test(extractedQuery) && extractedQuery.length >= 8;
+
+      let matchingLogs = [];
+      let masterRecord = null;
+
+      if (isMobileQuery) {
+        const mobileLogs = globalCloudLogs.filter(log => String(log.mobile).trim() === extractedQuery);
+        if (mobileLogs.length > 0) {
+          mobileLogs.sort((a, b) => {
+            const seqA = parseInt((a.passNo.match(/\d+$/) || [0])[0], 10);
+            const seqB = parseInt((b.passNo.match(/\d+$/) || [0])[0], 10);
+            return seqB - seqA;
+          });
+
+          const latestPassNo = mobileLogs[0].passNo;
+          matchingLogs = globalCloudLogs.filter(log => log.passNo.toLowerCase() === latestPassNo.toLowerCase());
+        }
+      } else {
+        matchingLogs = globalCloudLogs.filter(log => log.passNo.toLowerCase() === extractedQuery.toLowerCase());
+      }
 
       if (matchingLogs.length > 0) {
-        const masterRecord = matchingLogs[matchingLogs.length - 1];
-        const originalRecord = matchingLogs[0]; // True initial issuance date of the pass
+        masterRecord = matchingLogs[matchingLogs.length - 1];
+        const originalRecord = matchingLogs[0];
         
-        // --- EXPIRATION VALIDATION CHECK (using original issuance date) ---
         const expirationStatus = checkPassExpiration(originalRecord.date, masterRecord.validity);
         const activeInsideLog = matchingLogs.slice().reverse().find(l => !l.timeOut || l.timeOut === '_______' || l.timeOut === '--:--' || l.timeOut === '--');
 
-        // If the visitor is NOT currently inside, but their pass is expired, BLOCK them!
         if (!activeInsideLog && expirationStatus.isExpired) {
           displayOutResult(`ERROR: Pass ${masterRecord.passNo} has EXPIRED (${masterRecord.validity} limit exceeded). Please issue a new pass!`, false);
           return;
         }
-        // -----------------------------------
 
         const todayStr = getCurrentDate();
 
@@ -1820,7 +1834,7 @@
         }
         setTimeout(() => { fetchCloudData(); }, 1000);
       } else {
-        displayOutResult(`ERROR: Pass number "${extractedPass}" not found in system records. Please issue a new pass.`, false);
+        displayOutResult(`ERROR: Pass number or mobile "${extractedQuery}" not found in system records. Please issue a new pass.`, false);
       }
     }
 
@@ -2972,7 +2986,7 @@
         ].join(",") + "\n";
       });
       const link = document.createElement("a");
-      link.setAttribute("href", encodeURI(csvContent));
+      link.setAttribute("href", encodeURI(encodedUri || csvContent));
       link.setAttribute("download", `SICAL_Visitor_Report_${getCurrentDate()}.csv`);
       document.body.appendChild(link);
       link.click();
