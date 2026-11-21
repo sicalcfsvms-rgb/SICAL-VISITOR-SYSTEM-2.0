@@ -12,8 +12,8 @@
   <!-- FontAwesome Icons CDN with SRI Hash -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
   <!-- QRCode.js & html5-qrcode CDN -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="https://unpkg.com/html5-qrcode"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script defer src="https://unpkg.com/html5-qrcode"></script>
   <style>
     :root {
       --navy: #0f172a;
@@ -1394,8 +1394,6 @@
           renderLogsTable(globalCloudLogs);
         });
         initApp();
-      } else {
-        fetchCloudData();
       }
     });
 
@@ -1903,18 +1901,34 @@
     }
 
     // OPTIMIZED BACKGROUND CACHE LOADER (Fetches once, stores in memory)
-    async function fetchCloudData() {
+    let _cloudFetchPromise = null, _cloudFetchStarted = 0;
+    function fetchCloudData() {
+      // Reuse a fetch that started moments ago (avoids double download on page load)
+      if (_cloudFetchPromise && (Date.now() - _cloudFetchStarted) < 3000) return _cloudFetchPromise;
+      _cloudFetchStarted = Date.now();
+      _cloudFetchPromise = _fetchCloudDataImpl().finally(() => { setTimeout(() => { _cloudFetchPromise = null; }, 0); });
+      return _cloudFetchPromise;
+    }
+
+    async function _fetchCloudDataImpl() {
       document.getElementById('statMonth').textContent = "...";
       document.getElementById('statToday').textContent = "...";
       document.getElementById('statYesterday').textContent = "...";
       document.getElementById('statInside').textContent = "...";
 
-      if (GOOGLE_SCRIPT_URL) {
+      if (!GOOGLE_SCRIPT_URL) return;
+
+      // Up to 2 attempts, 60s each (large sheets can take a while on first load)
+      for (let attempt = 1; attempt <= 2; attempt++) {
+        const controller = new AbortController();
+        const fetchTimer = setTimeout(() => controller.abort(), 60000);
+        const t0 = Date.now();
         try {
-          const response = await fetch(GOOGLE_SCRIPT_URL);
+          const response = await fetch(GOOGLE_SCRIPT_URL, { signal: controller.signal });
           const data = await response.json();
 
           if (data && data.status === "success") {
+            console.log("Cloud data loaded: " + (data.logs || []).length + " records in " + ((Date.now() - t0) / 1000).toFixed(1) + "s");
             globalCloudLogs = (data.logs || []).map(log => ({
               ...log,
               passNo: String(log.passNo || "").trim(),
@@ -1929,17 +1943,27 @@
 
             globalCloudUsers = data.users || [];
 
-            computeDashboardAnalytics(globalCloudLogs);
-            renderLogsTable(globalCloudLogs);
-            renderLongTermLogsTable(globalCloudLogs);
-            renderUserManagementTable(globalCloudUsers);
+            // Stagger heavy rendering so the main thread stays responsive
+            setTimeout(() => computeDashboardAnalytics(globalCloudLogs), 0);
+            setTimeout(() => renderLogsTable(globalCloudLogs), 50);
+            setTimeout(() => renderLongTermLogsTable(globalCloudLogs), 100);
+            setTimeout(() => renderUserManagementTable(globalCloudUsers), 150);
             if (!isPassAlreadySaved) updatePreview();
             return;
           }
+          console.log("Cloud data response not successful (attempt " + attempt + ")");
         } catch (err) {
-          console.log("Failed to fetch cloud data: " + err.message);
+          console.log("Failed to fetch cloud data (attempt " + attempt + "): " + (err.name === 'AbortError' ? "timed out after 60s" : err.message));
+        } finally {
+          clearTimeout(fetchTimer);
         }
       }
+
+      // Both attempts failed: show it instead of leaving "..." forever
+      ['statMonth', 'statToday', 'statYesterday', 'statInside'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = "!";
+      });
     }
 
     function renderUserManagementTable(usersList) {
@@ -2275,21 +2299,35 @@
       renderDashLiveLogs(logs.slice(-5).reverse());
     }
 
+    // Draws ALL rows without freezing the page: rows are added in small batches
+    function cancelRowFill(el) { if (el) el._fillToken = (el._fillToken || 0) + 1; }
+    function fillRowsChunked(el, rows, chunkSize) {
+      chunkSize = chunkSize || 150;
+      const token = (el._fillToken = (el._fillToken || 0) + 1);
+      el.innerHTML = '';
+      let i = 0;
+      (function step() {
+        if (el._fillToken !== token) return;
+        el.insertAdjacentHTML('beforeend', rows.slice(i, i + chunkSize).join(''));
+        i += chunkSize;
+        if (i < rows.length) setTimeout(step, 16);
+      })();
+    }
+
     function renderNotOutVisitorList(list) {
       const tbody = document.getElementById('notOutListTableBody');
+      cancelRowFill(tbody);
       tbody.innerHTML = '';
       if(!list || list.length === 0) {
         tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No active visitors inside.</td></tr>';
         return;
       }
-      list.forEach(v => {
-        tbody.innerHTML += `<tr>
+      fillRowsChunked(tbody, list.map(v => `<tr>
           <td><strong>${v.name}</strong></td>
           <td><span style="padding:2px 6px; border-radius:4px; font-weight:bold; font-size:0.7rem;">${v.category || 'Others'}</span></td>
           <td>${v.passNo}</td>
           <td>${v.timeIn}</td>
-        </tr>`;
-      });
+        </tr>`));
     }
 
     function renderCategoryWiseTable(catObj) {
@@ -2346,13 +2384,13 @@
       if (titleElem) {
         titleElem.innerHTML = `<i class="fa-solid fa-hourglass-alert"></i> Time Capture — Extended Stay Visitors (> 8 Hours Inside CFS Site) (${list ? list.length : 0})`;
       }
+      cancelRowFill(container);
       container.innerHTML = '';
       if(!list || list.length === 0) {
         container.innerHTML = '<div style="font-size:0.7rem; color:#64748b; padding:6px;">No visitors currently exceeding standard stay duration (>8 Hours).</div>';
         return;
       }
-      list.forEach(v => {
-        container.innerHTML += `
+      fillRowsChunked(container, list.map(v => `
           <div class="overstay-card">
             <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
               <strong>${v.name}</strong>
@@ -2361,8 +2399,7 @@
             <div><strong>Pass:</strong> ${v.passNo} &nbsp;|&nbsp; <strong>Cat:</strong> ${v.category || 'Others'}</div>
             <div><strong>Time In:</strong> ${v.timeIn} (${v.date})</div>
           </div>
-        `;
-      });
+        `), 60);
     }
 
     function parseToCleanDateObj(dateStr) {
@@ -2882,6 +2919,7 @@
 
     function renderLongTermLogsTable(logs) {
       const tbody = document.getElementById('longTermLogsBody');
+      cancelRowFill(tbody);
       tbody.innerHTML = '';
       if (!logs || logs.length === 0) {
         tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">No long-term pass members found.</td></tr>';
@@ -2901,11 +2939,11 @@
         if (log.timeOut && log.timeOut !== '_______' && log.timeOut !== '--:--' && log.timeOut !== '--') passMap[log.passNo].outCount++;
       });
 
-      Object.values(passMap).forEach(item => {
+      fillRowsChunked(tbody, Object.values(passMap).map(item => {
         const rangeStr = getValidityDateRange(item.issuedDate, item.validity);
         const status = checkPassExpiration(item.issuedDate, item.validity);
         const statusTag = status.isExpired ? `<span style="color:#dc2626; font-weight:bold;">EXPIRED</span>` : `<span style="color:#16a34a; font-weight:bold;">ACTIVE</span>`;
-        tbody.innerHTML += `<tr>
+        return `<tr>
           <td><strong>${item.passNo}</strong></td>
           <td>${item.issuedDate}</td>
           <td>${item.name}</td>
@@ -2916,7 +2954,7 @@
           <td style="text-align:center;">${statusTag}</td>
           <td style="text-align:center;"><strong>Visit(s) - IN - ${item.inCount} / OUT - ${item.outCount}</strong></td>
         </tr>`;
-      });
+      }));
     }
 
     function exportLongTermPassesToCSV() {
@@ -2985,12 +3023,16 @@
           `"${log.validity}"`, `"${log.purpose}"`, `"${log.vehicle || 'N/A'}"`, `"${log.photoUrl || 'N/A'}"`
         ].join(",") + "\n";
       });
+      const csvBody = csvContent.replace("data:text/csv;charset=utf-8,", "");
+      const blob = new Blob(["\uFEFF" + csvBody], { type: "text/csv;charset=utf-8;" });
+      const blobUrl = URL.createObjectURL(blob);
       const link = document.createElement("a");
-      link.setAttribute("href", encodeURI(encodedUri || csvContent));
+      link.setAttribute("href", blobUrl);
       link.setAttribute("download", `SICAL_Visitor_Report_${getCurrentDate()}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
     }
   </script>
 </body>
